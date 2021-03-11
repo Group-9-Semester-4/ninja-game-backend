@@ -1,36 +1,45 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.ICardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
 class CardService implements ICardService {
 
-    private ICardRepository cardRepository;
+    private CardRepository repository;
+
     @Autowired
-    public CardService(ICardRepository cardRepository) {
-        this.cardRepository = cardRepository;
+    public CardService(CardRepository repository) {
+        this.repository = repository;
     }
 
 
     @Override
-    public CardEntity getById(String id) {
+    public Optional<CardEntity> getById(String id) {
         UUID uuid = UUID.fromString(id);
-        return cardRepository.getById(uuid);
+        return repository.findById(uuid);
     }
 
     @Override
-    public CardEntity getByName(String name) {
-        return cardRepository.getByName(name);
+    public Iterable<CardEntity> getAll() {
+        return repository.findAll();
     }
 
-    @Override
-    public List<CardEntity> getAll() {
-        return cardRepository.getAll();
-    }
+
+//    @Override
+//    public CardEntity getByName(String name) {
+//        return repository.getByName(name);
+//    }
+//
+//    @Override
+//    public List<CardEntity> getAll() {
+//        return repository.getAll();
+//    }
 }

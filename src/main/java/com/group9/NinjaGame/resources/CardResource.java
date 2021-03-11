@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/card")
@@ -21,18 +22,23 @@ public class CardResource {
         this.cardService = service;
     }
 
-    @GetMapping(path = "/{name}")
-    public CardEntity getCardByName(@PathVariable String name) {
-        return cardService.getByName(name);
-    }
+//    @GetMapping(path = "/{name}")
+//    public CardEntity getCardByName(@PathVariable String name) {
+//        return cardService.getByName(name);
+//    }
 
     @GetMapping(path = "/{id}")
-    public CardEntity getCardById(@PathVariable String id) {
+    public Optional<CardEntity> getCardById(@PathVariable String id) {
         return cardService.getById(id);
     }
 
-    @GetMapping(path = "/all")
-    public List<CardEntity> getCards() {
+    @GetMapping(path="/all")
+    public Iterable<CardEntity> getAll() {
         return cardService.getAll();
     }
+
+//    @GetMapping(path = "/all")
+//    public List<CardEntity> getCards() {
+//        return cardService.getAll();
+//    }
 }
