@@ -1,0 +1,14 @@
+# Settings are simple key-value pairs
+# flyway.key=value
+# Single line comment start with a hash
+
+# for reference, see https://flywaydb.org/documentation/configuration/configfile.html
+# this link has a sample file, with all possible
+# mysql setup - jdbc:mysql://<host>:<port>/<database>?<key1>=<value1>&<key2>=<value2>...
+# copy everything under this line, and ask a team member for the values.
+
+flyway.user=
+flyway.password=
+flyway.schemas=
+flyway.url=
+flyway.locations=filesystem:./src/main/resources/db/migration
