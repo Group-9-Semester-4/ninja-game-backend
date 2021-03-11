@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface ICardService{
     public Optional<CardEntity> getById(String uuid);
     public Iterable<CardEntity> getAll();
+    public Iterable<CardEntity> getAllCustom();
 
 //    public CardEntity getByName(String name);
 //    public List<CardEntity> getAll();

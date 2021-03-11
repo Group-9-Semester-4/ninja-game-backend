@@ -18,7 +18,7 @@ public class CardEntity {
     private String description;
 
     @Column(name="points", length=10, nullable=false, unique=false)
-    private String points;
+    private int points;
 
     public CardEntity() {
     }
@@ -47,11 +47,11 @@ public class CardEntity {
         this.description = description;
     }
 
-    public String getPoints() {
+    public int getPoints() {
         return points;
     }
 
-    public void setPoints(String points) {
+    public void setPoints(int points) {
         this.points = points;
     }
 }

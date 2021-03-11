@@ -32,6 +32,10 @@ class CardService implements ICardService {
         return repository.findAll();
     }
 
+    public Iterable<CardEntity> getAllCustom() {
+        return repository.getCard();
+    }
+
 
 //    @Override
 //    public CardEntity getByName(String name) {

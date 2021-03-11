@@ -37,6 +37,11 @@ public class CardResource {
         return cardService.getAll();
     }
 
+    @GetMapping(path="/custom")
+    public Iterable<CardEntity> getCustom() {
+        return cardService.getAllCustom();
+    }
+
 //    @GetMapping(path = "/all")
 //    public List<CardEntity> getCards() {
 //        return cardService.getAll();
