@@ -22,28 +22,18 @@ public class CardResource {
         this.cardService = service;
     }
 
-//    @GetMapping(path = "/{name}")
-//    public CardEntity getCardByName(@PathVariable String name) {
-//        return cardService.getByName(name);
-//    }
-
     @GetMapping(path = "/{id}")
     public Optional<CardEntity> getCardById(@PathVariable String id) {
         return cardService.getById(id);
     }
 
-    @GetMapping(path="/all")
+    @GetMapping(path = "/all")
     public Iterable<CardEntity> getAll() {
         return cardService.getAll();
     }
 
-    @GetMapping(path="/custom")
+    @GetMapping(path = "/custom")
     public Iterable<CardEntity> getCustom() {
         return cardService.getAllCustom();
     }
-
-//    @GetMapping(path = "/all")
-//    public List<CardEntity> getCards() {
-//        return cardService.getAll();
-//    }
 }

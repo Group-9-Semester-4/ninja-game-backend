@@ -4,20 +4,20 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name="cards")
+@Table(name = "cards")
 public class CardEntity {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name="name", length=50, nullable=false, unique=false)
+    @Column(name = "name", length = 50, nullable = false, unique = false)
     private String name;
 
-    @Column(name="description", length=50, nullable=false, unique=false)
+    @Column(name = "description", length = 50, nullable = false, unique = false)
     private String description;
 
-    @Column(name="points", length=10, nullable=false, unique=false)
+    @Column(name = "points", length = 10, nullable = false, unique = false)
     private int points;
 
     public CardEntity() {

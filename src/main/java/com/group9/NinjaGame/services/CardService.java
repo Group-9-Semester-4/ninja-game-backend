@@ -2,11 +2,9 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardEntity;
 import com.group9.NinjaGame.repositories.CardRepository;
-import com.group9.NinjaGame.repositories.ICardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,17 +31,6 @@ class CardService implements ICardService {
     }
 
     public Iterable<CardEntity> getAllCustom() {
-        return repository.getCard();
+        return repository.getCustomCard();
     }
-
-
-//    @Override
-//    public CardEntity getByName(String name) {
-//        return repository.getByName(name);
-//    }
-//
-//    @Override
-//    public List<CardEntity> getAll() {
-//        return repository.getAll();
-//    }
 }
