@@ -5,17 +5,20 @@ import com.group9.NinjaGame.repositories.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 class CardService implements ICardService {
 
     private CardRepository repository;
+    private List<CardEntity> allCards;
 
     @Autowired
     public CardService(CardRepository repository) {
         this.repository = repository;
+        Iterable<CardEntity> x = repository.findAll();
+        this.allCards = new ArrayList<CardEntity>();
+        x.forEach(allCards::add);
     }
 
 
@@ -32,5 +35,10 @@ class CardService implements ICardService {
 
     public Iterable<CardEntity> getAllCustom() {
         return repository.getCustomCard();
+    }
+
+    @Override
+    public CardEntity drawRandomCard() {
+        return this.allCards.get(new Random().nextInt(this.allCards.size()));
     }
 }

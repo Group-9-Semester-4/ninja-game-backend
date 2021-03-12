@@ -10,5 +10,7 @@ public interface ICardService {
     Iterable<CardEntity> getAll();
 
     Iterable<CardEntity> getAllCustom();
+
+    CardEntity drawRandomCard();
 }
 

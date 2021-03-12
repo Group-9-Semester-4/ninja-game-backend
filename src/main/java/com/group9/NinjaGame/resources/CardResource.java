@@ -36,4 +36,9 @@ public class CardResource implements ICardResource {
     public Iterable<CardEntity> getCustom() {
         return cardService.getAllCustom();
     }
+
+    @GetMapping(path="/draw")
+    public CardEntity drawRandomCard() {
+        return cardService.drawRandomCard();
+    }
 }
