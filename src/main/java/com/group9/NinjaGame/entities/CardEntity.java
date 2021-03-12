@@ -20,6 +20,12 @@ public class CardEntity {
     @Column(name = "points", length = 10, nullable = false, unique = false)
     private int points;
 
+    @Column(name = "difficulty_type", nullable = false, unique = false)
+    private boolean difficulty_type;
+
+    @Column(name = "difficulty", nullable = false, unique = false)
+    private int difficulty;
+
     public CardEntity() {
     }
 

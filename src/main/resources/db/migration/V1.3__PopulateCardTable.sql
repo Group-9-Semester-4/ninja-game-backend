@@ -1,0 +1,1 @@
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Jumping jacks', 'Jumping jacks', 10, 1, 10);
