@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/card")
-public class CardResource {
+public class CardResource implements ICardResource {
 
     private ICardService cardService;
 
