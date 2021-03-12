@@ -1,6 +1,7 @@
 package com.group9.NinjaGame.resources;
 
 import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.services.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class CardResource implements ICardResource {
     }
 
     @GetMapping(path = "/all")
-    public Iterable<CardEntity> getAll() {
+    public List<Card> getAll() {
         return cardService.getAll();
     }
 
@@ -38,7 +39,7 @@ public class CardResource implements ICardResource {
     }
 
     @GetMapping(path="/draw")
-    public CardEntity drawRandomCard() {
+    public Card drawRandomCard() {
         return cardService.drawRandomCard();
     }
 }

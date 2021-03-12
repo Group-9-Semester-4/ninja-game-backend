@@ -60,4 +60,20 @@ public class CardEntity {
     public void setPoints(int points) {
         this.points = points;
     }
+
+    public boolean isDifficulty_type() {
+        return difficulty_type;
+    }
+
+    public void setDifficulty_type(boolean difficulty_type) {
+        this.difficulty_type = difficulty_type;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
 }
