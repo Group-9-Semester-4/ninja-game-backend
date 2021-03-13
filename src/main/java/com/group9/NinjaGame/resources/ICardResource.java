@@ -11,8 +11,5 @@ import java.util.Optional;
 public interface ICardResource {
     Card getCardById(@PathVariable String id);
     List<Card> getAll();
-    List<Card> getCustom();
-    Card drawRandomCard();
-    List<Card> getCardsForCustomGame(@RequestBody List<Card> unwantedCards);
-    List<Card> cardDone(@RequestBody List<Card> currentDeck, Card card);
+
 }

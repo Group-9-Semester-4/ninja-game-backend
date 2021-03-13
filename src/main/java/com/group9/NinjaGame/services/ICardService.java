@@ -12,13 +12,6 @@ public interface ICardService {
 
     List<Card> getAll();
 
-    List<Card> getAllCustom();
-
-    Card drawRandomCard();
-
-    List<Card> getCardsForCustomGame(List<Card> unwantedCards);
-
-    List<Card> removeDoneCard(List<Card> currentDeck, Card cardDone);
 
 }
 

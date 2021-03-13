@@ -30,6 +30,10 @@ public class Game {
         this.allCards = allCards;
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     public int getPoints() {
         return points;
     }
