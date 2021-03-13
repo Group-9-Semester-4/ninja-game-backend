@@ -4,13 +4,11 @@ import com.group9.NinjaGame.entities.CardEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.services.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/card")
@@ -24,7 +22,7 @@ public class CardResource implements ICardResource {
     }
 
     @GetMapping(path = "/{id}")
-    public Optional<CardEntity> getCardById(@PathVariable String id) {
+    public Card getCardById(@PathVariable String id) {
         return cardService.getById(id);
     }
 
@@ -34,7 +32,7 @@ public class CardResource implements ICardResource {
     }
 
     @GetMapping(path = "/custom")
-    public Iterable<CardEntity> getCustom() {
+    public List<Card> getCustom() {
         return cardService.getAllCustom();
     }
 
@@ -42,4 +40,16 @@ public class CardResource implements ICardResource {
     public Card drawRandomCard() {
         return cardService.drawRandomCard();
     }
+
+    @GetMapping(path="/customDeck")
+    public List<Card> getCardsForCustomGame(List<Card> unwantedCards) {
+        return cardService.getCardsForCustomGame(unwantedCards);
+    }
+
+    // TODO: get only the current deck, not all cards
+    @GetMapping(path="/done")
+    public List<Card> cardDone(List<Card> currentDeck, Card card) {
+        return cardService.removeDoneCard(cardService.getAll(), card);
+    }
+
 }

@@ -23,7 +23,9 @@ public class Card {
     }
 
     public static Card fromCardEntity(CardEntity e) {
-        return new Card(e.getName(), e.getDescription(), e.getPoints(), e.isDifficulty_type(), e.getDifficulty());
+        Card card = new Card(e.getName(), e.getDescription(), e.getPoints(), e.isDifficulty_type(), e.getDifficulty());
+        card.setId(e.getId());
+        return card;
     }
 
     public UUID getId() {
