@@ -14,4 +14,5 @@ public interface IGameResource {
     Card draw(UUID uuid);
     Game startGame(@PathVariable UUID gameId, @RequestBody List<Card> unwantedCards);
     List<Card> cardDone(@PathVariable UUID gameId, @RequestBody Card card);
+    Game finishGame(@PathVariable UUID uuid);
 }

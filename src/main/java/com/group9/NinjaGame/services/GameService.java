@@ -13,13 +13,12 @@ import java.util.*;
 @Component
 public class GameService implements IGameService {
 
-    private CardService cardService;
+    private ICardService cardService;
     private CardRepository repository;
-    private List<Card> allCards;
     private GameContainer gameContainer;
 
     @Autowired
-    public GameService(CardService cardService, CardRepository repository, GameContainer gameContainer) {
+    public GameService(ICardService cardService, CardRepository repository, GameContainer gameContainer) {
         this.cardService = cardService;
         this.repository = repository;
         this.gameContainer = gameContainer;
@@ -49,12 +48,25 @@ public class GameService implements IGameService {
         }
         return game;
     }
+
     public List<Card> removeDoneCard(UUID gameId, Card cardDone) {
         Game game = gameContainer.findGame(gameId);
         game.getAllCards().remove(cardDone);
+        int points = game.getPoints();
+        points += cardDone.getPoints();
+        game.setPoints(points);
+        game.setCardsDone(+1);
         return game.getAllCards();
     }
 
+    public Game finishGame(UUID gameId) {
+        Game game = gameContainer.findGame(gameId);
+        gameContainer.endGame(game);
+        // TODO: is the game obj still kept after container deletion tho?
+        return game;
+    }
+
+    // not used for now, just to give an idea
     // from CrudRepo we are getting a Iterable<CardEntity>, but we wanna work with models, so here in the service
     // the retyping is done using a new list and an iterator
     public List<Card> getAllCustom() {

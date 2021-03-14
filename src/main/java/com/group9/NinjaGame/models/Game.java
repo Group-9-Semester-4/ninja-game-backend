@@ -10,6 +10,8 @@ public class Game {
     private UUID uuid;
     private List<Card> allCards;
     private int points;
+    private int miniGameAttempts;
+    private int cardsDone;
     private int timeLimit;
     private boolean singleplayer;
     private boolean playingAlone;
@@ -20,6 +22,8 @@ public class Game {
         this.singleplayer = singleplayer;
         this.playingAlone = playingAlone;
         this.allCards = new ArrayList<Card>();
+        this.miniGameAttempts = 0;
+        this.cardsDone = 0;
     }
 
     public List<Card> getAllCards() {
@@ -64,5 +68,21 @@ public class Game {
 
     public void setPlayingAlone(boolean playingAlone) {
         this.playingAlone = playingAlone;
+    }
+
+    public int getMiniGameAttempts() {
+        return (points / cardsDone) / 10;
+    }
+
+    public void setMiniGameAttempts(int miniGameAttempts) {
+        this.miniGameAttempts = miniGameAttempts;
+    }
+
+    public int getCardsDone() {
+        return cardsDone;
+    }
+
+    public void setCardsDone(int cardsDone) {
+        this.cardsDone = cardsDone;
     }
 }

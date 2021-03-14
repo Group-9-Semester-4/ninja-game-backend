@@ -3,8 +3,7 @@ package com.group9.NinjaGame.resources;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.models.Game;
-import com.group9.NinjaGame.services.CardService;
-import com.group9.NinjaGame.services.GameService;
+
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,11 @@ import java.util.UUID;
 @RequestMapping("/game")
 public class GameResource implements IGameResource {
 
-    CardService cardService;
-    GameService gameService;
+    ICardService cardService;
+    IGameService gameService;
 
     @Autowired
-    public GameResource(CardService cardService, GameService gameService) {
+    public GameResource(ICardService cardService, IGameService gameService) {
         this.cardService = cardService;
         this.gameService = gameService;
     }
@@ -48,5 +47,10 @@ public class GameResource implements IGameResource {
     @GetMapping(path = "/{uuid}/done")
     public List<Card> cardDone(@PathVariable UUID uuid, Card card) {
         return gameService.removeDoneCard(uuid, card);
+    }
+
+    @GetMapping(path = "/{uuid}/finish")
+    public Game finishGame(@PathVariable UUID uuid) {
+        return gameService.finishGame(uuid);
     }
 }

@@ -11,4 +11,5 @@ public interface IGameService {
     Card draw(UUID uuid);
     Game startGame(UUID uuid, List<Card> unwantedCards);
     List<Card> removeDoneCard(UUID gameId, Card cardDone);
+    Game finishGame(UUID uuid);
 }

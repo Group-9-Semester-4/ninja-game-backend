@@ -24,7 +24,7 @@ public class CardService implements ICardService {
         }
     }
 
-
+    // wont be used later probably, just to give an idea how it works
     @Override
     public Card getById(String id) {
         Card card = null;
@@ -42,7 +42,7 @@ public class CardService implements ICardService {
         return this.allCards;
     }
 
-
+    // helper method to convert Iterable<CardEntity> into List<Card>
     public List<Card> fromIterator(Iterable<CardEntity> cardEntities) {
         List<Card> cards = new ArrayList<Card>();
         Iterator<CardEntity> itr = cardEntities.iterator();
