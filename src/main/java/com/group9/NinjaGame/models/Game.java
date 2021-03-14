@@ -71,7 +71,8 @@ public class Game {
     }
 
     public int getMiniGameAttempts() {
-        return (points / cardsDone) / 10;
+        return 1;
+        // return (points / cardsDone) / 10; <- schlechtes kode, both points and cardsDone and mGameAttempts are 0.
     }
 
     public void setMiniGameAttempts(int miniGameAttempts) {
