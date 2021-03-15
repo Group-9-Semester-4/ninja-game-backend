@@ -32,7 +32,7 @@ public class GameContainer {
 
     public Game findGame(UUID uuid) {
         for (Game g : games) {
-            if(g.getUuid().equals(uuid)) return g;
+            if(g.getId().equals(uuid)) return g;
         }
         return null;
     }

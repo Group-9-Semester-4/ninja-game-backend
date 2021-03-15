@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "182a48ec-c9bb-4013-bb93-d51d2286b037",
+		"_postman_id": "c9c06e1e-dba6-44a7-84db-20f54bd82a90",
 		"name": "Ninja game",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -40,7 +40,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[\r\n    \r\n        \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\",\r\n        \"3b8f6420-831b-11eb-b3ef-00163e4e5003\"\r\n    \r\n]",
+					"raw": "[\r\n    \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\",\r\n    \"3b8f6420-831b-11eb-b3ef-00163e4e5003\",\r\n    \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\"   \r\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -48,14 +48,14 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/game/2355d71f-2d65-4abb-acb4-7d240d9244fb/start",
+					"raw": "localhost:8080/game/{{gameId}}/start",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"game",
-						"2355d71f-2d65-4abb-acb4-7d240d9244fb",
+						"{{gameId}}",
 						"start"
 					]
 				}
@@ -68,14 +68,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/game/b0df7412-80e6-497b-be8b-6e89efd31099/draw",
+					"raw": "localhost:8080/game/{{gameId}}/draw",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"game",
-						"b0df7412-80e6-497b-be8b-6e89efd31099",
+						"{{gameId}}",
 						"draw"
 					]
 				}
@@ -89,7 +89,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"cardId\": \"3d825363-831b-11eb-b3ef-00163e4e5003\"\r\n}",
+					"raw": "{\r\n    \"id\" : \"{{cardId}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -97,14 +97,14 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/game/c41e8cd9-e726-4137-bce5-cc591095ba4a/done",
+					"raw": "localhost:8080/game/{{gameId}}/done",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"game",
-						"c41e8cd9-e726-4137-bce5-cc591095ba4a",
+						"{{gameId}}",
 						"done"
 					]
 				}
@@ -117,14 +117,14 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/game/165e417a-f8d2-4cfa-91e5-d3ae152baddc/finish",
+					"raw": "localhost:8080/game/{{gameId}}/finish",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"game",
-						"165e417a-f8d2-4cfa-91e5-d3ae152baddc",
+						"{{gameId}}",
 						"finish"
 					]
 				}

@@ -2,7 +2,6 @@ package com.group9.NinjaGame.models;
 
 import com.group9.NinjaGame.entities.CardEntity;
 
-import javax.persistence.Column;
 import java.util.UUID;
 
 public class Card {
@@ -13,7 +12,8 @@ public class Card {
     private boolean difficulty_type;
     private int difficulty;
 
-    public Card() {}
+    public Card() {
+    }
 
     public Card(String name, String description, int points, boolean difficulty_type, int difficulty) {
         this.id = UUID.randomUUID();

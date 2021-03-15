@@ -26,27 +26,26 @@ public class GameService implements IGameService {
 
     @Override
     public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        Game game = new Game(timeLimit,singlePlayer,playingAlone);
+        Game game = new Game(timeLimit, singlePlayer, playingAlone);
         game.setAllCards(cardService.getAll());
         gameContainer.addGame(game);
         return game;
     }
 
     @Override
-    public Card draw(UUID uuid) {
-        Game game = gameContainer.findGame(uuid);
-        if(game.getAllCards().size() == 0) {
+    public Card draw(UUID gameId) {
+        Game game = gameContainer.findGame(gameId);
+        if (game.getAllCards().size() == 0) {
             return null;
+        } else {
+            return game.getAllCards().get(new Random().nextInt(game.getAllCards().size()));
         }
-        else return game.getAllCards().get(new Random().nextInt(game.getAllCards().size()));
     }
 
-
-    // TODO: take array of IDs not cards
     @Override
     public Game startGame(UUID gameId, List<UUID> unwantedCards) {
         Game game = gameContainer.findGame(gameId);
-        if(unwantedCards.size() == 0) return game;
+        if (unwantedCards.size() == 0) return game;
         for (UUID cardId : unwantedCards) {
             game.removeCard(cardId);
         }
@@ -57,15 +56,13 @@ public class GameService implements IGameService {
         Game game = gameContainer.findGame(gameId);
         Optional<CardEntity> cardEntity = repository.findById(cardId);
         CardEntity entity = null;
-        if(cardEntity.isPresent()) {
+        if (cardEntity.isPresent()) {
             entity = cardEntity.get();
         }
         Card card = Card.fromCardEntity(entity);
         game.removeCard(card.getId());
-//        int points = game.getPoints();
-//        points += card.getPoints();
         game.setPoints(game.getPoints() + card.getPoints());
-        game.setCardsDone(game.getCardsDone()+1);
+        game.setCardsDone(game.getCardsDone() + 1);
         return game.getAllCards();
     }
 
@@ -75,15 +72,6 @@ public class GameService implements IGameService {
         return game;
     }
 
-    // not used for now, just to give an idea
-    // from CrudRepo we are getting a Iterable<CardEntity>, but we wanna work with models, so here in the service
-    // the retyping is done using a new list and an iterator
-    public List<Card> getAllCustom() {
-        Iterable<CardEntity> cardEntities = repository.getCustomCard();
-
-        return fromIterator(cardEntities);
-    }
-
     public List<Card> fromIterator(Iterable<CardEntity> cardEntities) {
         List<Card> cards = new ArrayList<Card>();
         Iterator<CardEntity> itr = cardEntities.iterator();
@@ -91,5 +79,12 @@ public class GameService implements IGameService {
             cards.add(Card.fromCardEntity(itr.next()));
         }
         return cards;
+    }
+
+    // Unused but kept as an example for Custom Queries.
+    public List<Card> getAllCustom() {
+        Iterable<CardEntity> cardEntities = repository.getCustomCard();
+
+        return fromIterator(cardEntities);
     }
 }

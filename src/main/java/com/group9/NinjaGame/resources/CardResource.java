@@ -28,7 +28,4 @@ public class CardResource implements ICardResource {
         return cardService.getAll();
     }
 
-
-
-
 }

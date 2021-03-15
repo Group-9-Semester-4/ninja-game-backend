@@ -1,25 +1,23 @@
 package com.group9.NinjaGame.models;
 
-import com.group9.NinjaGame.entities.CardEntity;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Game {
-    private UUID uuid;
+    private UUID id;
     private List<Card> allCards;
     private int points;
     private int miniGameAttempts;
     private int cardsDone;
     private int timeLimit;
-    private boolean singleplayer;
+    private boolean singlePlayer;
     private boolean playingAlone;
 
-    public Game(int timeLimit, boolean singleplayer, boolean playingAlone) {
-        this.uuid = UUID.randomUUID();
+    public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+        this.id = UUID.randomUUID();
         this.timeLimit = timeLimit;
-        this.singleplayer = singleplayer;
+        this.singlePlayer = singlePlayer;
         this.playingAlone = playingAlone;
         this.allCards = new ArrayList<Card>();
         this.miniGameAttempts = getMiniGameAttempts();
@@ -34,8 +32,8 @@ public class Game {
         this.allCards = allCards;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getId() {
+        return id;
     }
 
     public int getPoints() {
@@ -55,11 +53,11 @@ public class Game {
     }
 
     public boolean isSingleplayer() {
-        return singleplayer;
+        return singlePlayer;
     }
 
-    public void setSingleplayer(boolean singleplayer) {
-        this.singleplayer = singleplayer;
+    public void setSingleplayer(boolean singlePlayer) {
+        this.singlePlayer = singlePlayer;
     }
 
     public boolean isPlayingAlone() {
@@ -71,7 +69,7 @@ public class Game {
     }
 
     public int getMiniGameAttempts() {
-        if(points == 0 || cardsDone == 0) {
+        if (points == 0 || cardsDone == 0) {
             return 0;
         }
         return (int) points / cardsDone;
@@ -89,7 +87,7 @@ public class Game {
         this.cardsDone = cardsDone;
     }
 
-    public void removeCard(UUID cardId) {
-        this.allCards.removeIf(card -> card.getId().equals(cardId));
+    public void removeCard(UUID id) {
+        this.allCards.removeIf(card -> card.getId().equals(id));
     }
 }
