@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "182a48ec-c9bb-4013-bb93-d51d2286b037",
+		"name": "Ninja game",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Game Initialize",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"timeLimit\" : 60,\r\n    \"singlePlayer\" : \"true\",\r\n    \"playingAlone\" : \"true\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/game/init",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"init"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Draw a card",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/game/b0df7412-80e6-497b-be8b-6e89efd31099/draw",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"b0df7412-80e6-497b-be8b-6e89efd31099",
+						"draw"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Card done",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"3c61a990-831b-11eb-b3ef-00163e4e5003\",\r\n    \"name\": \"Ninja kicks\",\r\n    \"description\": \"Kick in the air\",\r\n    \"points\": 10,\r\n    \"difficulty_type\": false,\r\n    \"difficulty\": 30\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/game/e85c8756-0762-49fa-9fad-a902a0d793c9/done",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"e85c8756-0762-49fa-9fad-a902a0d793c9",
+						"done"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start a game + unwanted cards",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n        {\r\n            \"id\": \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\",\r\n            \"name\": \"Gorilla walk\",\r\n            \"description\": \"Move arms and follow with your legs\",\r\n            \"points\": 20,\r\n            \"difficulty_type\": false,\r\n            \"difficulty\": 60\r\n        },\r\n        {\r\n            \"id\": \"3b8f6420-831b-11eb-b3ef-00163e4e5003\",\r\n            \"name\": \"Bunny jumps\",\r\n            \"description\": \"On all fours jump to your arms\",\r\n            \"points\": 20,\r\n            \"difficulty_type\": false,\r\n            \"difficulty\": 60\r\n        }\r\n        ]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/game/e85c8756-0762-49fa-9fad-a902a0d793c9/start",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"e85c8756-0762-49fa-9fad-a902a0d793c9",
+						"start"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
