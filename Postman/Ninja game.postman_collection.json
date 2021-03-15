@@ -110,6 +110,26 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Finish game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/game/165e417a-f8d2-4cfa-91e5-d3ae152baddc/finish",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"game",
+						"165e417a-f8d2-4cfa-91e5-d3ae152baddc",
+						"finish"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

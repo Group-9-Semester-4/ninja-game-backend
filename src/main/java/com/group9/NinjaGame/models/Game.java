@@ -22,8 +22,8 @@ public class Game {
         this.singleplayer = singleplayer;
         this.playingAlone = playingAlone;
         this.allCards = new ArrayList<Card>();
-        this.miniGameAttempts = 0;
-        this.cardsDone = 0;
+        this.miniGameAttempts = getMiniGameAttempts();
+        this.cardsDone = getCardsDone();
     }
 
     public List<Card> getAllCards() {
@@ -71,8 +71,10 @@ public class Game {
     }
 
     public int getMiniGameAttempts() {
-        return 1;
-        // return (points / cardsDone) / 10; <- schlechtes kode, both points and cardsDone and mGameAttempts are 0.
+        if(points == 0 || cardsDone == 0) {
+            return 0;
+        }
+        return (int) points / cardsDone;
     }
 
     public void setMiniGameAttempts(int miniGameAttempts) {

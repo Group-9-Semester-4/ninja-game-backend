@@ -58,7 +58,7 @@ public class GameResource implements IGameResource {
                 UUID.fromString(json.get("cardId").asText()));
     }
 
-    @GetMapping(path = "/{uuid}/finish")
+    @PostMapping(path = "/{uuid}/finish")
     public Game finishGame(@PathVariable UUID uuid) {
         return gameService.finishGame(uuid);
     }

@@ -35,7 +35,10 @@ public class GameService implements IGameService {
     @Override
     public Card draw(UUID uuid) {
         Game game = gameContainer.findGame(uuid);
-        return game.getAllCards().get(new Random().nextInt(game.getAllCards().size()));
+        if(game.getAllCards().size() == 0) {
+            return null;
+        }
+        else return game.getAllCards().get(new Random().nextInt(game.getAllCards().size()));
     }
 
 
@@ -58,18 +61,17 @@ public class GameService implements IGameService {
             entity = cardEntity.get();
         }
         Card card = Card.fromCardEntity(entity);
-        game.getAllCards().remove(card);
-        int points = game.getPoints();
-        points += card.getPoints();
-        game.setPoints(points);
-        game.setCardsDone(+1);
+        game.removeCard(card.getId());
+//        int points = game.getPoints();
+//        points += card.getPoints();
+        game.setPoints(game.getPoints() + card.getPoints());
+        game.setCardsDone(game.getCardsDone()+1);
         return game.getAllCards();
     }
 
     public Game finishGame(UUID gameId) {
         Game game = gameContainer.findGame(gameId);
         gameContainer.endGame(game);
-        // TODO: is the game obj still kept after container deletion tho?
         return game;
     }
 
