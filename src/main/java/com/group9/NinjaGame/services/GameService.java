@@ -39,21 +39,28 @@ public class GameService implements IGameService {
     }
 
 
+    // TODO: take array of IDs not cards
     @Override
-    public Game startGame(UUID gameId, List<Card> unwantedCards) {
+    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
         Game game = gameContainer.findGame(gameId);
         if(unwantedCards.size() == 0) return game;
-        for (Card c : unwantedCards) {
-            game.getAllCards().remove(c);
+        for (UUID cardId : unwantedCards) {
+            game.removeCard(cardId);
         }
         return game;
     }
 
-    public List<Card> removeDoneCard(UUID gameId, Card cardDone) {
+    public List<Card> removeDoneCard(UUID gameId, UUID cardId) {
         Game game = gameContainer.findGame(gameId);
-        game.getAllCards().remove(cardDone);
+        Optional<CardEntity> cardEntity = repository.findById(cardId);
+        CardEntity entity = null;
+        if(cardEntity.isPresent()) {
+            entity = cardEntity.get();
+        }
+        Card card = Card.fromCardEntity(entity);
+        game.getAllCards().remove(card);
         int points = game.getPoints();
-        points += cardDone.getPoints();
+        points += card.getPoints();
         game.setPoints(points);
         game.setCardsDone(+1);
         return game.getAllCards();

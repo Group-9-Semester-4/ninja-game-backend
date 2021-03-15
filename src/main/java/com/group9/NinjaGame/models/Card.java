@@ -13,6 +13,8 @@ public class Card {
     private boolean difficulty_type;
     private int difficulty;
 
+    public Card() {}
+
     public Card(String name, String description, int points, boolean difficulty_type, int difficulty) {
         this.id = UUID.randomUUID();
         this.name = name;

@@ -86,4 +86,8 @@ public class Game {
     public void setCardsDone(int cardsDone) {
         this.cardsDone = cardsDone;
     }
+
+    public void removeCard(UUID cardId) {
+        this.allCards.removeIf(card -> card.getId().equals(cardId));
+    }
 }

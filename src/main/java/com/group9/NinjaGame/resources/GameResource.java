@@ -1,5 +1,8 @@
 package com.group9.NinjaGame.resources;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.models.Game;
@@ -10,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/game")
@@ -38,15 +44,18 @@ public class GameResource implements IGameResource {
 
         return gameService.draw(uuid);
     }
-
-    @GetMapping(path = "/{uuid}/start")
-    public Game startGame(@PathVariable UUID uuid, List<Card> unwantedCards) {
-        return gameService.startGame(uuid, unwantedCards);
+    @Override
+    @PostMapping(path = "/{uuid}/start")
+    public Game startGame(@PathVariable UUID uuid, @RequestBody List<String> json) {
+        List<UUID> listUUIDs = json.stream().map(s -> UUID.fromString(s)).collect(Collectors.toList());
+        return gameService.startGame(uuid, listUUIDs);
     }
 
-    @GetMapping(path = "/{uuid}/done")
-    public List<Card> cardDone(@PathVariable UUID uuid, Card card) {
-        return gameService.removeDoneCard(uuid, card);
+    @Override
+    @PostMapping(path = "/{uuid}/done")
+    public List<Card> cardDone(@PathVariable UUID uuid, @RequestBody ObjectNode json) {
+        return gameService.removeDoneCard(uuid,
+                UUID.fromString(json.get("cardId").asText()));
     }
 
     @GetMapping(path = "/{uuid}/finish")
