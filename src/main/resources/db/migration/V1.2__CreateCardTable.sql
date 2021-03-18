@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `cards` (
     `difficulty` INT NOT NULL,
     # difficulty_type -> boolean for difficulty type, 0 means difficulty is stored in seconds
     # 1 means difficulty stored in # of repetitions
-    `singleplayer` BOOLEAN NOT NULL DEFAULT 1
+    `singleplayer` BOOLEAN NOT NULL DEFAULT 1,
+    `filepath` VARCHAR(50) NOT NULL DEFAULT 'default.png'
 
 )ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;

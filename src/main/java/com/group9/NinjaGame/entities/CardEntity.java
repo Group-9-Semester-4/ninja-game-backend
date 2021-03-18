@@ -26,6 +26,9 @@ public class CardEntity {
     @Column(name = "difficulty", nullable = false, unique = false)
     private int difficulty;
 
+    @Column(name = "filepath", nullable = false, unique = false)
+    private String filepath;
+
     public CardEntity() {
     }
 
@@ -75,5 +78,13 @@ public class CardEntity {
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
     }
 }

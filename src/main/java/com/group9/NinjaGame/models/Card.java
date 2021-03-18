@@ -11,21 +11,24 @@ public class Card {
     public int points;
     private boolean difficulty_type;
     private int difficulty;
+    private String filepath;
+    private static final String absoluteServerPath = "http://localhost:8080/img/card_pictures/";
 
     public Card() {
     }
 
-    public Card(String name, String description, int points, boolean difficulty_type, int difficulty) {
+    public Card(String name, String description, int points, boolean difficulty_type, int difficulty, String filepath) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.description = description;
         this.points = points;
         this.difficulty_type = difficulty_type;
         this.difficulty = difficulty;
+        this.filepath = absoluteServerPath+filepath;
     }
 
     public static Card fromCardEntity(CardEntity e) {
-        Card card = new Card(e.getName(), e.getDescription(), e.getPoints(), e.isDifficulty_type(), e.getDifficulty());
+        Card card = new Card(e.getName(), e.getDescription(), e.getPoints(), e.isDifficulty_type(), e.getDifficulty(), e.getFilepath());
         card.setId(e.getId());
         return card;
     }
@@ -76,6 +79,14 @@ public class Card {
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
     }
 }
 
