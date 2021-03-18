@@ -15,8 +15,9 @@ public class GameContainer {
     private GameContainer() {
         this.games = new ArrayList<Game>();
     }
+
     public static GameContainer getInstance() {
-        if(gameContainer == null) {
+        if (gameContainer == null) {
             gameContainer = new GameContainer();
         }
         return gameContainer;
@@ -32,7 +33,7 @@ public class GameContainer {
 
     public Game findGame(UUID uuid) {
         for (Game g : games) {
-            if(g.getId().equals(uuid)) return g;
+            if (g.getId().equals(uuid)) return g;
         }
         return null;
     }

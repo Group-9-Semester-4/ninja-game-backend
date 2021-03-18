@@ -10,8 +10,12 @@ import java.util.UUID;
 
 public interface IGameResource {
     ResponseEntity<?> initGame(ObjectNode json);
+
     ResponseEntity<?> drawCard(UUID gameId);
+
     ResponseEntity<?> startGame(@PathVariable UUID gameId, @RequestBody List<String> unwantedCards);
+
     ResponseEntity<?> cardDone(@PathVariable UUID gameId, @RequestBody ObjectNode json);
+
     ResponseEntity<?> finishGame(@PathVariable UUID gameId);
 }

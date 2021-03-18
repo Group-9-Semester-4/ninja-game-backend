@@ -30,7 +30,7 @@ public class CardService implements ICardService {
         Card card = null;
         UUID uuid = UUID.fromString(id);
         Optional<CardEntity> cardEntityOptional = repository.findById(uuid);
-        if(cardEntityOptional.isPresent()) {
+        if (cardEntityOptional.isPresent()) {
             CardEntity cardEntity = cardEntityOptional.get();
             card = Card.fromCardEntity(cardEntity);
         }

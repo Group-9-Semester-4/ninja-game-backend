@@ -24,7 +24,7 @@ public class Card {
         this.points = points;
         this.difficulty_type = difficulty_type;
         this.difficulty = difficulty;
-        this.filepath = absoluteServerPath+filepath;
+        this.filepath = absoluteServerPath + filepath;
     }
 
     public static Card fromCardEntity(CardEntity e) {

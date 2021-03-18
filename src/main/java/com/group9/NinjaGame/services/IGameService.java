@@ -8,8 +8,12 @@ import java.util.UUID;
 
 public interface IGameService {
     Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone);
+
     Card draw(UUID uuid);
+
     Game startGame(UUID uuid, List<UUID> unwantedCards);
+
     List<Card> removeDoneCard(UUID gameId, UUID cardId);
+
     Game finishGame(UUID uuid);
 }

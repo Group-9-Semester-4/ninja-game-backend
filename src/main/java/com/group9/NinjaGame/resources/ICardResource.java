@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ICardResource {
     Card getCardById(@PathVariable String id);
+
     List<Card> getAll();
 
 }
