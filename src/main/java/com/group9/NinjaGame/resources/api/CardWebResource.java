@@ -12,12 +12,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/card")
-public class CardResource {
+public class CardWebResource {
 
     private ICardService cardService;
 
     @Autowired
-    public CardResource(ICardService service) {
+    public CardWebResource(ICardService service) {
         this.cardService = service;
     }
 

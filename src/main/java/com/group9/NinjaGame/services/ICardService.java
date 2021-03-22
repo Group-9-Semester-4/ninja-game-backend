@@ -10,7 +10,8 @@ public interface ICardService {
 
     List<Card> getAll();
     void addCard(CardEntity cardEntity);
-
+    CardEntity getEntityById(String id);
+    void deleteCard(CardEntity cardEntity);
 
 }
 
