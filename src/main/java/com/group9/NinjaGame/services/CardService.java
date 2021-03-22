@@ -38,6 +38,19 @@ public class CardService implements ICardService {
     }
 
     @Override
+    public CardEntity getEntityById(String id) {
+        Card card = null;
+        UUID uuid = UUID.fromString(id);
+        Optional<CardEntity> cardEntityOptional = repository.findById(uuid);
+        CardEntity cardEntity = null;
+        if (cardEntityOptional.isPresent()) {
+            cardEntity = cardEntityOptional.get();
+        }
+        //return card;
+        return cardEntity;
+    }
+
+    @Override
     public List<Card> getAll() {
         return this.allCards;
     }
@@ -55,5 +68,14 @@ public class CardService implements ICardService {
     // TODO: validate
     public void addCard(CardEntity cardEntity) {
         repository.save(cardEntity);
+    }
+
+
+    public void updateCard(CardEntity cardEntity){
+        //repository.save(cardEntity);
+    }
+
+    public void deleteCard(CardEntity cardEntity){
+        repository.delete(cardEntity);
     }
 }
