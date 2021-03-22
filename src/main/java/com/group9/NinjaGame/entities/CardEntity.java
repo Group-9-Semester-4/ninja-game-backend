@@ -21,7 +21,7 @@ public class CardEntity {
     private int points;
 
     @Column(name = "difficulty_type", nullable = false, unique = false)
-    private boolean difficulty_type;
+    private int difficulty_type;
 
     @Column(name = "difficulty", nullable = false, unique = false)
     private int difficulty;
@@ -64,11 +64,11 @@ public class CardEntity {
         this.points = points;
     }
 
-    public boolean isDifficulty_type() {
+    public int isDifficulty_type() {
         return difficulty_type;
     }
 
-    public void setDifficulty_type(boolean difficulty_type) {
+    public void setDifficulty_type(int difficulty_type) {
         this.difficulty_type = difficulty_type;
     }
 

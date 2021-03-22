@@ -9,7 +9,7 @@ public class Card {
     public String name;
     public String description;
     public int points;
-    private boolean difficulty_type;
+    private int difficulty_type;
     private int difficulty;
     private String filepath;
     private static final String absoluteServerPath = "http://localhost:8080/img/card_pictures/";
@@ -17,7 +17,7 @@ public class Card {
     public Card() {
     }
 
-    public Card(String name, String description, int points, boolean difficulty_type, int difficulty, String filepath) {
+    public Card(String name, String description, int points, int difficulty_type, int difficulty, String filepath) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.description = description;
@@ -65,11 +65,11 @@ public class Card {
         this.points = points;
     }
 
-    public boolean isDifficulty_type() {
+    public int isDifficulty_type() {
         return difficulty_type;
     }
 
-    public void setDifficulty_type(boolean difficulty_type) {
+    public void setDifficulty_type(int difficulty_type) {
         this.difficulty_type = difficulty_type;
     }
 
