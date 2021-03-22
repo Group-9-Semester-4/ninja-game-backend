@@ -45,7 +45,7 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
     @Bean
     public ViewResolver htmlViewResolver() {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setTemplateEngine(templateEngine(htmlTemplateResolver()));
+
         resolver.setContentType("text/html");
         resolver.setCharacterEncoding("UTF-8");
         resolver.setViewNames(new String[]{"*.html"});
@@ -55,7 +55,7 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
     @Bean
     public ViewResolver javascriptViewResolver() {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setTemplateEngine(templateEngine(javascriptTemplateResolver()));
+
         resolver.setContentType("application/javascript");
         resolver.setCharacterEncoding("UTF-8");
         resolver.setViewNames(new String[]{"*.js"});
@@ -65,7 +65,7 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
     @Bean
     public ViewResolver plainViewResolver() {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setTemplateEngine(templateEngine(plainTemplateResolver()));
+
         resolver.setContentType("text/plain");
         resolver.setCharacterEncoding("UTF-8");
         resolver.setViewNames(new String[]{"*.txt"});
@@ -81,32 +81,6 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
         return engine;
     }
 
-    private ITemplateResolver htmlTemplateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(applicationContext);
-        resolver.setPrefix("/WEB-INF/views/");
-        resolver.setCacheable(false);
-        resolver.setTemplateMode(TemplateMode.HTML);
-        return resolver;
-    }
-
-    private ITemplateResolver javascriptTemplateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(applicationContext);
-        resolver.setPrefix("/WEB-INF/js/");
-        resolver.setCacheable(false);
-        resolver.setTemplateMode(TemplateMode.JAVASCRIPT);
-        return resolver;
-    }
-
-    private ITemplateResolver plainTemplateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(applicationContext);
-        resolver.setPrefix("/WEB-INF/txt/");
-        resolver.setCacheable(false);
-        resolver.setTemplateMode(TemplateMode.TEXT);
-        return resolver;
-    }
 
     @Bean
     @Description("Spring Message Resolver")
@@ -116,12 +90,12 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
         return messageSource;
     }
 
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-        localeResolver.setDefaultLocale(new Locale("en"));
-        return localeResolver;
-    }
+//    @Bean
+//    public LocaleResolver localeResolver() {
+//        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+//        localeResolver.setDefaultLocale(new Locale("en"));
+//        return localeResolver;
+//    }
 
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
