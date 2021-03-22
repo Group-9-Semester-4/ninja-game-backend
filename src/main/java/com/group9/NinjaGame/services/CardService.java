@@ -51,4 +51,9 @@ public class CardService implements ICardService {
         }
         return cards;
     }
+
+    // TODO: validate
+    public void addCard(CardEntity cardEntity) {
+        repository.save(cardEntity);
+    }
 }

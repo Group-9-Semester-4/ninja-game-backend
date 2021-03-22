@@ -7,6 +7,7 @@
 <body>
 <p th:text="${hah}" />
 <ul>
+    <p><a href="/admin/card/signup">Add a new card</a></p>
     <li th:each="card: ${cards}">
         <p th:text="${card.name}"></p>
     </li>
