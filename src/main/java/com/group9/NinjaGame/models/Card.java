@@ -9,7 +9,7 @@ public class Card {
     public String name;
     public String description;
     public int points;
-    private int difficulty_type;
+    private int difficultyType;
     private int difficulty;
     private String filepath;
     private static final String absoluteServerPath = "http://localhost:8080/img/card_pictures/";
@@ -17,18 +17,18 @@ public class Card {
     public Card() {
     }
 
-    public Card(String name, String description, int points, int difficulty_type, int difficulty, String filepath) {
+    public Card(String name, String description, int points, int difficultyType, int difficulty, String filepath) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.description = description;
         this.points = points;
-        this.difficulty_type = difficulty_type;
+        this.difficultyType = difficultyType;
         this.difficulty = difficulty;
         this.filepath = absoluteServerPath + filepath;
     }
 
     public static Card fromCardEntity(CardEntity e) {
-        Card card = new Card(e.getName(), e.getDescription(), e.getPoints(), e.isDifficulty_type(), e.getDifficulty(), e.getFilepath());
+        Card card = new Card(e.getName(), e.getDescription(), e.getPoints(), e.getDifficulty_type(), e.getDifficulty(), e.getFilepath());
         card.setId(e.getId());
         return card;
     }
@@ -65,12 +65,12 @@ public class Card {
         this.points = points;
     }
 
-    public int isDifficulty_type() {
-        return difficulty_type;
+    public int getDifficultyType() {
+        return difficultyType;
     }
 
-    public void setDifficulty_type(int difficulty_type) {
-        this.difficulty_type = difficulty_type;
+    public void setDifficultyType(int difficultyType) {
+        this.difficultyType = difficultyType;
     }
 
     public int getDifficulty() {
