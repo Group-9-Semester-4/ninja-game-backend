@@ -27,7 +27,6 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 
 @Configuration
-@EnableWebMvc
 @ComponentScan({ "com.group9.NinjaGame" })
 /**
  * Java configuration file that is used for Spring MVC and Thymeleaf
@@ -72,16 +71,6 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
         return resolver;
     }
 
-    private ISpringTemplateEngine templateEngine(ITemplateResolver templateResolver) {
-        SpringTemplateEngine engine = new SpringTemplateEngine();
-//        engine.addDialect(new LayoutDialect(new GroupingStrategy()));
-//        engine.addDialect(new Java8TimeDialect());
-        engine.setTemplateResolver(templateResolver);
-        engine.setTemplateEngineMessageSource(messageSource());
-        return engine;
-    }
-
-
     @Bean
     @Description("Spring Message Resolver")
     public ResourceBundleMessageSource messageSource() {
@@ -90,12 +79,6 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
         return messageSource;
     }
 
-//    @Bean
-//    public LocaleResolver localeResolver() {
-//        SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-//        localeResolver.setDefaultLocale(new Locale("en"));
-//        return localeResolver;
-//    }
 
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -113,11 +96,5 @@ public class WebMVCConfig implements WebMvcConfigurer,  ApplicationContextAware 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**", "/css/**")
                 .addResourceLocations("/WEB-INF/resources/", "/WEB-INF/css/");
-    }
-
-    @Override
-    @Description("Custom Conversion Service")
-    public void addFormatters(FormatterRegistry registry) {
-//        registry.addFormatter(new NameFormatter());
     }
 }
