@@ -8,6 +8,7 @@
 <form action="#"
       th:action="@{/admin/card/update/{id}(id=${cardEntity.id})}"
       th:object="${cardEntity}"
+      enctype="multipart/form-data"
       method="post">
     <label for="name">Name</label>
     <input type="text" th:field="*{name}" id="name" placeholder="Name">
@@ -28,8 +29,11 @@
     <label for="filepath">Filepath</label>
     <input type="text" th:field="*{filepath}" id="filepath" placeholder="Filepath">
     <span th:if="${#fields.hasErrors('filepath')}" th:errors="*{filepath}"></span>
-
+    <label for="file">File</label>
+    <input type="file" name="file" id="file">
     <input type="submit" value="Update Card">
 </form>
+<img th:src="@{/img/card_pictures/{filepath}(filepath=${cardEntity.filepath})}" />
+<img src="/img/card_pictures/backhand throw.png" />
 </body>
 </html>

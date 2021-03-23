@@ -66,6 +66,7 @@ public class CardService implements ICardService {
     }
 
     // TODO: validate
+    // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/
     public void addCard(CardEntity cardEntity) {
         repository.save(cardEntity);
     }
