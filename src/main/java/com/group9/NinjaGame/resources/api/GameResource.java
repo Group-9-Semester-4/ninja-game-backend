@@ -43,6 +43,8 @@ public class GameResource {
         return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
+
+
     @GetMapping(path = "/{uuid}/draw")
     public ResponseEntity<?> drawCard(@PathVariable UUID uuid) {
         if (gameService.draw(uuid) == null) {
@@ -59,6 +61,7 @@ public class GameResource {
         return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
+
     @PostMapping(path = "/{uuid}/done", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cardDone(@PathVariable UUID uuid, @RequestBody ObjectNode cardCompletedUUID) {
         return new ResponseEntity<>(gameService.removeDoneCard(uuid, UUID.fromString(cardCompletedUUID.get("id").asText())), HttpStatus.OK);
@@ -68,4 +71,12 @@ public class GameResource {
     public ResponseEntity<?> finishGame(@PathVariable UUID uuid) {
         return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.OK);
     }
+
+    @PostMapping(path = "/{gameid}/{cardsetid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> startGame(@PathVariable UUID gameid, @PathVariable UUID cardsetid) {
+        Game g = gameService.startGame(gameid, cardsetid);
+        return new ResponseEntity<>(g, HttpStatus.OK);
+    }
+
+
 }

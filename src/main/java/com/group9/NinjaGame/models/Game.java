@@ -1,12 +1,15 @@
 package com.group9.NinjaGame.models;
 
+import com.group9.NinjaGame.containers.DefaultCardSetsContainer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Game {
     private UUID id;
-    private List<Card> allCards;
+    //private List<Card> allCards;
+    private CardSet selectedCardSet;
     private int points;
     private int miniGameAttempts;
     private int cardsDone;
@@ -14,22 +17,26 @@ public class Game {
     private boolean singlePlayer;
     private boolean playingAlone;
 
+
+
+
     public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
         this.id = UUID.randomUUID();
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;
         this.playingAlone = playingAlone;
-        this.allCards = new ArrayList<Card>();
+        this.selectedCardSet = DefaultCardSetsContainer.getInstance().defaultCardSets.get(0);
         this.miniGameAttempts = getMiniGameAttempts();
         this.cardsDone = getCardsDone();
     }
 
+
     public List<Card> getAllCards() {
-        return allCards;
+        return selectedCardSet.listOfCards;
     }
 
     public void setAllCards(List<Card> allCards) {
-        this.allCards = allCards;
+        this.selectedCardSet.listOfCards = allCards;
     }
 
     public UUID getId() {
@@ -68,6 +75,14 @@ public class Game {
         this.playingAlone = playingAlone;
     }
 
+    public CardSet getSelectedCardSet() {
+        return selectedCardSet;
+    }
+
+    public void setSelectedCardSet(CardSet cardSet) {
+        this.selectedCardSet = cardSet;
+    }
+
     public int getMiniGameAttempts() {
         if (points == 0 || cardsDone == 0) {
             return 0;
@@ -88,6 +103,6 @@ public class Game {
     }
 
     public void removeCard(UUID id) {
-        this.allCards.removeIf(card -> card.getId().equals(id));
+        this.selectedCardSet.listOfCards.removeIf(card -> card.getId().equals(id));
     }
 }

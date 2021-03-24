@@ -1,8 +1,10 @@
 package com.group9.NinjaGame.services;
 
+import com.group9.NinjaGame.containers.DefaultCardSetsContainer;
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.CardEntity;
 import com.group9.NinjaGame.models.Card;
+import com.group9.NinjaGame.models.CardSet;
 import com.group9.NinjaGame.models.Game;
 import com.group9.NinjaGame.repositories.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,14 @@ public class GameService implements IGameService {
     private ICardService cardService;
     private CardRepository repository;
     private GameContainer gameContainer;
+    private DefaultCardSetsContainer defaultCardSetsContainer;
 
     @Autowired
-    public GameService(ICardService cardService, CardRepository repository, GameContainer gameContainer) {
+    public GameService(ICardService cardService, CardRepository repository, GameContainer gameContainer, DefaultCardSetsContainer defaultCardSetsContainer) {
         this.cardService = cardService;
         this.repository = repository;
         this.gameContainer = gameContainer;
+        this.defaultCardSetsContainer = defaultCardSetsContainer;
     }
 
     @Override
@@ -43,6 +47,28 @@ public class GameService implements IGameService {
     }
 
     @Override
+    public Game startGame(UUID gameId, UUID cardSetId) {
+        Game game = gameContainer.findGame(gameId);
+        List<Card> cardList = cardService.createDefaultCardList();
+        UUID createdId = defaultCardSetsContainer.addDefaultCardSet(cardList);
+
+
+        CardSet cardSet = defaultCardSetsContainer.findCardSet(cardSetId);
+
+
+        if(cardSet != null){
+            try {
+                throw new Exception("dopice");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        game.setSelectedCardSet(cardSet);
+        return game;
+    }
+
+    @Override
     public Game startGame(UUID gameId, List<UUID> unwantedCards) {
         Game game = gameContainer.findGame(gameId);
         if (unwantedCards.size() == 0) return game;
@@ -51,6 +77,8 @@ public class GameService implements IGameService {
         }
         return game;
     }
+
+
 
     public List<Card> removeDoneCard(UUID gameId, UUID cardId) {
         Game game = gameContainer.findGame(gameId);
