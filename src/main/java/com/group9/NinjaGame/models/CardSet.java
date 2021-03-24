@@ -14,6 +14,9 @@ public class CardSet {
     public int difficulty;
     //public boolean userCreated;
 
+    public CardSet(){
+
+    }
 
     public CardSet (List<Card> listOfCards, String name, int completeTimeLimit, boolean multiplayerSuitable, int difficulty){
         this.id = UUID.randomUUID();

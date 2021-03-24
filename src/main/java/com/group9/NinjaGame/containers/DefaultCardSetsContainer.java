@@ -19,7 +19,6 @@ public class DefaultCardSetsContainer {
 
     private DefaultCardSetsContainer() {
         this.defaultCardSets = new ArrayList<CardSet>();
-        //this.addDefaultCardSet();
     }
 
     public static DefaultCardSetsContainer getInstance() {
@@ -29,15 +28,9 @@ public class DefaultCardSetsContainer {
         return defaultCardSetsContainer;
     }
 
-    public UUID addDefaultCardSet(List<Card> listOfCards){
-        CardSet newCardSet = new CardSet(listOfCards, "default", 3600, true, 0);
-
+    public void addDefaultCardSet(List<Card> listOfCards, String name, int completeTimeLimit, boolean multiplayerSuitable, int difficulty){
+        CardSet newCardSet = new CardSet(listOfCards, name, completeTimeLimit, multiplayerSuitable, difficulty);
         defaultCardSets.add(newCardSet);
-
-        //CardSet newCardSet1 = new CardSet(listOfCards, "kokot1", 1800, false, 1);
-
-        //defaultCardSets.add(newCardSet1);
-        return newCardSet.id;
     }
 
     public CardSet findCardSet(UUID uuid) {

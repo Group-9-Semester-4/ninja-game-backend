@@ -80,15 +80,12 @@ public class CardService implements ICardService {
         repository.delete(cardEntity);
     }
 
-    public List<Card> createDefaultCardList(){
+    public List<Card> createDefaultCardList(List<String> listOfIds){
         List<Card> cards = new ArrayList<Card>();
-        Card card = this.getById("3b7f7b62-831b-11eb-b3ef-00163e4e5003");
-        cards.add(card);
-        card = this.getById("3b8f6420-831b-11eb-b3ef-00163e4e5003");
-        cards.add(card);
-        card = this.getById("3b7f7b62-831b-11eb-b3ef-00163e4e5003");
-        cards.add(card);
+        for(String item : listOfIds){
+            Card card = this.getById(item);
+            cards.add(card);
+        }
         return cards;
-
     }
 }

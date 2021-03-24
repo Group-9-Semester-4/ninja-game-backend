@@ -12,7 +12,7 @@ public interface ICardService {
     void addCard(CardEntity cardEntity);
     CardEntity getEntityById(String id);
     void deleteCard(CardEntity cardEntity);
-    List<Card> createDefaultCardList();
+    List<Card> createDefaultCardList(List<String> listOfIds);
 
 }
 

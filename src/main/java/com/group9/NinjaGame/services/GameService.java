@@ -31,7 +31,25 @@ public class GameService implements IGameService {
     @Override
     public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
         Game game = new Game(timeLimit, singlePlayer, playingAlone);
-        game.setAllCards(cardService.getAll());
+        //game.setAllCards(cardService.getAll());
+        ArrayList<String> listOfIds = new ArrayList<String>();
+        listOfIds.add("03b4e565-8be0-11eb-a9af-00163e4e5003");
+        listOfIds.add("03c541a4-8be0-11eb-a9af-00163e4e5003");
+        listOfIds.add("03d6785c-8be0-11eb-a9af-00163e4e5003");
+
+        ArrayList<String> listOfIds1 = new ArrayList<String>();
+        listOfIds1.add("03b4e565-8be0-11eb-a9af-00163e4e5003");
+        listOfIds1.add("03c541a4-8be0-11eb-a9af-00163e4e5003");
+        listOfIds1.add("03d6785c-8be0-11eb-a9af-00163e4e5003");
+
+        List<Card> cardList = cardService.createDefaultCardList(listOfIds);
+        List<Card> cardList1 = cardService.createDefaultCardList(listOfIds1);
+        defaultCardSetsContainer.addDefaultCardSet(cardList, "default", 3600, true, 0);
+        defaultCardSetsContainer.addDefaultCardSet(cardList1, "proKokoty", 9090, false, 9);
+
+        //simulating user input
+        game.setSelectedCardSet(defaultCardSetsContainer.defaultCardSets.get(0));
+
         gameContainer.addGame(game);
         return game;
     }
@@ -49,12 +67,7 @@ public class GameService implements IGameService {
     @Override
     public Game startGame(UUID gameId, UUID cardSetId) {
         Game game = gameContainer.findGame(gameId);
-        List<Card> cardList = cardService.createDefaultCardList();
-        UUID createdId = defaultCardSetsContainer.addDefaultCardSet(cardList);
-
-
         CardSet cardSet = defaultCardSetsContainer.findCardSet(cardSetId);
-
 
         if(cardSet != null){
             try {

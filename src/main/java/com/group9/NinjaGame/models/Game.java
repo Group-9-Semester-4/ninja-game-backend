@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Game {
-    private UUID id;
-    //private List<Card> allCards;
+    private UUID id;;
     private CardSet selectedCardSet;
     private int points;
     private int miniGameAttempts;
@@ -25,7 +24,7 @@ public class Game {
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;
         this.playingAlone = playingAlone;
-        this.selectedCardSet = DefaultCardSetsContainer.getInstance().defaultCardSets.get(0);
+        this.selectedCardSet = new CardSet();
         this.miniGameAttempts = getMiniGameAttempts();
         this.cardsDone = getCardsDone();
     }
@@ -35,8 +34,8 @@ public class Game {
         return selectedCardSet.listOfCards;
     }
 
-    public void setAllCards(List<Card> allCards) {
-        this.selectedCardSet.listOfCards = allCards;
+    public void setAllCards(List<Card> cards) {
+        this.selectedCardSet.listOfCards = cards;
     }
 
     public UUID getId() {
