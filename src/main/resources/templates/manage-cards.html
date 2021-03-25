@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage cards</title>
+</head>
+<body>
+<div th:switch="${cards}">
+    <h2 th:case="null">No Cards yet!</h2>
+    <div th:case="*">
+        <h2>Cards</h2>
+        <p><a href="/admin/card/createcard">Add a new card</a></p>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Points</th>
+                <th>Difficulty-type</th>
+                <th>Difficulty</th>
+                <th>Path</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--<a th:href="@{/admin/card/update/{id}(id=${card.id})}" th:text="${card.name}"></a>  -->
+            <tr th:each="card : ${cards}">
+                <td th:text="${card.name}"></td>
+                <td><a th:href="@{/admin/card/update/{id}(id=${card.id})}">Edit</a></td>
+                <td><a th:href="@{/admin/card/delete/{id}(id=${card.id})}">Delete</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

@@ -24,7 +24,7 @@ import java.util.UUID;
 
 @RequestMapping("/admin/card")
 @Controller
-public class AdminCardResource {
+public class CardResource {
 
     private final String UPLOAD_DIR = "src/main/resources/public/img/card_pictures/";
 
@@ -32,25 +32,40 @@ public class AdminCardResource {
     ICardService cardService;
 
     @GetMapping("/index")
+    public String showManageCards() {
+        return "index";
+    }
+
+
+    @GetMapping("/manage-cards")
     //TODO: doesn't update automatically
     public String listCards(Model model) {
         List<Card> cardList = cardService.getAll();
         model.addAttribute("cards", cardList);
-        model.addAttribute("hah", "mikijesupersnorchler");
-        return "index";
+        return "manage-cards";
     }
+
+    @GetMapping("/manage-card-sets")
+    //TODO: doesn't update automatically
+    public String listCardSets(Model model) {
+        //List<CardSetEntity> cardList = cardService.get...
+        //model.addAttribute("cardSets", cardList);
+        return "manage-card-sets";
+    }
+
+
 
     @GetMapping("/createcard")
     public String showCreateCardForm(CardEntity cardEntity) {
         return "add-card.html";
     }
 
-    @GetMapping("/createdeck")
-    public String showCreateDeckForm(Model model) {
+    @GetMapping("/create-card-set")
+    public String showCreateCardSetForm(Model model) {
         List<Card> cardList = cardService.getAll();
         model.addAttribute("cards", cardList);
         model.addAttribute("cardSetEntity", new CardSetEntity());
-        return "add-deck.html";
+        return "add-card-set.html";
     }
 
     @PostMapping("add")
@@ -70,14 +85,7 @@ public class AdminCardResource {
         return "redirect:/admin/card/index";
     }
 
-    @PostMapping("add-deck")
-    public String addCardDeck(@Valid CardSetEntity cardSetEntity, BindingResult result) {
-        if (result.hasErrors()) {
-            return "add-deck.html";
-        }
-        cardService.createCardSet(cardSetEntity);
-        return "redirect:/admin/card/index";
-    }
+
 
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") String id, Model model) {

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Card Set</title>
+</head>
+<body>
+<!-- gl -->
+<form action="#"
+      th:action="@{/admin/card-set/update/{id}(id=${cardSetEntity.id})}"
+      th:object="${cardSetEntity}"
+      method="post">
+    <label for="name">Name</label>
+    <input type="text" th:field="*{name}" id="name" placeholder="Name">
+    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+    <label for="completeTimeLimit">Time limit</label>
+    <input type="number" th:field="*{completeTimeLimit}" id="completeTimeLimit" placeholder="300">
+    <span th:if="${#fields.hasErrors('completeTimeLimit')}" th:errors="*{completeTimeLimit}"></span>
+    <label for="multiplayer">Multiplayer suitable?</label>
+    <input type="checkbox" th:field="*{multiplayerSuitable}" id="multiplayer">
+    <span th:if="${#fields.hasErrors('multiplayerSuitable')}" th:errors="*{multiplayerSuitable}"></span>
+    <label for="difficulty">difficulty</label>
+    <input type="number" th:field="*{difficulty}" id="difficulty" placeholder="30">
+    <span th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}"></span>
+
+    <input type="submit" value="Update Card Set">
+</form>
+</body>
+</html>

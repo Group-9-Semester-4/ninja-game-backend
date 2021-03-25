@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Card Sets</title>
+</head>
+<body>
+
+<div th:switch="${cardSets}">
+    <h2 th:case="null">No Card Sets yet!</h2>
+    <div th:case="*">
+        <h2>Card Sets</h2>
+        <p><a href="/admin/card/create-card-set">Add a new card Sets</a></p>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--<a th:href="@{/admin/card/update/{id}(id=${card.id})}" th:text="${card.name}"></a>  -->
+            <tr th:each="cardSet : ${cardSets}">
+                <td th:text="${cardSet.name}"></td>
+                <td><a th:href="@{/admin/card-set/update/{id}(id=${cardSet.id})}">Edit</a></td>
+                <td><a th:href="@{/admin/card-set/delete/{id}(id=${cardSet.id})}">Delete</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

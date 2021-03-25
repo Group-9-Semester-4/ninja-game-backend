@@ -14,12 +14,10 @@ import java.util.*;
 public class CardService implements ICardService {
 
     private CardRepository repository;
-    private CardSetRepository cardSetRepository;
     private List<Card> allCards;
 
     @Autowired
-    public CardService(CardRepository repository, CardSetRepository cardSetRepository) {
-        this.cardSetRepository = cardSetRepository;
+    public CardService(CardRepository repository) {
         this.repository = repository;
         Iterable<CardEntity> x = repository.findAll();
         this.allCards = new ArrayList<Card>();
@@ -77,7 +75,5 @@ public class CardService implements ICardService {
         repository.delete(cardEntity);
     }
 
-    public void createCardSet(CardSetEntity cardSetEntity) {
-        cardSetRepository.save(cardSetEntity);
-    }
+
 }
