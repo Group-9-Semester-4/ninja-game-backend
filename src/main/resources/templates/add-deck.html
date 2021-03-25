@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add deck</title>
+</head>
+<body>
+<p> here we go</p>
+
+<form action="#" th:action="@{/admin/card/add-deck}" th:object="${cardSetEntity}" method="post">
+
+    <label for="name">Name</label>
+    <input type="text" th:field="*{name}" id="name" placeholder="Name">
+    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+    <label for="completeTimeLimit">Time limit</label>
+    <input type="number" th:field="*{completeTimeLimit}" id="completeTimeLimit" placeholder="300">
+    <span th:if="${#fields.hasErrors('completeTimeLimit')}" th:errors="*{completeTimeLimit}"></span>
+    <label for="multiplayer">Multiplayer suitable?</label>
+    <input type="checkbox" th:field="*{multiplayerSuitable}" id="multiplayer">
+    <span th:if="${#fields.hasErrors('multiplayerSuitable')}" th:errors="*{multiplayerSuitable}"></span>
+    <label for="difficulty">difficulty</label>
+    <input type="number" th:field="*{difficulty}" id="difficulty" placeholder="30">
+    <span th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}"></span>
+    <input type="checkbox" name="cards"
+           th:each="card : ${cards}"
+           th:text="${card.name}"
+           th:value="${card.id}"
+           th:field="*{cards}"
+    />
+    <input type="submit" value="Add Card deck">
+
+</form>
+</body>
+</html>

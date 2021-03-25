@@ -1,8 +1,9 @@
 package com.group9.NinjaGame.resources.admin;
 
 import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.models.Card;
-import com.group9.NinjaGame.services.CardService;
+import com.group9.NinjaGame.models.CardSet;
 import com.group9.NinjaGame.services.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,13 +40,21 @@ public class AdminCardResource {
         return "index";
     }
 
-    @GetMapping("/signup")
-    public String showSignUpForm(CardEntity cardEntity) {
+    @GetMapping("/createcard")
+    public String showCreateCardForm(CardEntity cardEntity) {
         return "add-card.html";
     }
 
+    @GetMapping("/createdeck")
+    public String showCreateDeckForm(Model model) {
+        List<Card> cardList = cardService.getAll();
+        model.addAttribute("cards", cardList);
+        model.addAttribute("cardSetEntity", new CardSetEntity());
+        return "add-deck.html";
+    }
+
     @PostMapping("add")
-    public String addCard(@RequestParam ("file") MultipartFile file, @Valid CardEntity cardEntity, BindingResult result, Model model) {
+    public String addCard(@RequestParam ("file") MultipartFile file, @Valid CardEntity cardEntity, BindingResult result) {
         if ((result.hasErrors()) || (file.isEmpty())) {
             return "add-card.html";
         }
@@ -58,6 +67,15 @@ public class AdminCardResource {
         }
         cardEntity.setFilepath(fileName);
         cardService.addCard(cardEntity);
+        return "redirect:/admin/card/index";
+    }
+
+    @PostMapping("add-deck")
+    public String addCardDeck(@Valid CardSetEntity cardSetEntity, BindingResult result) {
+        if (result.hasErrors()) {
+            return "add-deck.html";
+        }
+        cardService.createCardSet(cardSetEntity);
         return "redirect:/admin/card/index";
     }
 

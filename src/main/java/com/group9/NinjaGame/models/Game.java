@@ -1,14 +1,14 @@
 package com.group9.NinjaGame.models;
 
-import com.group9.NinjaGame.containers.DefaultCardSetsContainer;
+import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.CardSetEntity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game {
     private UUID id;;
-    private CardSet selectedCardSet;
+    private CardSetEntity selectedCardSet;
     private int points;
     private int miniGameAttempts;
     private int cardsDone;
@@ -24,18 +24,19 @@ public class Game {
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;
         this.playingAlone = playingAlone;
-        this.selectedCardSet = new CardSet();
+        this.selectedCardSet = new CardSetEntity();
         this.miniGameAttempts = getMiniGameAttempts();
         this.cardsDone = getCardsDone();
     }
 
 
-    public List<Card> getAllCards() {
-        return selectedCardSet.listOfCards;
+    public List<CardEntity> getAllCards() {
+        return new ArrayList<>(selectedCardSet.getCards());
     }
 
-    public void setAllCards(List<Card> cards) {
-        this.selectedCardSet.listOfCards = cards;
+    public void setAllCards(List<CardEntity> cards) {
+        Set set = new HashSet<CardEntity>(cards);
+        this.selectedCardSet.setCards(set);
     }
 
     public UUID getId() {
@@ -74,12 +75,12 @@ public class Game {
         this.playingAlone = playingAlone;
     }
 
-    public CardSet getSelectedCardSet() {
+    public CardSetEntity getSelectedCardSet() {
         return selectedCardSet;
     }
 
-    public void setSelectedCardSet(CardSet cardSet) {
-        this.selectedCardSet = cardSet;
+    public void setSelectedCardSet(CardSetEntity cardSetEntity) {
+        this.selectedCardSet = cardSetEntity;
     }
 
     public int getMiniGameAttempts() {
@@ -102,6 +103,6 @@ public class Game {
     }
 
     public void removeCard(UUID id) {
-        this.selectedCardSet.listOfCards.removeIf(card -> card.getId().equals(id));
+        this.selectedCardSet.getCards().removeIf(card -> card.getId().equals(id));
     }
 }
