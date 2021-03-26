@@ -27,6 +27,7 @@ public class CardService implements ICardService {
     }
 
     // wont be used later probably, just to give an idea how it works
+    // lag machine
     @Override
     public Card getById(String id) {
         Card card = null;
