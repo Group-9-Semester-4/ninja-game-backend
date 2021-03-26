@@ -1,4 +1,4 @@
-package com.group9.NinjaGame.resources;
+package com.group9.NinjaGame.resources.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.group9.NinjaGame.models.Game;
@@ -15,8 +15,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/game")
-public class GameResource implements IGameResource {
+@RequestMapping("/api/game")
+public class GameResource {
 
     /*
         ToDo -> Handle Exceptions
@@ -36,14 +36,13 @@ public class GameResource implements IGameResource {
         this.gameService = gameService;
     }
 
-    @Override
+
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody ObjectNode json) {
         Game g = gameService.initGame(json.get("timeLimit").asInt(), json.get("singlePlayer").asBoolean(), json.get("playingAlone").asBoolean());
         return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
-    @Override
     @GetMapping(path = "/{uuid}/draw")
     public ResponseEntity<?> drawCard(@PathVariable UUID uuid) {
         if (gameService.draw(uuid) == null) {
@@ -53,7 +52,6 @@ public class GameResource implements IGameResource {
         }
     }
 
-    @Override
     @PostMapping(path = "/{uuid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> startGame(@PathVariable UUID uuid, @RequestBody List<String> unwantedCards) {
         List<UUID> unwantedCardsUUIDs = unwantedCards.stream().map(s -> UUID.fromString(s)).collect(Collectors.toList());
@@ -61,7 +59,6 @@ public class GameResource implements IGameResource {
         return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
-    @Override
     @PostMapping(path = "/{uuid}/done", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cardDone(@PathVariable UUID uuid, @RequestBody ObjectNode cardCompletedUUID) {
         return new ResponseEntity<>(gameService.removeDoneCard(uuid, UUID.fromString(cardCompletedUUID.get("id").asText())), HttpStatus.OK);

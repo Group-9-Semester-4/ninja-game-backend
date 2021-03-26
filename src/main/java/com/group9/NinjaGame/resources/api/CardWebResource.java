@@ -1,4 +1,4 @@
-package com.group9.NinjaGame.resources;
+package com.group9.NinjaGame.resources.api;
 
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.services.ICardService;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/card")
-public class CardResource implements ICardResource {
+@RequestMapping("/api/card")
+public class CardWebResource {
 
     private ICardService cardService;
 
     @Autowired
-    public CardResource(ICardService service) {
+    public CardWebResource(ICardService service) {
         this.cardService = service;
     }
 

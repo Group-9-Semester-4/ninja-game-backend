@@ -1,6 +1,7 @@
 package com.group9.NinjaGame.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Entity
@@ -12,18 +13,23 @@ public class CardEntity {
     private UUID id;
 
     @Column(name = "name", length = 50, nullable = false, unique = false)
+    @NotBlank(message = "Name is mandatory")
     private String name;
 
     @Column(name = "description", length = 50, nullable = false, unique = false)
+    @NotBlank(message = "Description is mandatory")
     private String description;
 
     @Column(name = "points", length = 10, nullable = false, unique = false)
+    @NotBlank(message = "Number of points is mandatory")
     private int points;
 
     @Column(name = "difficulty_type", nullable = false, unique = false)
+    @NotBlank(message = "This field is mandatory")
     private int difficulty_type;
 
     @Column(name = "difficulty", nullable = false, unique = false)
+    @NotBlank(message = "This field is mandatory")
     private int difficulty;
 
     @Column(name = "filepath", nullable = false, unique = false)
@@ -64,7 +70,7 @@ public class CardEntity {
         this.points = points;
     }
 
-    public int isDifficulty_type() {
+    public int getDifficulty_type() {
         return difficulty_type;
     }
 
