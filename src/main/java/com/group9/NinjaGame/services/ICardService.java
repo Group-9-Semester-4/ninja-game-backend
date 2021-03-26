@@ -10,6 +10,7 @@ import java.util.List;
 public interface ICardService {
     Card getById(String uuid);
 
+    List<CardEntity> findAll();
     List<Card> getAll();
     void addCard(CardEntity cardEntity);
     CardEntity getEntityById(String id);

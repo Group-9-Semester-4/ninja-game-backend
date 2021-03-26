@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RequestMapping("/admin/card-set")
@@ -30,6 +32,8 @@ public class CardSetResource {
     @Autowired
     ICardSetService cardSetService;
     ICardService cardService;
+
+
 
     @GetMapping("")
     public String listCardSets(Model model) {
@@ -53,11 +57,11 @@ public class CardSetResource {
             return "add-card-set.html";
         }
         cardSetService.createCardSet(cardSetEntity);
-        return "redirect:/admin/card-set/a";
+        return "redirect:/admin/card-set";
     }
 
     @GetMapping("/update/{id}")
-    public String showUpdateForm(@PathVariable("id") String id, Model model) {
+    public String showUpdateForm(@PathVariable("id") String id, Model model, HttpSession session) {
         CardSetEntity cardSetEntity = null;
         try {
             cardSetEntity = cardSetService.getById(id);
@@ -65,8 +69,12 @@ public class CardSetResource {
         catch (Exception e){
             throw new IllegalArgumentException("Invalid cardset Id:" + id);
         }
+        List<CardEntity> allCards = cardService.findAll();
+        Set<CardEntity> cardSetCards = cardSetEntity.getCards();
+        allCards.removeAll(cardSetCards);
 
         model.addAttribute("cardSetEntity", cardSetEntity);
+        session.setAttribute("allCards", allCards);
         return "update-card-set";
     }
 

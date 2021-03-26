@@ -50,6 +50,14 @@ public class CardService implements ICardService {
         }
         return cardEntity;
     }
+    @Override
+    public List<CardEntity> findAll() {
+        Iterable<CardEntity> cardEntities =  repository.findAll();
+        List<CardEntity> cards = new ArrayList<>();
+        cardEntities.forEach(cards::add);
+        return cards;
+
+    }
 
     @Override
     public List<Card> getAll() {
