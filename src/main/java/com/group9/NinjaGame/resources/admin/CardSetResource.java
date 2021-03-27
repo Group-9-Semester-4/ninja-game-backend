@@ -5,6 +5,7 @@ import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
+import com.group9.NinjaGame.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +23,13 @@ import java.util.UUID;
 public class CardSetResource {
     private final String UPLOAD_DIR = "src/main/resources/public/img/card_pictures/";
 
-    @Autowired
     ICardSetService cardSetService;
     ICardService cardService;
+    @Autowired
+    public CardSetResource(ICardService cardService, ICardSetService cardSetService) {
+        this.cardService = cardService;
+        this.cardSetService = cardSetService;
+    }
 
 
     @GetMapping("")
@@ -37,9 +42,9 @@ public class CardSetResource {
 
     @GetMapping("/create-card-set")
     public String showCreateCardSetForm(Model model) {
-         List<Card> cardList = cardService.getAll();
-        model.addAttribute("cards", cardList);
+        List<Card> cardList = cardService.getAll();
         model.addAttribute("cardSetEntity", new CardSetEntity());
+        model.addAttribute("allCards", cardList);
         return "add-card-set.html";
     }
 
@@ -55,16 +60,19 @@ public class CardSetResource {
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") String id, Model model) {
         CardSetEntity cardSetEntity = new CardSetEntity();
-        List<CardEntity> allCards = cardService.findAll();
+        List<Card> cardList = cardService.getAll();
+
+        //List<CardEntity> allCards = cardService.findAll();
         try {
             cardSetEntity = cardSetService.getById(id);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid cardset Id:" + id);
         }
         Set<CardEntity> cardSetCards = cardSetEntity.getCards();
-        allCards.removeAll(cardSetCards);
+       // allCards.removeAll(cardSetCards);
 
         model.addAttribute("cardSetEntity", cardSetEntity);
+        model.addAttribute("allCards", cardList);
         //session.setAttribute("allCards", allCards);
         return "update-card-set";
     }

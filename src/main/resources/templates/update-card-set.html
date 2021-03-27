@@ -22,19 +22,12 @@
     <label for="difficulty">difficulty</label>
     <input type="number" th:field="*{difficulty}" id="difficulty" placeholder="30">
     <span th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}"></span>
-    <input type="checkbox" name="cards" checked
-           th:each="card : ${cards}"
-           th:if="${cards.containsKey()}"
+    <input type="checkbox" name="cards"
+           th:each="card : ${allCards}"
            th:text="${card.name}"
            th:value="${card.id}"
            th:field="*{cards}"
-    />
-    <input type="checkbox" name="session.allCards"
-           th:each="card : ${session.allCards}"
-           th:if="${cards.containsKey()}"
-           th:text="${card.name}"
-           th:value="${card.id}"
-           th:field="*{cards}"
+           th:checked="${cardSetEntity.cards.contains(card)} ?  'checked'"
     />
 
     <input type="submit" value="Update Card Set">
