@@ -37,7 +37,10 @@ public class Game {
     }
 
     public List<CardEntity> getAllCards() {
-        return new ArrayList<>(selectedCardSet.getCards());
+        if(selectedCardSet.getCards() != null){
+            return new ArrayList<>(selectedCardSet.getCards());
+        }
+        return null;
     }
 
     public void setAllCards(List<CardEntity> cards) {

@@ -32,12 +32,10 @@ public class GameService implements IGameService {
 
     @Override
     public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        GameEntity gameEntity = new GameEntity();
-        gameEntity.setTimeLimit(timeLimit);
-        gameEntity.setSinglePlayer(singlePlayer);
-        gameEntity.setPlayingAlone(playingAlone);
+        Game game = new Game(timeLimit, singlePlayer, playingAlone);
+        GameEntity gameEntity = GameEntity.fromGameEntity(game);
+
         gameRepository.save(gameEntity);
-        Game game = Game.fromGameEntity(gameEntity);
         return game;
     }
 

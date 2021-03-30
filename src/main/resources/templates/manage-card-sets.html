@@ -17,12 +17,14 @@
             <thead>
             <tr>
                 <th>Name</th>
+                <th>Id</th>
             </tr>
             </thead>
             <tbody>
             <!--<a th:href="@{/admin/card/update/{id}(id=${card.id})}" th:text="${card.name}"></a>  -->
             <tr th:each="cardSet : ${cardSets}">
                 <td th:text="${cardSet.name}"></td>
+                <td th:text="${cardSet.id}"></td>
                 <td><a th:href="@{/admin/card-set/update/{id}(id=${cardSet.id})}">Edit</a></td>
                 <td><a th:href="@{/admin/card-set/delete/{id}(id=${cardSet.id})}">Delete</a></td>
             </tr>
