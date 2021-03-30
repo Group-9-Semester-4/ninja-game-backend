@@ -24,12 +24,12 @@
     <input type="number" th:field="*{difficulty}" id="difficulty" placeholder="30">
     <span th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}"></span>
     <input type="checkbox" name="cards"
-           th:each="card : ${cards}"
+           th:each="card : ${allCards}"
            th:text="${card.name}"
            th:value="${card.id}"
            th:field="*{cards}"
     />
-    <input type="submit" value="Add Card deck">
+    <input type="submit" value="Add Card Set">
 
 </form>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>

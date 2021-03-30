@@ -12,6 +12,7 @@ import java.util.UUID;
 public class CardSetEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private UUID id;
 
     @Column(name = "name", length = 50, nullable = false, unique = false)
@@ -37,6 +38,10 @@ public class CardSetEntity {
             joinColumns = @JoinColumn(name = "card_set_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
     Set<CardEntity> cards;
+
+    @OneToOne(mappedBy = "selectedCardSet")
+    private GameEntity gameEntity;
+
 
     public CardSetEntity() {
     }
