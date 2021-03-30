@@ -2,6 +2,7 @@ package com.group9.NinjaGame.models;
 
 import com.group9.NinjaGame.entities.CardEntity;
 import com.group9.NinjaGame.entities.CardSetEntity;
+import com.group9.NinjaGame.entities.GameEntity;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,6 +30,11 @@ public class Game {
         this.cardsDone = getCardsDone();
     }
 
+    public static Game fromGameEntity(GameEntity g) {
+        Game game = new Game(g.getTimeLimit(), g.isSinglePlayer(), g.isPlayingAlone());
+        game.setId(g.getId());
+        return game;
+    }
 
     public List<CardEntity> getAllCards() {
         return new ArrayList<>(selectedCardSet.getCards());
@@ -41,6 +47,10 @@ public class Game {
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public int getPoints() {
