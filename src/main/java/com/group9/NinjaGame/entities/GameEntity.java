@@ -11,6 +11,7 @@ import java.util.UUID;
 public class GameEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private UUID id;
 
     @Column(name = "points", length = 50, nullable = false, unique = false)
@@ -49,7 +50,6 @@ public class GameEntity {
         gameEntity.setTimeLimit(game.getTimeLimit());
         gameEntity.setSinglePlayer(game.isSingleplayer());
         gameEntity.setPlayingAlone(game.isPlayingAlone());
-        gameEntity.setId(game.getId());
         return gameEntity;
     }
 

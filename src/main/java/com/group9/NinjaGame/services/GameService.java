@@ -1,6 +1,5 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.CardEntity;
 import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.entities.GameEntity;
@@ -36,6 +35,8 @@ public class GameService implements IGameService {
         GameEntity gameEntity = GameEntity.fromGameEntity(game);
 
         gameRepository.save(gameEntity);
+
+        game.setId(gameEntity.getId());
         return game;
     }
 
@@ -59,6 +60,7 @@ public class GameService implements IGameService {
 
     @Override
     public Game startGame(UUID gameId, UUID cardSetId) {
+
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         Optional<CardSetEntity> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
         GameEntity gameEntity = null;
@@ -69,11 +71,15 @@ public class GameService implements IGameService {
         }
         if (cardSetEntityOptional.isPresent()) {
             CardSetEntity cardSetEntity = cardSetEntityOptional.get();
+            gameEntity.setSelectedCardSet(cardSetEntity);
+            gameRepository.save(gameEntity);
             g.setSelectedCardSet(cardSetEntity);
+
         }
         return g;
     }
 
+    //not tested
     @Override
     public Game startGame(UUID gameId, List<UUID> unwantedCards) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
@@ -87,11 +93,13 @@ public class GameService implements IGameService {
         for (UUID cardId : unwantedCards) {
             g.removeCard(cardId);
         }
+        gameEntity.setSelectedCardSet(g.getSelectedCardSet());
+        gameRepository.save(gameEntity);
         return g;
     }
 
 
-
+    //TODO: most likely not working
     public List<CardEntity> removeDoneCard(UUID gameId, UUID cardId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         Optional<CardEntity> cardEntity = repository.findById(cardId);

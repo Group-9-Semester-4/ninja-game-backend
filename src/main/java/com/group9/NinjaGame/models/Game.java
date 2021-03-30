@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Game {
-    private UUID id;;
+    private UUID id;
     private CardSetEntity selectedCardSet;
     private int points;
     private int miniGameAttempts;
@@ -21,7 +21,7 @@ public class Game {
 
 
     public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        this.id = UUID.randomUUID();
+        this.id = null;
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;
         this.playingAlone = playingAlone;

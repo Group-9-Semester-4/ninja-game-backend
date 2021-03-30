@@ -74,8 +74,8 @@ public class GameResource {
 
     //TODO:change pathvariable to requestbody
     @PostMapping(path = "/{gameid}/{cardsetid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@PathVariable UUID gameid, @PathVariable UUID cardsetid) {
-        Game g = gameService.startGame(gameid, cardsetid);
+    public ResponseEntity<?> startGame(@PathVariable String gameid, @PathVariable UUID cardsetid) {
+        Game g = gameService.startGame(UUID.fromString(gameid), cardsetid);
         return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
