@@ -25,11 +25,15 @@
     <input type="number" th:field="*{difficulty}" id="difficulty" placeholder="30">
     <span th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}"></span>
     <input type="checkbox" name="cards"
-           th:each="card : ${allCards}"
+           th:each="card : *{cards}"
            th:text="${card.name}"
            th:value="${card.id}"
            th:field="*{cards}"
-
+    />
+    <input  type="checkbox" name="cards"
+            th:each="card : ${allCards}"
+            th:text="${card.name}"
+            th:value="${card.id}"
     />
            <!--th:checked="${cardSetEntity.cards.contains(card)} ?  'checked'"-->
 

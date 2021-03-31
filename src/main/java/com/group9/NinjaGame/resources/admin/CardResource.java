@@ -42,7 +42,7 @@ public class CardResource {
     @GetMapping("/manage")
     //TODO: doesn't update automatically
     public String listCards(Model model) {
-        List<Card> cardList = cardService.getAll();
+        List<CardEntity> cardList = cardService.getAll();
         model.addAttribute("cards", cardList);
         return "manage-cards";
     }

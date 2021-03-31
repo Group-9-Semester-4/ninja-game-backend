@@ -1,10 +1,8 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.repositories.CardRepository;
-import com.group9.NinjaGame.repositories.CardSetRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,17 +13,17 @@ import java.util.*;
 public class CardService implements ICardService {
 
     private CardRepository repository;
-    private List<Card> allCards;
+    private List<CardEntity> allCards;
 
     @Autowired
     public CardService(CardRepository repository) {
         this.repository = repository;
         Iterable<CardEntity> x = repository.findAll();
-        this.allCards = new ArrayList<Card>();
+        this.allCards = new ArrayList<CardEntity>();
         for (CardEntity ce : x) {
-            Card card = new Card();
-            BeanUtils.copyProperties(ce, card);
-            this.allCards.add(card);
+//            Card card = new Card();
+//            BeanUtils.copyProperties(ce, card);
+                this.allCards.add(ce);
         }
     }
 
@@ -43,7 +41,7 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public List<Card> getAll() {
+    public List<CardEntity> getAll() {
         return this.allCards;
     }
 

@@ -5,18 +5,15 @@ import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
-import com.group9.NinjaGame.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @RequestMapping("/admin/card-set")
@@ -43,7 +40,7 @@ public class CardSetResource {
 
     @GetMapping("/create")
     public String showCreateCardSetForm(Model model) {
-        List<Card> cardList = cardService.getAll();
+        List<CardEntity> cardList = cardService.getAll();
         model.addAttribute("cardSetEntity", new CardSetEntity());
         model.addAttribute("allCards", cardList);
         return "add-card-set";
@@ -61,26 +58,21 @@ public class CardSetResource {
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") String id, Model model) {
         CardSetEntity cardSetEntity = new CardSetEntity();
-        List<Card> cardList = new ArrayList<>();
-        ArrayList<Object> customCards = new ArrayList<>();
-        System.out.println("1");
+        List<CardEntity> cardList = new ArrayList<>();
 
         try {
             cardSetEntity = cardSetService.getById(id);
             cardList = cardService.getAll();
-
-
-            System.out.println("2");
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid card set Id:" + id);
         }
-        System.out.println("3");
+
+        for(CardEntity c : cardSetEntity.getCards()){
+            cardList.removeIf(card -> card.getId().equals(c.getId()));
+        }
 
         model.addAttribute("cardSetEntity", cardSetEntity);
         model.addAttribute("allCards", cardList);
-
-        System.out.println("4");
-
         return "update-card-set";
     }
 
@@ -111,7 +103,7 @@ public class CardSetResource {
     @GetMapping("/manage-cards")
     //TODO: doesn't update automatically
     public String listCards(Model model) {
-        List<Card> cardList = cardService.getAll();
+        List<CardEntity> cardList = cardService.getAll();
         model.addAttribute("cards", cardList);
         return "manage-cards";
     }
