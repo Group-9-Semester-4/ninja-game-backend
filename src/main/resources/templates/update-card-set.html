@@ -29,8 +29,10 @@
            th:text="${card.name}"
            th:value="${card.id}"
            th:field="*{cards}"
-           th:checked="${cardSetEntity.cards.contains(card)} ?  'checked'"
+
     />
+           <!--th:checked="${cardSetEntity.cards.contains(card)} ?  'checked'"-->
+
 
     <input type="submit" value="Update Card Set">
 </form>

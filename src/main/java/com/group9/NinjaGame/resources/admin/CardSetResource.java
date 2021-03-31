@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -60,16 +61,25 @@ public class CardSetResource {
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") String id, Model model) {
         CardSetEntity cardSetEntity = new CardSetEntity();
-        List<Card> cardList = cardService.getAll();
+        List<Card> cardList = new ArrayList<>();
+        ArrayList<Object> customCards = new ArrayList<>();
+        System.out.println("1");
 
         try {
             cardSetEntity = cardSetService.getById(id);
+            cardList = cardService.getAll();
+
+
+            System.out.println("2");
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid card set Id:" + id);
         }
+        System.out.println("3");
 
         model.addAttribute("cardSetEntity", cardSetEntity);
         model.addAttribute("allCards", cardList);
+
+        System.out.println("4");
 
         return "update-card-set";
     }

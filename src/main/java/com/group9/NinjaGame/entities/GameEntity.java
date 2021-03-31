@@ -45,14 +45,6 @@ public class GameEntity {
     public GameEntity() {
     }
 
-    public static GameEntity fromGameEntity(Game game) {
-        GameEntity gameEntity = new GameEntity();
-        gameEntity.setTimeLimit(game.getTimeLimit());
-        gameEntity.setSinglePlayer(game.isSingleplayer());
-        gameEntity.setPlayingAlone(game.isPlayingAlone());
-        return gameEntity;
-    }
-
     public UUID getId() {
         return id;
     }

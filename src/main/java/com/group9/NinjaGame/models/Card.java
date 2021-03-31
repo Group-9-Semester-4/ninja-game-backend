@@ -27,11 +27,6 @@ public class Card {
         this.filepath = absoluteServerPath + filepath;
     }
 
-    public static Card fromCardEntity(CardEntity e) {
-        Card card = new Card(e.getName(), e.getDescription(), e.getPoints(), e.getDifficulty_type(), e.getDifficulty(), e.getFilepath());
-        card.setId(e.getId());
-        return card;
-    }
 
     public UUID getId() {
         return id;

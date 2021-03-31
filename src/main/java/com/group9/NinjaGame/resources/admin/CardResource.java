@@ -1,11 +1,8 @@
 package com.group9.NinjaGame.resources.admin;
 
 import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.models.Card;
-import com.group9.NinjaGame.models.CardSet;
 import com.group9.NinjaGame.services.ICardService;
-import com.group9.NinjaGame.services.ICardSetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -110,7 +107,7 @@ public class CardResource {
             }
         }
         cardService.addCard(cardEntity);
-        return "redirect:/admin/card/index";
+        return "redirect:/admin/card/manage";
     }
 
     @GetMapping("/delete/{id}")

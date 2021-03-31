@@ -5,6 +5,7 @@ import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,24 +22,13 @@ public class CardService implements ICardService {
         this.repository = repository;
         Iterable<CardEntity> x = repository.findAll();
         this.allCards = new ArrayList<Card>();
-        for (CardEntity c : x) {
-            this.allCards.add(Card.fromCardEntity(c));
+        for (CardEntity ce : x) {
+            Card card = new Card();
+            BeanUtils.copyProperties(ce, card);
+            this.allCards.add(card);
         }
     }
 
-    // wont be used later probably, just to give an idea how it works
-    // lag machine
-    @Override
-    public Card getById(String id) {
-        Card card = null;
-        UUID uuid = UUID.fromString(id);
-        Optional<CardEntity> cardEntityOptional = repository.findById(uuid);
-        if (cardEntityOptional.isPresent()) {
-            CardEntity cardEntity = cardEntityOptional.get();
-            card = Card.fromCardEntity(cardEntity);
-        }
-        return card;
-    }
 
     @Override
     public CardEntity getEntityById(String id) {
@@ -55,16 +45,6 @@ public class CardService implements ICardService {
     @Override
     public List<Card> getAll() {
         return this.allCards;
-    }
-
-    // helper method to convert Iterable<CardEntity> into List<Card>
-    public List<Card> fromIterator(Iterable<CardEntity> cardEntities) {
-        List<Card> cards = new ArrayList<Card>();
-        Iterator<CardEntity> itr = cardEntities.iterator();
-        while (itr.hasNext()) {
-            cards.add(Card.fromCardEntity(itr.next()));
-        }
-        return cards;
     }
 
     // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/

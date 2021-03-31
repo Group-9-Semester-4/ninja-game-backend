@@ -8,6 +8,7 @@ import com.group9.NinjaGame.models.Game;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,10 @@ public class GameService implements IGameService {
     @Override
     public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
         Game game = new Game(timeLimit, singlePlayer, playingAlone);
-        GameEntity gameEntity = GameEntity.fromGameEntity(game);
+        GameEntity gameEntity = new GameEntity();
+        //might be performance heavyish, alternatives include MapStruct or Orika
+        BeanUtils.copyProperties(game, gameEntity, "selectedCardSet", "id");
+
 
         gameRepository.save(gameEntity);
 
@@ -54,27 +58,23 @@ public class GameService implements IGameService {
             Set<CardEntity> cardEntities = gameEntity.getSelectedCardSet().getCards();
             List<CardEntity> arr = new ArrayList<>(cardEntities);
             CardEntity cardEntity = arr.get(new Random().nextInt(arr.size()));
-            return Card.fromCardEntity(cardEntity);
+            Card card = new Card();
+            BeanUtils.copyProperties(cardEntity, card);
+            return card;
         }
     }
-
     @Override
     public Game startGame(UUID gameId, UUID cardSetId) {
-
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         Optional<CardSetEntity> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
         GameEntity gameEntity = null;
-        Game g = null;
-        if (gameEntityOptional.isPresent()) {
+        Game g = new Game();
+        if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
-        }
-        if (cardSetEntityOptional.isPresent()) {
             CardSetEntity cardSetEntity = cardSetEntityOptional.get();
             gameEntity.setSelectedCardSet(cardSetEntity);
             gameRepository.save(gameEntity);
-            g.setSelectedCardSet(cardSetEntity);
-
+            BeanUtils.copyProperties(gameEntity, g);
         }
         return g;
     }
@@ -84,10 +84,10 @@ public class GameService implements IGameService {
     public Game startGame(UUID gameId, List<UUID> unwantedCards) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         GameEntity gameEntity = null;
-        Game g = null;
+        Game g = new Game();
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
+            BeanUtils.copyProperties(gameEntity, g);
         }
         if (unwantedCards.size() == 0) return g;
         for (UUID cardId : unwantedCards) {
@@ -105,19 +105,15 @@ public class GameService implements IGameService {
         Optional<CardEntity> cardEntity = repository.findById(cardId);
         CardEntity entity = null;
         GameEntity gameEntity = null;
-        Game g = null;
-        if (gameEntityOptional.isPresent()) {
+        Game g = new Game();
+        if (gameEntityOptional.isPresent() && cardEntity.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
-        }
+            BeanUtils.copyProperties(gameEntity, g);
 
-        if (cardEntity.isPresent()) {
             entity = cardEntity.get();
         }
-        Card card = Card.fromCardEntity(entity);
-
-        g.removeCard(card.getId());
-        g.setPoints(g.getPoints() + card.getPoints());
+        g.removeCard(entity.getId());
+        g.setPoints(g.getPoints() + entity.getPoints());
         g.setCardsDone(g.getCardsDone() + 1);
         return g.getAllCards();
     }
@@ -125,28 +121,12 @@ public class GameService implements IGameService {
     public Game finishGame(UUID gameId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         GameEntity gameEntity = null;
-        Game g = null;
+        Game g = new Game();
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
+            BeanUtils.copyProperties(gameEntity, g);
             gameRepository.delete(gameEntity);
         }
         return g;
-    }
-
-    public List<Card> fromIterator(Iterable<CardEntity> cardEntities) {
-        List<Card> cards = new ArrayList<Card>();
-        Iterator<CardEntity> itr = cardEntities.iterator();
-        while (itr.hasNext()) {
-            cards.add(Card.fromCardEntity(itr.next()));
-        }
-        return cards;
-    }
-
-    // Unused but kept as an example for Custom Queries.
-    public List<Card> getAllCustom() {
-        Iterable<CardEntity> cardEntities = repository.getCustomCard();
-
-        return fromIterator(cardEntities);
     }
 }

@@ -3,6 +3,7 @@ package com.group9.NinjaGame.models;
 import com.group9.NinjaGame.entities.CardEntity;
 import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.entities.GameEntity;
+import org.springframework.beans.BeanUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,7 +18,8 @@ public class Game {
     private boolean singlePlayer;
     private boolean playingAlone;
 
-
+    public Game(){
+    }
 
 
     public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
@@ -28,12 +30,6 @@ public class Game {
         this.selectedCardSet = new CardSetEntity();
         this.miniGameAttempts = getMiniGameAttempts();
         this.cardsDone = getCardsDone();
-    }
-
-    public static Game fromGameEntity(GameEntity g) {
-        Game game = new Game(g.getTimeLimit(), g.isSinglePlayer(), g.isPlayingAlone());
-        game.setId(g.getId());
-        return game;
     }
 
     public List<CardEntity> getAllCards() {
