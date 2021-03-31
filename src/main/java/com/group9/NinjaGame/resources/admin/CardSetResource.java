@@ -21,10 +21,10 @@ import java.util.UUID;
 @RequestMapping("/admin/card-set")
 @Controller
 public class CardSetResource {
-    private final String UPLOAD_DIR = "src/main/resources/public/img/card_pictures/";
 
     ICardSetService cardSetService;
     ICardService cardService;
+
     @Autowired
     public CardSetResource(ICardService cardService, ICardSetService cardSetService) {
         this.cardService = cardService;
@@ -34,24 +34,24 @@ public class CardSetResource {
 
     @GetMapping("")
     public String listCardSets(Model model) {
-        List<CardSetEntity> cardList = cardSetService.getAllCardSets();
-        model.addAttribute("cardSets", cardList);
+        List<CardSetEntity> cardSets = cardSetService.getAllCardSets();
+        model.addAttribute("cardSets", cardSets);
         return "manage-card-sets";
     }
 
 
-    @GetMapping("/create-card-set")
+    @GetMapping("/create")
     public String showCreateCardSetForm(Model model) {
         List<Card> cardList = cardService.getAll();
         model.addAttribute("cardSetEntity", new CardSetEntity());
         model.addAttribute("allCards", cardList);
-        return "add-card-set.html";
+        return "add-card-set";
     }
 
-    @PostMapping("add-card-set")
+    @PostMapping("add")
     public String addCardSet(@Valid CardSetEntity cardSetEntity, BindingResult result) {
         if (result.hasErrors()) {
-            return "add-card-set.html";
+            return "add-card-set";
         }
         cardSetService.createCardSet(cardSetEntity);
         return "redirect:/admin/card-set";
@@ -62,18 +62,15 @@ public class CardSetResource {
         CardSetEntity cardSetEntity = new CardSetEntity();
         List<Card> cardList = cardService.getAll();
 
-        //List<CardEntity> allCards = cardService.findAll();
         try {
             cardSetEntity = cardSetService.getById(id);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid cardset Id:" + id);
+            throw new IllegalArgumentException("Invalid card set Id:" + id);
         }
-        Set<CardEntity> cardSetCards = cardSetEntity.getCards();
-       // allCards.removeAll(cardSetCards);
 
         model.addAttribute("cardSetEntity", cardSetEntity);
         model.addAttribute("allCards", cardList);
-        //session.setAttribute("allCards", allCards);
+
         return "update-card-set";
     }
 

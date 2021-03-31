@@ -9,7 +9,7 @@
 <body>
 <p> here we go</p>
 
-<form action="#" th:action="@{/admin/card-set/add-card-set}" th:object="${cardSetEntity}" method="post">
+<form action="#" th:action="@{/admin/card-set/add}" th:object="${cardSetEntity}" method="post">
 
     <label for="name">Name</label>
     <input type="text" th:field="*{name}" id="name" placeholder="Name">

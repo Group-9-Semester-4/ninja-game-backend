@@ -42,7 +42,7 @@ public class CardResource {
     }
 
 
-    @GetMapping("/manage-cards")
+    @GetMapping("/manage")
     //TODO: doesn't update automatically
     public String listCards(Model model) {
         List<Card> cardList = cardService.getAll();
@@ -50,26 +50,18 @@ public class CardResource {
         return "manage-cards";
     }
 
-    @GetMapping("/manage-card-sets")
-    //TODO: doesn't update automatically
-    public String listCardSets(Model model) {
-        //List<CardSetEntity> cardList = cardService.get...
-        //model.addAttribute("cardSets", cardList);
-        return "manage-card-sets";
-    }
 
 
-
-    @GetMapping("/createcard")
+    @GetMapping("/create")
     public String showCreateCardForm(CardEntity cardEntity) {
-        return "add-card.html";
+        return "add-card";
     }
 
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public String addCard(@RequestParam ("file") MultipartFile file, @Valid CardEntity cardEntity, BindingResult result) {
         if ((result.hasErrors()) || (file.isEmpty())) {
-            return "add-card.html";
+            return "add-card";
         }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         try {
@@ -92,7 +84,7 @@ public class CardResource {
             cardEntity = cardService.getEntityById(id);
         }
         catch (Exception e){
-            throw new IllegalArgumentException("Invalid user Id:" + id);
+            throw new IllegalArgumentException("Invalid card Id:" + id);
         }
 
         model.addAttribute("cardEntity", cardEntity);
