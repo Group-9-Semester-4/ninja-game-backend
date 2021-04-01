@@ -1,8 +1,12 @@
 package com.group9.NinjaGame.resources.api;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.CardSetEntity;
+import com.group9.NinjaGame.entities.GameEntity;
 import com.group9.NinjaGame.models.Game;
 import com.group9.NinjaGame.services.ICardService;
+import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,11 +33,14 @@ public class GameResource {
 
     ICardService cardService;
     IGameService gameService;
+    ICardSetService cardSetService;
 
     @Autowired
-    public GameResource(ICardService cardService, IGameService gameService) {
+    public GameResource(ICardService cardService, IGameService gameService, ICardSetService cardSetService) {
         this.cardService = cardService;
         this.gameService = gameService;
+        this.cardSetService = cardSetService;
+
     }
 
 
@@ -44,6 +51,19 @@ public class GameResource {
     }
 
 
+    @PostMapping(path = "/{uuid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> startGame(@PathVariable UUID uuid, @RequestBody List<String> unwantedCards) {
+        List<UUID> unwantedCardsUUIDs = unwantedCards.stream().map(s -> UUID.fromString(s)).collect(Collectors.toList());
+        Game g = gameService.startGame(uuid, unwantedCardsUUIDs);
+        return new ResponseEntity<>(g, HttpStatus.OK);
+    }
+
+    //TODO:change pathvariable to requestbody
+    @PostMapping(path = "/{gameid}/{cardsetid}/start")
+    public ResponseEntity<?> startGame(@PathVariable String gameid, @PathVariable UUID cardsetid) {
+        Game g = gameService.startGame(UUID.fromString(gameid), cardsetid);
+        return new ResponseEntity<>(g, HttpStatus.OK);
+    }
 
     @GetMapping(path = "/{uuid}/draw")
     public ResponseEntity<?> drawCard(@PathVariable UUID uuid) {
@@ -52,13 +72,6 @@ public class GameResource {
         } else {
             return new ResponseEntity<>(gameService.draw(uuid), HttpStatus.OK);
         }
-    }
-
-    @PostMapping(path = "/{uuid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@PathVariable UUID uuid, @RequestBody List<String> unwantedCards) {
-        List<UUID> unwantedCardsUUIDs = unwantedCards.stream().map(s -> UUID.fromString(s)).collect(Collectors.toList());
-        Game g = gameService.startGame(uuid, unwantedCardsUUIDs);
-        return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
 
@@ -72,11 +85,23 @@ public class GameResource {
         return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.OK);
     }
 
-    //TODO:change pathvariable to requestbody
-    @PostMapping(path = "/{gameid}/{cardsetid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@PathVariable String gameid, @PathVariable UUID cardsetid) {
-        Game g = gameService.startGame(UUID.fromString(gameid), cardsetid);
-        return new ResponseEntity<>(g, HttpStatus.OK);
+
+    @GetMapping(path = "/cards")
+    public ResponseEntity<?> getAllCards() {
+        Iterable<CardEntity> allCards = cardService.findAll();
+        return new ResponseEntity<>(allCards, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/cardsets")
+    public ResponseEntity<?> getAllCardsets() {
+        Iterable<CardSetEntity> allCardsets = cardSetService.findAll();
+        return new ResponseEntity<>(allCardsets, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/games")
+    public ResponseEntity<?> getAllGames() {
+        Iterable<GameEntity> allGames = gameService.findAll();
+        return new ResponseEntity<>(allGames, HttpStatus.OK);
     }
 
 

@@ -79,7 +79,6 @@ public class GameService implements IGameService {
         return g;
     }
 
-    //not tested
     @Override
     public Game startGame(UUID gameId, List<UUID> unwantedCards) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
@@ -98,8 +97,6 @@ public class GameService implements IGameService {
         return g;
     }
 
-
-    //TODO: most likely not working
     public List<CardEntity> removeDoneCard(UUID gameId, UUID cardId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         Optional<CardEntity> cardEntity = repository.findById(cardId);
@@ -124,9 +121,13 @@ public class GameService implements IGameService {
         Game g = new Game();
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            BeanUtils.copyProperties(gameEntity, g);
+            BeanUtils.copyProperties(gameEntity, g, "selectedCardSet");
             gameRepository.delete(gameEntity);
         }
         return g;
+    }
+
+    public Iterable<GameEntity> findAll() {
+        return gameRepository.findAll();
     }
 }

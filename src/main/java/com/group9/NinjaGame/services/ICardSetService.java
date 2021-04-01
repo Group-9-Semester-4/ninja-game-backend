@@ -9,5 +9,6 @@ public interface ICardSetService {
     List<CardSetEntity> getAllCardSets();
     CardSetEntity getById(String id);
     void deleteCardSet(CardSetEntity cardSetEntity);
+    public Iterable<CardSetEntity> findAll();
 
 }

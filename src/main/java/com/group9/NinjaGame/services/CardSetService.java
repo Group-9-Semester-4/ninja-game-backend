@@ -1,6 +1,7 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardSetEntity;
+import com.group9.NinjaGame.entities.GameEntity;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,8 @@ public class CardSetService implements ICardSetService {
         cardSetRepository.delete(cardSetEntity);
     }
 
+    public Iterable<CardSetEntity> findAll() {
+        return cardSetRepository.findAll();
+    }
 
 }
