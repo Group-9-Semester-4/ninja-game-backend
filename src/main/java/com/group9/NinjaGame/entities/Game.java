@@ -36,8 +36,8 @@ public class Game {
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
-    @OneToOne
-    @JoinColumn(name = "card_set_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "card_set_id")
     private CardSet selectedCardSet;
 
     public Game() {
