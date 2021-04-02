@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS `card_sets` (
     `name` VARCHAR(50) NOT NULL,
     `complete_time_limit` INT NOT NULL,
     `difficulty` INT NOT NULL,
-    `multiplayer_suitable` BOOLEAN NOT NULL DEFAULT 1);
+    `multiplayer_suitable` BOOLEAN NOT NULL DEFAULT 1,
+    `temporary` BOOLEAN not null default 0);
 
 CREATE TABLE IF NOT EXISTS `card_set_cards` (
     `card_id` BINARY(16) NOT NULL,
