@@ -1,5 +1,6 @@
 package com.group9.NinjaGame.services;
 
+import com.group9.NinjaGame.container.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.GameEntity;
@@ -39,26 +40,6 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public Card draw(UUID gameId) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-
-        if (gameEntityOptional.isPresent()) {
-
-            GameEntity gameEntity = gameEntityOptional.get();
-
-            if (gameEntity.getSelectedCardSet().getCards().size() == 0) {
-                return null;
-            } else {
-                Set<Card> cardEntities = gameEntity.getSelectedCardSet().getCards();
-                List<Card> arr = new ArrayList<>(cardEntities);
-
-                return arr.get(new Random().nextInt(arr.size()));
-            }
-        }
-
-        return null;
-    }
-    @Override
     public GameEntity startGame(UUID gameId, UUID cardSetId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
@@ -70,7 +51,16 @@ public class GameService implements IGameService {
             CardSet cardSet = cardSetEntityOptional.get();
 
             gameEntity.setSelectedCardSet(cardSet);
-            gameRepository.save(gameEntity);
+
+            List<UUID> cardIds = new ArrayList<>();
+
+            for (Card card : cardSet.getCards()) {
+                cardIds.add(card.getId());
+            }
+
+            GameContainer.getInstance().setGameCards(gameId, cardIds);
+
+            gameEntity = gameRepository.save(gameEntity);
         }
 
         return gameEntity;
@@ -84,32 +74,33 @@ public class GameService implements IGameService {
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
 
-            CardSet cardSet = createTemporaryCardSet(unwantedCards);
+            List<UUID> cards = (List<UUID>) cardRepository.getCardIds(unwantedCards);
 
-            gameEntity.setSelectedCardSet(cardSet);
+            GameContainer.getInstance().setGameCards(gameId, cards);
 
-            gameRepository.save(gameEntity);
+            gameEntity = gameRepository.save(gameEntity);
         }
 
         return gameEntity;
     }
 
-    public List<Card> removeDoneCard(UUID gameId, UUID cardId) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<Card> cardEntity = cardRepository.findById(cardId);
-        Card entity = null;
-        GameEntity gameEntity = null;
-        Game g = new Game();
-        if (gameEntityOptional.isPresent() && cardEntity.isPresent()) {
-            gameEntity = gameEntityOptional.get();
-            BeanUtils.copyProperties(gameEntity, g);
+    @Override
+    public Card draw(UUID gameId) {
 
-            entity = cardEntity.get();
-        }
-        g.removeCard(entity.getId());
-        g.setPoints(g.getPoints() + entity.getPoints());
-        g.setCardsDone(g.getCardsDone() + 1);
-        return g.getAllCards();
+        List<UUID> cardIds = GameContainer.getInstance().getGameCards(gameId);
+
+        UUID drawnCardId = cardIds.get(new Random().nextInt(cardIds.size()));
+
+        Optional<Card> cardOptional = cardRepository.findById(drawnCardId);
+
+        return cardOptional.orElse(null);
+
+    }
+
+    public boolean removeDoneCard(UUID gameId, UUID cardId) {
+        List<UUID> cardIds = GameContainer.getInstance().getGameCards(gameId);
+
+        return cardIds.remove(cardId);
     }
 
     public Game finishGame(UUID gameId) {
@@ -131,16 +122,5 @@ public class GameService implements IGameService {
 
     public Iterable<GameEntity> findAll() {
         return gameRepository.findAll();
-    }
-
-    protected CardSet createTemporaryCardSet(List<UUID> unwantedCards) {
-        List<Card> cards = (List<Card>) cardRepository.getCards(unwantedCards);
-
-        CardSet cardSet = new CardSet(UUID.randomUUID(), "temp");
-        cardSet.setCards(cards);
-
-        cardSet = cardSetRepository.save(cardSet);
-
-        return cardSet;
     }
 }

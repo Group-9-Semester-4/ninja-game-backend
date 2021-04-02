@@ -15,7 +15,7 @@ public interface IGameService {
     GameEntity startGame(UUID uuid, List<UUID> unwantedCards);
     GameEntity startGame(UUID gameId, UUID cardSetId);
 
-    List<Card> removeDoneCard(UUID gameId, UUID cardId);
+    boolean removeDoneCard(UUID gameId, UUID cardId);
 
     Game finishGame(UUID uuid);
     Iterable<GameEntity> findAll();

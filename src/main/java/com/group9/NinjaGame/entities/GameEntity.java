@@ -2,6 +2,8 @@ package com.group9.NinjaGame.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -113,5 +115,12 @@ public class GameEntity {
 
     public void setSelectedCardSet(CardSet cardSet) {
         this.selectedCardSet = cardSet;
+    }
+
+    public int getGameAttempts() {
+        if (points == 0 || cardsDone == 0) {
+            return 0;
+        }
+        return points / cardsDone;
     }
 }
