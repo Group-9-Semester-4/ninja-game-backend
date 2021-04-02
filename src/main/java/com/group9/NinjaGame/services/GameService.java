@@ -84,7 +84,9 @@ public class GameService implements IGameService {
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
 
-            gameEntity.setSelectedCardSet(createTemporaryCardSet(unwantedCards));
+            CardSet cardSet = createTemporaryCardSet(unwantedCards);
+
+            gameEntity.setSelectedCardSet(cardSet);
 
             gameRepository.save(gameEntity);
         }
@@ -136,6 +138,8 @@ public class GameService implements IGameService {
 
         CardSet cardSet = new CardSet(UUID.randomUUID(), "temp");
         cardSet.setCards(cards);
+
+        cardSetRepository.save(cardSet);
 
         return cardSet;
     }

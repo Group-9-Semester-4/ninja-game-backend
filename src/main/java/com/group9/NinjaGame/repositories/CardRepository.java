@@ -21,6 +21,6 @@ public interface CardRepository extends CrudRepository<CardEntity, UUID> {
     @Query("SELECT c FROM CardEntity c WHERE c.points > 1")
     Iterable<CardEntity> getCustomCard();
 
-    @Query("SELECT c from CardEntity c where c.id in :unwantedCards")
+    @Query("SELECT c from CardEntity c where c.id not in :unwantedCards")
     Iterable<CardEntity> getCards(@Param("unwantedCards") List<UUID> unwantedCards);
 }
