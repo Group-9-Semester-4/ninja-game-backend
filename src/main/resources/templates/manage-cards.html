@@ -8,11 +8,12 @@
 </head>
 <body>
 <div th:switch="${cards}">
-    <h2 th:case="null">No Cards yet!</h2>
+    <div class="alert alert-danger" role="alert" th:case="null">No Cards yet!</div>
     <div th:case="*">
-        <h2>Cards</h2>
-        <p><a href="/admin/card/create">Add a new card</a></p>
-        <table>
+        <h2 class="display-2">Cards</h2>
+        <h4 class="text-muted"> This list has all cards in the system.</h4>
+        <p><a class="btn btn-primary btn-lg" href="/admin/card/create">Add a new card</a></p>
+        <table class="table table-striped table-hover">
             <thead>
             <tr>
                 <th>Name</th>
