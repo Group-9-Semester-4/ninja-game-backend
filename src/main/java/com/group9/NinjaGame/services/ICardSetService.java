@@ -1,14 +1,11 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.entities.CardSetEntity;
-
-import java.util.List;
+import com.group9.NinjaGame.entities.CardSet;
 
 public interface ICardSetService {
-    void createCardSet(CardSetEntity cardSetEntity);
-    List<CardSetEntity> getAllCardSets();
-    CardSetEntity getById(String id);
-    void deleteCardSet(CardSetEntity cardSetEntity);
-    public Iterable<CardSetEntity> findAll();
+    void createCardSet(CardSet cardSet);
+    CardSet getById(String id);
+    void deleteCardSet(CardSet cardSet);
+    Iterable<CardSet> findAll();
 
 }

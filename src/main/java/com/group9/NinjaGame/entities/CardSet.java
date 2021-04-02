@@ -4,12 +4,14 @@ import com.group9.NinjaGame.models.Card;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "card_sets")
-public class CardSetEntity {
+public class CardSet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -42,8 +44,15 @@ public class CardSetEntity {
     @OneToOne(mappedBy = "selectedCardSet")
     private GameEntity gameEntity;
 
+    @Column(name = "temporary", nullable = false)
+    private boolean temporary;
 
-    public CardSetEntity() {
+    public CardSet() {
+    }
+
+    public CardSet(UUID id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public UUID getId() {
@@ -92,6 +101,18 @@ public class CardSetEntity {
 
     public void setCards(Set<CardEntity> cards) {
         this.cards = cards;
+    }
+
+    public void setCards(List<CardEntity> cards) {
+        this.cards = new HashSet<>(cards);
+    }
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
     }
 }
 

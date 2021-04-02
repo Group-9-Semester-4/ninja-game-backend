@@ -1,7 +1,5 @@
 package com.group9.NinjaGame.entities;
 
-import com.group9.NinjaGame.models.Game;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
@@ -40,9 +38,17 @@ public class GameEntity {
 
     @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "card_set_id", referencedColumnName = "id")
-    private CardSetEntity selectedCardSet;
+    private CardSet selectedCardSet;
 
     public GameEntity() {
+    }
+
+    public GameEntity(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+        this.id = null;
+        this.timeLimit = timeLimit;
+        this.singlePlayer = singlePlayer;
+        this.playingAlone = playingAlone;
+        this.selectedCardSet = null;
     }
 
     public UUID getId() {
@@ -101,11 +107,11 @@ public class GameEntity {
         this.playingAlone = playingAlone;
     }
 
-    public CardSetEntity getSelectedCardSet() {
+    public CardSet getSelectedCardSet() {
         return selectedCardSet;
     }
 
-    public void setSelectedCardSet(CardSetEntity cardSetEntity) {
-        this.selectedCardSet = cardSetEntity;
+    public void setSelectedCardSet(CardSet cardSet) {
+        this.selectedCardSet = cardSet;
     }
 }

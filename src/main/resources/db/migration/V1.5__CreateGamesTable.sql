@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS `games` (
         `minigame_attempts` INT NOT NULL DEFAULT 0,
         `singleplayer` BOOLEAN NOT NULL,
         `playing_alone` BOOLEAN NOT NULL,
-        FOREIGN KEY (card_set_id) REFERENCES card_sets (id) ON DELETE SET NULL)
+        FOREIGN KEY (card_set_id) REFERENCES card_sets (id))
         ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;

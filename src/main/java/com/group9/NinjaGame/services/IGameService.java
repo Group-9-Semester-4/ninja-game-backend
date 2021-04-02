@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IGameService {
-    Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone);
+    GameEntity initGame(int timeLimit, boolean singlePlayer, boolean playingAlone);
 
     Card draw(UUID uuid);
 
-    Game startGame(UUID uuid, List<UUID> unwantedCards);
-    Game startGame(UUID gameId, UUID cardSetId);
+    GameEntity startGame(UUID uuid, List<UUID> unwantedCards);
+    GameEntity startGame(UUID gameId, UUID cardSetId);
 
     List<CardEntity> removeDoneCard(UUID gameId, UUID cardId);
 

@@ -6,10 +6,10 @@ import com.group9.NinjaGame.models.Card;
 import java.util.List;
 
 public interface ICardService {
-    List<CardEntity> getAll();
     void addCard(CardEntity cardEntity);
     CardEntity getEntityById(String id);
     void deleteCard(CardEntity cardEntity);
     Iterable<CardEntity> findAll();
+    List<CardEntity> listAll();
 }
 

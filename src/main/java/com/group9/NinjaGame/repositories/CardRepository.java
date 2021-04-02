@@ -3,8 +3,10 @@ package com.group9.NinjaGame.repositories;
 import com.group9.NinjaGame.entities.CardEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -18,4 +20,7 @@ public interface CardRepository extends CrudRepository<CardEntity, UUID> {
      */
     @Query("SELECT c FROM CardEntity c WHERE c.points > 1")
     Iterable<CardEntity> getCustomCard();
+
+    @Query("SELECT c from CardEntity c where c.id in :unwantedCards")
+    Iterable<CardEntity> getCards(@Param("unwantedCards") List<UUID> unwantedCards);
 }

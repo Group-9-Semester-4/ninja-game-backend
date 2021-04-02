@@ -37,7 +37,7 @@ public class CardEntity {
     private String filepath;
 
     @ManyToMany(mappedBy = "cards")
-    Set<CardSetEntity> cardSets;
+    Set<CardSet> cardSets;
 
     public CardEntity() {
     }

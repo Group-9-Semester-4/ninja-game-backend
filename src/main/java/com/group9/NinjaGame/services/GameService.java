@@ -1,7 +1,7 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.entities.CardSetEntity;
+import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.GameEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.models.Game;
@@ -18,30 +18,25 @@ import java.util.*;
 public class GameService implements IGameService {
 
     private ICardService cardService;
-    private CardRepository repository;
+    private CardRepository cardRepository;
     private CardSetRepository cardSetRepository;
     private GameRepository gameRepository;
 
     @Autowired
-    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository repository, GameRepository gameRepository) {
+    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository cardRepository, GameRepository gameRepository) {
         this.cardService = cardService;
         this.cardSetRepository = cardSetRepository;
-        this.repository = repository;
+        this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
     }
 
     @Override
-    public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        Game game = new Game(timeLimit, singlePlayer, playingAlone);
-        GameEntity gameEntity = new GameEntity();
-        //might be performance heavyish, alternatives include MapStruct or Orika
-        BeanUtils.copyProperties(game, gameEntity, "selectedCardSet", "id");
-
+    public GameEntity initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+        GameEntity gameEntity = new GameEntity(timeLimit, singlePlayer, playingAlone);
 
         gameRepository.save(gameEntity);
 
-        game.setId(gameEntity.getId());
-        return game;
+        return gameEntity;
     }
 
     @Override
@@ -64,42 +59,42 @@ public class GameService implements IGameService {
         }
     }
     @Override
-    public Game startGame(UUID gameId, UUID cardSetId) {
+    public GameEntity startGame(UUID gameId, UUID cardSetId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardSetEntity> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
+        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
+
         GameEntity gameEntity = null;
-        Game g = new Game();
+
         if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            CardSetEntity cardSetEntity = cardSetEntityOptional.get();
-            gameEntity.setSelectedCardSet(cardSetEntity);
+            CardSet cardSet = cardSetEntityOptional.get();
+
+            gameEntity.setSelectedCardSet(cardSet);
             gameRepository.save(gameEntity);
-            BeanUtils.copyProperties(gameEntity, g);
         }
-        return g;
+
+        return gameEntity;
     }
 
     @Override
-    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
+    public GameEntity startGame(UUID gameId, List<UUID> unwantedCards) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         GameEntity gameEntity = null;
-        Game g = new Game();
+
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            BeanUtils.copyProperties(gameEntity, g);
+
+            gameEntity.setSelectedCardSet(createTemporaryCardSet(unwantedCards));
+
+            gameRepository.save(gameEntity);
         }
-        if (unwantedCards.size() == 0) return g;
-        for (UUID cardId : unwantedCards) {
-            g.removeCard(cardId);
-        }
-        gameEntity.setSelectedCardSet(g.getSelectedCardSet());
-        gameRepository.save(gameEntity);
-        return g;
+
+        return gameEntity;
     }
 
     public List<CardEntity> removeDoneCard(UUID gameId, UUID cardId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardEntity> cardEntity = repository.findById(cardId);
+        Optional<CardEntity> cardEntity = cardRepository.findById(cardId);
         CardEntity entity = null;
         GameEntity gameEntity = null;
         Game g = new Game();
@@ -122,6 +117,11 @@ public class GameService implements IGameService {
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
             BeanUtils.copyProperties(gameEntity, g);
+
+            if (gameEntity.getSelectedCardSet().isTemporary()){
+                cardSetRepository.delete(gameEntity.getSelectedCardSet());
+            }
+
             gameRepository.delete(gameEntity);
         }
         return g;
@@ -129,5 +129,14 @@ public class GameService implements IGameService {
 
     public Iterable<GameEntity> findAll() {
         return gameRepository.findAll();
+    }
+
+    protected CardSet createTemporaryCardSet(List<UUID> unwantedCards) {
+        List<CardEntity> cards = (List<CardEntity>) cardRepository.getCards(unwantedCards);
+
+        CardSet cardSet = new CardSet(UUID.randomUUID(), "temp");
+        cardSet.setCards(cards);
+
+        return cardSet;
     }
 }

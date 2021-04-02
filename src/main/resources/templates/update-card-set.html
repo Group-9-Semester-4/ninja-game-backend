@@ -9,8 +9,8 @@
 <body>
 <!-- gl -->
 <form action="#"
-      th:action="@{/admin/card-set/update/{id}(id=${cardSetEntity.id})}"
-      th:object="${cardSetEntity}"
+      th:action="@{/admin/card-set/update/{id}(id=${cardSet.id})}"
+      th:object="${cardSet}"
       method="post">
     <label for="name">Name</label>
     <input type="text" th:field="*{name}" id="name" placeholder="Name">
@@ -35,7 +35,7 @@
             th:text="${card.name}"
             th:value="${card.id}"
     />
-           <!--th:checked="${cardSetEntity.cards.contains(card)} ?  'checked'"-->
+           <!--th:checked="${cardSet.cards.contains(card)} ?  'checked'"-->
 
 
     <input type="submit" value="Update Card Set">

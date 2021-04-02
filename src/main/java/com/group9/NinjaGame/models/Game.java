@@ -1,16 +1,13 @@
 package com.group9.NinjaGame.models;
 
 import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.entities.CardSetEntity;
-import com.group9.NinjaGame.entities.GameEntity;
-import org.springframework.beans.BeanUtils;
+import com.group9.NinjaGame.entities.CardSet;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Game {
     private UUID id;
-    private CardSetEntity selectedCardSet;
+    private CardSet selectedCardSet;
     private int points;
     private int miniGameAttempts;
     private int cardsDone;
@@ -27,7 +24,7 @@ public class Game {
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;
         this.playingAlone = playingAlone;
-        this.selectedCardSet = new CardSetEntity();
+        this.selectedCardSet = new CardSet();
         this.miniGameAttempts = getMiniGameAttempts();
         this.cardsDone = getCardsDone();
     }
@@ -84,12 +81,12 @@ public class Game {
         this.playingAlone = playingAlone;
     }
 
-    public CardSetEntity getSelectedCardSet() {
+    public CardSet getSelectedCardSet() {
         return selectedCardSet;
     }
 
-    public void setSelectedCardSet(CardSetEntity cardSetEntity) {
-        this.selectedCardSet = cardSetEntity;
+    public void setSelectedCardSet(CardSet cardSet) {
+        this.selectedCardSet = cardSet;
     }
 
     public int getMiniGameAttempts() {
