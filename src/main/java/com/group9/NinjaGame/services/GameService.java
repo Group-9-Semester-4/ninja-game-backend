@@ -121,7 +121,7 @@ public class GameService implements IGameService {
         Game g = new Game();
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            BeanUtils.copyProperties(gameEntity, g, "selectedCardSet");
+            BeanUtils.copyProperties(gameEntity, g);
             gameRepository.delete(gameEntity);
         }
         return g;

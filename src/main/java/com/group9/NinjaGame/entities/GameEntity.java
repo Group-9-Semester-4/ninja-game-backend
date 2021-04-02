@@ -38,7 +38,7 @@ public class GameEntity {
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "card_set_id", referencedColumnName = "id")
     private CardSetEntity selectedCardSet;
 

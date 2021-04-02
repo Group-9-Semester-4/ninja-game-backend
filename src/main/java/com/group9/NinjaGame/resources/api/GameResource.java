@@ -46,7 +46,8 @@ public class GameResource {
 
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody ObjectNode json) {
-        Game g = gameService.initGame(json.get("timeLimit").asInt(), json.get("singlePlayer").asBoolean(), json.get("playingAlone").asBoolean());
+        Game g = gameService.initGame(json.get("timeLimit").asInt(),
+                json.get("singlePlayer").asBoolean(), json.get("playingAlone").asBoolean());
         return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
@@ -65,22 +66,23 @@ public class GameResource {
         return new ResponseEntity<>(g, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{uuid}/draw")
-    public ResponseEntity<?> drawCard(@PathVariable UUID uuid) {
-        if (gameService.draw(uuid) == null) {
-            return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.NO_CONTENT); // todo - make sure frontend knows about this behavior
+    @GetMapping(path = "/draw")
+    public ResponseEntity<?> drawCard(@RequestParam UUID gameId) {
+        if (gameService.draw(gameId) == null) {
+            return new ResponseEntity<>(gameService.finishGame(gameId), HttpStatus.NO_CONTENT); // todo - make sure frontend knows about this behavior
         } else {
-            return new ResponseEntity<>(gameService.draw(uuid), HttpStatus.OK);
+            return new ResponseEntity<>(gameService.draw(gameId), HttpStatus.OK);
         }
     }
 
 
-    @PostMapping(path = "/{uuid}/done", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> cardDone(@PathVariable UUID uuid, @RequestBody ObjectNode cardCompletedUUID) {
-        return new ResponseEntity<>(gameService.removeDoneCard(uuid, UUID.fromString(cardCompletedUUID.get("id").asText())), HttpStatus.OK);
+    @PostMapping(path = "/done", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cardDone(@RequestBody ObjectNode json) {
+        return new ResponseEntity<>(gameService.removeDoneCard(UUID.fromString(json.get("gameId").asText()),
+                UUID.fromString(json.get("cardId").asText())), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{uuid}/finish")
+    @PostMapping(path = "/finish")
     public ResponseEntity<?> finishGame(@PathVariable UUID uuid) {
         return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.OK);
     }

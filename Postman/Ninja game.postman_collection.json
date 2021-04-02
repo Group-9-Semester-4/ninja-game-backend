@@ -88,11 +88,18 @@
 		},
 		{
 			"name": "Draw a card",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
-					"raw": "localhost:8080/api/game/{{gameId}}/draw",
+					"raw": "localhost:8080/api/game/draw?gameId={{gameId}}",
 					"host": [
 						"localhost"
 					],
@@ -100,8 +107,18 @@
 					"path": [
 						"api",
 						"game",
-						"{{gameId}}",
 						"draw"
+					],
+					"query": [
+						{
+							"key": "gameId",
+							"value": "{{gameId}}"
+						},
+						{
+							"key": null,
+							"value": "",
+							"disabled": true
+						}
 					]
 				}
 			},
