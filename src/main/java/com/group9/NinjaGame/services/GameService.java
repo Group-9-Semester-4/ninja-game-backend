@@ -3,7 +3,7 @@ package com.group9.NinjaGame.services;
 import com.group9.NinjaGame.container.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
-import com.group9.NinjaGame.entities.GameEntity;
+import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
@@ -29,26 +29,26 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public GameEntity initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        GameEntity gameEntity = new GameEntity(timeLimit, singlePlayer, playingAlone);
+    public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+        Game game = new Game(timeLimit, singlePlayer, playingAlone);
 
-        gameRepository.save(gameEntity);
+        gameRepository.save(game);
 
-        return gameEntity;
+        return game;
     }
 
     @Override
-    public GameEntity startGame(UUID gameId, UUID cardSetId) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
+    public Game startGame(UUID gameId, UUID cardSetId) {
+        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
         Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
 
-        GameEntity gameEntity = null;
+        Game game = null;
 
         if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
+            game = gameEntityOptional.get();
             CardSet cardSet = cardSetEntityOptional.get();
 
-            gameEntity.setSelectedCardSet(cardSet);
+            game.setSelectedCardSet(cardSet);
 
             List<UUID> cardIds = new ArrayList<>();
 
@@ -58,28 +58,28 @@ public class GameService implements IGameService {
 
             GameContainer.getInstance().setGameCards(gameId, cardIds);
 
-            gameEntity = gameRepository.save(gameEntity);
+            game = gameRepository.save(game);
         }
 
-        return gameEntity;
+        return game;
     }
 
     @Override
-    public GameEntity startGame(UUID gameId, List<UUID> unwantedCards) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        GameEntity gameEntity = null;
+    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
+        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+        Game game = null;
 
         if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
+            game = gameEntityOptional.get();
 
             List<UUID> cards = (List<UUID>) cardRepository.getCardIds(unwantedCards);
 
             GameContainer.getInstance().setGameCards(gameId, cards);
 
-            gameEntity = gameRepository.save(gameEntity);
+            game = gameRepository.save(game);
         }
 
-        return gameEntity;
+        return game;
     }
 
     @Override
@@ -104,24 +104,24 @@ public class GameService implements IGameService {
         return cardIds.remove(cardId);
     }
 
-    public GameEntity finishGame(UUID gameId) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        GameEntity gameEntity;
+    public Game finishGame(UUID gameId) {
+        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+        Game game;
 
         GameContainer.getInstance().removeGame(gameId);
 
         if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
+            game = gameEntityOptional.get();
 
-            gameRepository.delete(gameEntity);
+            gameRepository.delete(game);
 
-            return gameEntity;
+            return game;
         }
 
         return null;
     }
 
-    public Iterable<GameEntity> findAll() {
+    public Iterable<Game> findAll() {
         return gameRepository.findAll();
     }
 }

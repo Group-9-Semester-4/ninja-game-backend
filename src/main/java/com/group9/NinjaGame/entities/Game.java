@@ -2,13 +2,11 @@ package com.group9.NinjaGame.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "games")
-public class GameEntity {
+public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -42,10 +40,10 @@ public class GameEntity {
     @JoinColumn(name = "card_set_id", referencedColumnName = "id")
     private CardSet selectedCardSet;
 
-    public GameEntity() {
+    public Game() {
     }
 
-    public GameEntity(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+    public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
         this.id = null;
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;

@@ -40,7 +40,7 @@ public class CardSet {
     Set<Card> cards;
 
     @OneToOne(mappedBy = "selectedCardSet")
-    private GameEntity gameEntity;
+    private Game game;
 
     @Column(name = "temporary", nullable = false)
     private boolean temporary;
