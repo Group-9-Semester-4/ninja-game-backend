@@ -11,8 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = false, prePostEnabled = true)
 public class WebMVCSecurity extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -27,12 +26,14 @@ public class WebMVCSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user1").password("{noop}user1Pass").authorities("ROLE_USER");
+        auth.inMemoryAuthentication().withUser("user").password("{noop}password").authorities("ROLE_USER");
     }
 
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/resources/**");
+        web.ignoring().antMatchers("/img/**");
+        web.ignoring().antMatchers("/api/**");
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.CardSetEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.repositories.CardRepository;
+import com.group9.NinjaGame.repositories.CardSetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,7 @@ public class CardService implements ICardService {
     }
 
     // wont be used later probably, just to give an idea how it works
+    // lag machine
     @Override
     public Card getById(String id) {
         Card card = null;
@@ -46,7 +49,6 @@ public class CardService implements ICardService {
         if (cardEntityOptional.isPresent()) {
             cardEntity = cardEntityOptional.get();
         }
-        //return card;
         return cardEntity;
     }
 
@@ -65,17 +67,14 @@ public class CardService implements ICardService {
         return cards;
     }
 
-    // TODO: validate
+    // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/
     public void addCard(CardEntity cardEntity) {
         repository.save(cardEntity);
-    }
-
-
-    public void updateCard(CardEntity cardEntity){
-        //repository.save(cardEntity);
     }
 
     public void deleteCard(CardEntity cardEntity){
         repository.delete(cardEntity);
     }
+
+
 }

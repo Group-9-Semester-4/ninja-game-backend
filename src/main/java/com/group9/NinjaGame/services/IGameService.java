@@ -1,5 +1,6 @@
 package com.group9.NinjaGame.services;
 
+import com.group9.NinjaGame.entities.CardEntity;
 import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.models.Game;
 
@@ -12,8 +13,9 @@ public interface IGameService {
     Card draw(UUID uuid);
 
     Game startGame(UUID uuid, List<UUID> unwantedCards);
+    Game startGame(UUID gameId, UUID cardSetId);
 
-    List<Card> removeDoneCard(UUID gameId, UUID cardId);
+    List<CardEntity> removeDoneCard(UUID gameId, UUID cardId);
 
     Game finishGame(UUID uuid);
 }

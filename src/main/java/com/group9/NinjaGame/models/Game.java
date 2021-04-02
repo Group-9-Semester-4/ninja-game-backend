@@ -1,12 +1,15 @@
 package com.group9.NinjaGame.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.CardSetEntity;
+import com.group9.NinjaGame.entities.GameEntity;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game {
     private UUID id;
-    private List<Card> allCards;
+    private CardSetEntity selectedCardSet;
     private int points;
     private int miniGameAttempts;
     private int cardsDone;
@@ -14,26 +17,43 @@ public class Game {
     private boolean singlePlayer;
     private boolean playingAlone;
 
+
+
+
     public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        this.id = UUID.randomUUID();
+        this.id = null;
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;
         this.playingAlone = playingAlone;
-        this.allCards = new ArrayList<Card>();
+        this.selectedCardSet = new CardSetEntity();
         this.miniGameAttempts = getMiniGameAttempts();
         this.cardsDone = getCardsDone();
     }
 
-    public List<Card> getAllCards() {
-        return allCards;
+    public static Game fromGameEntity(GameEntity g) {
+        Game game = new Game(g.getTimeLimit(), g.isSinglePlayer(), g.isPlayingAlone());
+        game.setId(g.getId());
+        return game;
     }
 
-    public void setAllCards(List<Card> allCards) {
-        this.allCards = allCards;
+    public List<CardEntity> getAllCards() {
+        if(selectedCardSet.getCards() != null){
+            return new ArrayList<>(selectedCardSet.getCards());
+        }
+        return null;
+    }
+
+    public void setAllCards(List<CardEntity> cards) {
+        Set set = new HashSet<CardEntity>(cards);
+        this.selectedCardSet.setCards(set);
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public int getPoints() {
@@ -68,6 +88,14 @@ public class Game {
         this.playingAlone = playingAlone;
     }
 
+    public CardSetEntity getSelectedCardSet() {
+        return selectedCardSet;
+    }
+
+    public void setSelectedCardSet(CardSetEntity cardSetEntity) {
+        this.selectedCardSet = cardSetEntity;
+    }
+
     public int getMiniGameAttempts() {
         if (points == 0 || cardsDone == 0) {
             return 0;
@@ -88,6 +116,6 @@ public class Game {
     }
 
     public void removeCard(UUID id) {
-        this.allCards.removeIf(card -> card.getId().equals(id));
+        this.selectedCardSet.getCards().removeIf(card -> card.getId().equals(id));
     }
 }

@@ -2,6 +2,7 @@ package com.group9.NinjaGame.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -34,6 +35,9 @@ public class CardEntity {
 
     @Column(name = "filepath", nullable = false, unique = false)
     private String filepath;
+
+    @ManyToMany(mappedBy = "cards")
+    Set<CardSetEntity> cardSets;
 
     public CardEntity() {
     }
