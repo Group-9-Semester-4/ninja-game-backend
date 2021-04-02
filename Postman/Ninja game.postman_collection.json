@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2cddbf5a-7b6f-4f8a-967f-71f619fbf4e7",
+		"_postman_id": "8daa93d9-e545-4333-9e8e-1bacbf27a9eb",
 		"name": "Ninja game",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -39,8 +39,17 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"gameId\": \"{{gameId}}\",\r\n    \"cardSetId\": \"{{cardsetId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:8080/api/game/{{gameId}}/{{cardsetId}}/start",
+					"raw": "localhost:8080/api/game/start",
 					"host": [
 						"localhost"
 					],
@@ -48,8 +57,6 @@
 					"path": [
 						"api",
 						"game",
-						"{{gameId}}",
-						"{{cardsetId}}",
 						"start"
 					]
 				}
@@ -63,7 +70,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[\r\n    \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\",\r\n     \"bdaf6069-9238-11eb-85d0-00163e4e5003\"\r\n]",
+					"raw": "{\r\n    \"gameId\": \"{{gameId}}\",\r\n    \"unwantedCards\": [\r\n        \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\",\r\n        \"bdaf6069-9238-11eb-85d0-00163e4e5003\"\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -71,7 +78,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/{{gameId}}/start",
+					"raw": "localhost:8080/api/game/start",
 					"host": [
 						"localhost"
 					],
@@ -79,7 +86,6 @@
 					"path": [
 						"api",
 						"game",
-						"{{gameId}}",
 						"start"
 					]
 				}
@@ -131,7 +137,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\" : \"{{cardId}}\"\r\n}",
+					"raw": "{\r\n    \"cardId\" : \"{{cardId}}\",\r\n    \"gameId\": \"{{gameId}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -139,7 +145,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/{{gameId}}/done",
+					"raw": "localhost:8080/api/game/card-done",
 					"host": [
 						"localhost"
 					],
@@ -147,8 +153,7 @@
 					"path": [
 						"api",
 						"game",
-						"{{gameId}}",
-						"done"
+						"card-done"
 					]
 				}
 			},
@@ -159,15 +164,24 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"gameId\": \"{{gameId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:8080/game/{{gameId}}/finish",
+					"raw": "localhost:8080/api/game/finish",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"game",
-						"{{gameId}}",
 						"finish"
 					]
 				}

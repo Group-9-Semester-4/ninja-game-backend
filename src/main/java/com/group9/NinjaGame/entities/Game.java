@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "games")
-public class GameEntity {
+public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -36,14 +36,14 @@ public class GameEntity {
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne
     @JoinColumn(name = "card_set_id", referencedColumnName = "id")
     private CardSet selectedCardSet;
 
-    public GameEntity() {
+    public Game() {
     }
 
-    public GameEntity(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+    public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
         this.id = null;
         this.timeLimit = timeLimit;
         this.singlePlayer = singlePlayer;
@@ -113,5 +113,12 @@ public class GameEntity {
 
     public void setSelectedCardSet(CardSet cardSet) {
         this.selectedCardSet = cardSet;
+    }
+
+    public int getGameAttempts() {
+        if (points == 0 || cardsDone == 0) {
+            return 0;
+        }
+        return points / cardsDone;
     }
 }

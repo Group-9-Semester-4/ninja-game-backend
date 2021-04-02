@@ -1,13 +1,12 @@
 package com.group9.NinjaGame.resources.api;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
-import com.group9.NinjaGame.entities.GameEntity;
-import com.group9.NinjaGame.models.Game;
-import com.group9.NinjaGame.models.params.CardDoneParam;
-import com.group9.NinjaGame.models.params.InitGameParam;
-import com.group9.NinjaGame.models.params.StartGameParam;
+import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.models.CardDoneParam;
+import com.group9.NinjaGame.models.FinishGameParam;
+import com.group9.NinjaGame.models.InitGameParam;
+import com.group9.NinjaGame.models.StartGameParam;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
@@ -47,14 +46,14 @@ public class GameResource {
 
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
-        GameEntity game = gameService.initGame(param.timeLimit, param.singlePlayer, param.playingAlone);
+        Game game = gameService.initGame(param.timeLimit, param.singlePlayer, param.playingAlone);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
 
-        GameEntity game;
+        Game game;
 
         if (param.cardSetId != null) {
             game = gameService.startGame(param.gameId, param.cardSetId);
@@ -67,11 +66,13 @@ public class GameResource {
 
     @GetMapping(path = "/draw")
     public ResponseEntity<?> drawCard(@RequestParam UUID gameId) {
-        if (gameService.draw(gameId) == null) {
-            return new ResponseEntity<>(gameService.finishGame(gameId), HttpStatus.NO_CONTENT); // todo - make sure frontend knows about this behavior
-        } else {
-            return new ResponseEntity<>(gameService.draw(gameId), HttpStatus.OK);
+        Card card = gameService.draw(gameId);
+
+        if (card == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
+
+        return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
 
@@ -80,15 +81,15 @@ public class GameResource {
         return new ResponseEntity<>(gameService.removeDoneCard(param.gameId, param.cardId), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/finish")
-    public ResponseEntity<?> finishGame(@PathVariable UUID uuid) {
-        return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.OK);
+    @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+        return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 
 
     @GetMapping(path = "/cards")
     public ResponseEntity<?> getAllCards() {
-        Iterable<CardEntity> allCards = cardService.findAll();
+        Iterable<Card> allCards = cardService.findAll();
         return new ResponseEntity<>(allCards, HttpStatus.OK);
     }
 
@@ -100,7 +101,7 @@ public class GameResource {
 
     @GetMapping(path = "/games")
     public ResponseEntity<?> getAllGames() {
-        Iterable<GameEntity> allGames = gameService.findAll();
+        Iterable<Game> allGames = gameService.findAll();
         return new ResponseEntity<>(allGames, HttpStatus.OK);
     }
 

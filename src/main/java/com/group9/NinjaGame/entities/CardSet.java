@@ -1,7 +1,5 @@
 package com.group9.NinjaGame.entities;
 
-import com.group9.NinjaGame.models.Card;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
@@ -39,10 +37,10 @@ public class CardSet {
             name = "card_set_cards",
             joinColumns = @JoinColumn(name = "card_set_id"),
             inverseJoinColumns = @JoinColumn(name = "card_id"))
-    Set<CardEntity> cards;
+    Set<Card> cards;
 
     @OneToOne(mappedBy = "selectedCardSet")
-    private GameEntity gameEntity;
+    private Game game;
 
     @Column(name = "temporary", nullable = false)
     private boolean temporary;
@@ -95,15 +93,15 @@ public class CardSet {
         this.multiplayerSuitable = multiplayerSuitable;
     }
 
-    public Set<CardEntity> getCards() {
+    public Set<Card> getCards() {
         return cards;
     }
 
-    public void setCards(Set<CardEntity> cards) {
+    public void setCards(Set<Card> cards) {
         this.cards = cards;
     }
 
-    public void setCards(List<CardEntity> cards) {
+    public void setCards(List<Card> cards) {
         this.cards = new HashSet<>(cards);
     }
 
