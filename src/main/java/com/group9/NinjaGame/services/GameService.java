@@ -103,6 +103,7 @@ public class GameService implements IGameService {
         return cardIds.remove(cardId);
     }
 
+    // TODO: Change to using only GameEntity, clear the HashMap
     public Game finishGame(UUID gameId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
         GameEntity gameEntity = null;
