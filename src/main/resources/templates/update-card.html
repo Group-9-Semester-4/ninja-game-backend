@@ -8,8 +8,8 @@
 </head>
 <body>
 <form action="#"
-      th:action="@{/admin/card/update/{id}(id=${cardEntity.id})}"
-      th:object="${cardEntity}"
+      th:action="@{/admin/card/update/{id}(id=${card.id})}"
+      th:object="${card}"
       enctype="multipart/form-data"
       method="post">
     <label for="name">Name</label>
@@ -35,7 +35,7 @@
     <input type="file" name="file" id="file">
     <input type="submit" value="Update Card">
 </form>
-<img th:src="@{/img/card_pictures/{filepath}(filepath=${cardEntity.filepath})}" />
+<img th:src="@{/img/card_pictures/{filepath}(filepath=${card.filepath})}" />
 <img src="/img/card_pictures/backrolls.png" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 </body>

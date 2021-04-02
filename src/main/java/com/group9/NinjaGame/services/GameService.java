@@ -1,9 +1,8 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.GameEntity;
-import com.group9.NinjaGame.models.Card;
 import com.group9.NinjaGame.models.Game;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
@@ -42,21 +41,22 @@ public class GameService implements IGameService {
     @Override
     public Card draw(UUID gameId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        GameEntity gameEntity = null;
+
         if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
+
+            GameEntity gameEntity = gameEntityOptional.get();
+
+            if (gameEntity.getSelectedCardSet().getCards().size() == 0) {
+                return null;
+            } else {
+                Set<Card> cardEntities = gameEntity.getSelectedCardSet().getCards();
+                List<Card> arr = new ArrayList<>(cardEntities);
+
+                return arr.get(new Random().nextInt(arr.size()));
+            }
         }
 
-        if (gameEntity.getSelectedCardSet().getCards().size() == 0) {
-            return null;
-        } else {
-            Set<CardEntity> cardEntities = gameEntity.getSelectedCardSet().getCards();
-            List<CardEntity> arr = new ArrayList<>(cardEntities);
-            CardEntity cardEntity = arr.get(new Random().nextInt(arr.size()));
-            Card card = new Card();
-            BeanUtils.copyProperties(cardEntity, card);
-            return card;
-        }
+        return null;
     }
     @Override
     public GameEntity startGame(UUID gameId, UUID cardSetId) {
@@ -94,10 +94,10 @@ public class GameService implements IGameService {
         return gameEntity;
     }
 
-    public List<CardEntity> removeDoneCard(UUID gameId, UUID cardId) {
+    public List<Card> removeDoneCard(UUID gameId, UUID cardId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardEntity> cardEntity = cardRepository.findById(cardId);
-        CardEntity entity = null;
+        Optional<Card> cardEntity = cardRepository.findById(cardId);
+        Card entity = null;
         GameEntity gameEntity = null;
         Game g = new Game();
         if (gameEntityOptional.isPresent() && cardEntity.isPresent()) {
@@ -134,12 +134,12 @@ public class GameService implements IGameService {
     }
 
     protected CardSet createTemporaryCardSet(List<UUID> unwantedCards) {
-        List<CardEntity> cards = (List<CardEntity>) cardRepository.getCards(unwantedCards);
+        List<Card> cards = (List<Card>) cardRepository.getCards(unwantedCards);
 
         CardSet cardSet = new CardSet(UUID.randomUUID(), "temp");
         cardSet.setCards(cards);
 
-        cardSetRepository.save(cardSet);
+        cardSet = cardSetRepository.save(cardSet);
 
         return cardSet;
     }

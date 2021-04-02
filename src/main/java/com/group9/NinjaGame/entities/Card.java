@@ -1,32 +1,48 @@
-package com.group9.NinjaGame.models;
+package com.group9.NinjaGame.entities;
 
-import com.group9.NinjaGame.entities.CardEntity;
-
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.util.Set;
 import java.util.UUID;
 
+@Entity
+@Table(name = "cards")
 public class Card {
-    public UUID id;
-    public String name;
-    public String description;
-    public int points;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    @Column(name = "name", length = 50, nullable = false, unique = false)
+    @NotBlank(message = "Name is mandatory")
+    private String name;
+
+    @Column(name = "description", length = 50, nullable = false, unique = false)
+    @NotBlank(message = "Description is mandatory")
+    private String description;
+
+    @Column(name = "points", length = 10, nullable = false, unique = false)
+    @NotBlank(message = "Number of points is mandatory")
+    private int points;
+
+    @Column(name = "difficulty_type", nullable = false, unique = false)
+    @NotBlank(message = "This field is mandatory")
     private int difficultyType;
+
+    @Column(name = "difficulty", nullable = false, unique = false)
+    @NotBlank(message = "This field is mandatory")
     private int difficulty;
+
+    @Column(name = "filepath", nullable = false, unique = false)
     private String filepath;
+
+    @ManyToMany(mappedBy = "cards")
+    Set<CardSet> cardSets;
+
     private static final String absoluteServerPath = "http://localhost:8080/img/card_pictures/";
 
     public Card() {
     }
-
-    public Card(String name, String description, int points, int difficultyType, int difficulty, String filepath) {
-        this.id = UUID.randomUUID();
-        this.name = name;
-        this.description = description;
-        this.points = points;
-        this.difficultyType = difficultyType;
-        this.difficulty = difficulty;
-        this.filepath = absoluteServerPath + filepath;
-    }
-
 
     public UUID getId() {
         return id;
@@ -83,5 +99,8 @@ public class Card {
     public void setFilepath(String filepath) {
         this.filepath = filepath;
     }
-}
 
+    public String getAbsoluteServerPath() {
+        return absoluteServerPath + filepath;
+    }
+}

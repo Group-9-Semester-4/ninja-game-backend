@@ -1,6 +1,6 @@
 package com.group9.NinjaGame.resources.admin;
 
-import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
@@ -39,7 +39,7 @@ public class CardSetResource {
 
     @GetMapping("/create")
     public String showCreateCardSetForm(Model model) {
-        List<CardEntity> cardList = cardService.listAll();
+        List<Card> cardList = cardService.listAll();
         model.addAttribute("cardSet", new CardSet());
         model.addAttribute("allCards", cardList);
         return "add-card-set";
@@ -57,7 +57,7 @@ public class CardSetResource {
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") String id, Model model) {
         CardSet cardSet = new CardSet();
-        List<CardEntity> cardList = new ArrayList<>();
+        List<Card> cardList = new ArrayList<>();
 
         try {
             cardSet = cardSetService.getById(id);
@@ -66,7 +66,7 @@ public class CardSetResource {
             throw new IllegalArgumentException("Invalid card set Id:" + id);
         }
 
-        for(CardEntity c : cardSet.getCards()){
+        for(Card c : cardSet.getCards()){
             cardList.removeIf(card -> card.getId().equals(c.getId()));
         }
 
@@ -102,7 +102,7 @@ public class CardSetResource {
     @GetMapping("/manage-cards")
     //TODO: doesn't update automatically
     public String listCards(Model model) {
-        List<CardEntity> cardList = cardService.listAll();
+        List<Card> cardList = cardService.listAll();
         model.addAttribute("cards", cardList);
         return "manage-cards";
     }

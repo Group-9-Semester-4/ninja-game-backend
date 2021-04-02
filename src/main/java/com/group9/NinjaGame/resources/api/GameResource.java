@@ -1,10 +1,8 @@
 package com.group9.NinjaGame.resources.api;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.GameEntity;
-import com.group9.NinjaGame.models.Game;
 import com.group9.NinjaGame.models.params.CardDoneParam;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
@@ -67,11 +65,13 @@ public class GameResource {
 
     @GetMapping(path = "/draw")
     public ResponseEntity<?> drawCard(@RequestParam UUID gameId) {
-        if (gameService.draw(gameId) == null) {
-            return new ResponseEntity<>(gameService.finishGame(gameId), HttpStatus.NO_CONTENT); // todo - make sure frontend knows about this behavior
-        } else {
-            return new ResponseEntity<>(gameService.draw(gameId), HttpStatus.OK);
+        Card card = gameService.draw(gameId);
+
+        if (card == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
+
+        return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
 
@@ -88,7 +88,7 @@ public class GameResource {
 
     @GetMapping(path = "/cards")
     public ResponseEntity<?> getAllCards() {
-        Iterable<CardEntity> allCards = cardService.findAll();
+        Iterable<Card> allCards = cardService.findAll();
         return new ResponseEntity<>(allCards, HttpStatus.OK);
     }
 

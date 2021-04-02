@@ -1,6 +1,6 @@
 package com.group9.NinjaGame.models;
 
-import com.group9.NinjaGame.entities.CardEntity;
+import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 
 import java.util.*;
@@ -29,15 +29,15 @@ public class Game {
         this.cardsDone = getCardsDone();
     }
 
-    public List<CardEntity> getAllCards() {
+    public List<Card> getAllCards() {
         if(selectedCardSet.getCards() != null){
             return new ArrayList<>(selectedCardSet.getCards());
         }
         return null;
     }
 
-    public void setAllCards(List<CardEntity> cards) {
-        Set set = new HashSet<CardEntity>(cards);
+    public void setAllCards(List<Card> cards) {
+        Set set = new HashSet<Card>(cards);
         this.selectedCardSet.setCards(set);
     }
 

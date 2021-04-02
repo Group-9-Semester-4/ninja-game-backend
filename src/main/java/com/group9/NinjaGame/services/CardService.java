@@ -1,11 +1,9 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.models.Card;
+import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.repositories.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.util.ListUtils;
 
 import java.util.*;
 
@@ -21,32 +19,31 @@ public class CardService implements ICardService {
 
 
     @Override
-    public CardEntity getEntityById(String id) {
-        Card card = null;
+    public Card getEntityById(String id) {
         UUID uuid = UUID.fromString(id);
-        Optional<CardEntity> cardEntityOptional = repository.findById(uuid);
-        CardEntity cardEntity = null;
+        Optional<Card> cardEntityOptional = repository.findById(uuid);
+        Card card = null;
         if (cardEntityOptional.isPresent()) {
-            cardEntity = cardEntityOptional.get();
+            card = cardEntityOptional.get();
         }
-        return cardEntity;
+        return card;
     }
 
     // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/
-    public void addCard(CardEntity cardEntity) {
-        repository.save(cardEntity);
+    public void addCard(Card card) {
+        repository.save(card);
     }
 
-    public void deleteCard(CardEntity cardEntity){
-        repository.delete(cardEntity);
+    public void deleteCard(Card card){
+        repository.delete(card);
     }
 
-    public Iterable<CardEntity> findAll() {
+    public Iterable<Card> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public List<CardEntity> listAll() {
-        return (List<CardEntity>) ListUtils.toList(findAll());
+    public List<Card> listAll() {
+        return (List<Card>) findAll();
     }
 }
