@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1 class="display-1"> Create a card </h1>
-<form action="#" th:action="@{/admin/card/add}" enctype="multipart/form-data" th:object="${cardEntity}" method="post">
+<form action="#" th:action="@{/admin/card/add}" enctype="multipart/form-data" th:object="${card}" method="post">
     <div class="form-group">
         <label for="name">Name</label>
         <input type="text" class="form-control" th:field="*{name}" id="name" placeholder="Name">
@@ -25,9 +25,9 @@
         <span th:if="${#fields.hasErrors('points')}" th:errors="*{points}"></span>
     </div>
     <div class="form-group">
-        <label for="difficulty_type">Difficulty type</label>
-        <input type="number" class="form-control" th:field="*{difficulty_type}" id="difficulty_type" placeholder="Difficulty type">
-        <span th:if="${#fields.hasErrors('difficulty_type')}" th:errors="*{difficulty_type}"></span>
+        <label for="difficultyType">Difficulty type</label>
+        <input type="number" class="form-control" th:field="*{difficultyType}" id="difficultyType" placeholder="Difficulty type">
+        <span th:if="${#fields.hasErrors('difficultyType')}" th:errors="*{difficultyType}"></span>
     </div>
     <div class="form-group">
         <label for="difficulty">Difficulty</label>
