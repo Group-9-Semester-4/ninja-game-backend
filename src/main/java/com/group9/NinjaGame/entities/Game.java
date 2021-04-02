@@ -1,14 +1,12 @@
 package com.group9.NinjaGame.entities;
 
-import com.group9.NinjaGame.models.Game;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Entity
 @Table(name = "games")
-public class GameEntity {
+public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -38,19 +36,19 @@ public class GameEntity {
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "card_set_id", referencedColumnName = "id")
-    private CardSetEntity selectedCardSet;
+    private CardSet selectedCardSet;
 
-    public GameEntity() {
+    public Game() {
     }
 
-    public static GameEntity fromGameEntity(Game game) {
-        GameEntity gameEntity = new GameEntity();
-        gameEntity.setTimeLimit(game.getTimeLimit());
-        gameEntity.setSinglePlayer(game.isSingleplayer());
-        gameEntity.setPlayingAlone(game.isPlayingAlone());
-        return gameEntity;
+    public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+        this.id = null;
+        this.timeLimit = timeLimit;
+        this.singlePlayer = singlePlayer;
+        this.playingAlone = playingAlone;
+        this.selectedCardSet = null;
     }
 
     public UUID getId() {
@@ -109,11 +107,18 @@ public class GameEntity {
         this.playingAlone = playingAlone;
     }
 
-    public CardSetEntity getSelectedCardSet() {
+    public CardSet getSelectedCardSet() {
         return selectedCardSet;
     }
 
-    public void setSelectedCardSet(CardSetEntity cardSetEntity) {
-        this.selectedCardSet = cardSetEntity;
+    public void setSelectedCardSet(CardSet cardSet) {
+        this.selectedCardSet = cardSet;
+    }
+
+    public int getGameAttempts() {
+        if (points == 0 || cardsDone == 0) {
+            return 0;
+        }
+        return points / cardsDone;
     }
 }

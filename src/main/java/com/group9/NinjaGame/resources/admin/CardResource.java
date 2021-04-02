@@ -1,11 +1,7 @@
 package com.group9.NinjaGame.resources.admin;
 
-import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.entities.CardSetEntity;
-import com.group9.NinjaGame.models.Card;
-import com.group9.NinjaGame.models.CardSet;
+import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.services.ICardService;
-import com.group9.NinjaGame.services.ICardSetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,7 +41,7 @@ public class CardResource {
     @GetMapping("/manage")
     //TODO: doesn't update automatically
     public String listCards(Model model) {
-        List<Card> cardList = cardService.getAll();
+        List<Card> cardList = cardService.listAll();
         model.addAttribute("cards", cardList);
         return "manage-cards";
     }
@@ -53,13 +49,13 @@ public class CardResource {
 
 
     @GetMapping("/create")
-    public String showCreateCardForm(CardEntity cardEntity) {
+    public String showCreateCardForm(Card card) {
         return "add-card";
     }
 
 
     @PostMapping("/add")
-    public String addCard(@RequestParam ("file") MultipartFile file, @Valid CardEntity cardEntity, BindingResult result) {
+    public String addCard(@RequestParam ("file") MultipartFile file, @Valid Card card, BindingResult result) {
         if ((result.hasErrors()) || (file.isEmpty())) {
             return "add-card";
         }
@@ -70,8 +66,8 @@ public class CardResource {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        cardEntity.setFilepath(fileName);
-        cardService.addCard(cardEntity);
+        card.setFilepath(fileName);
+        cardService.addCard(card);
         return "redirect:/admin/card/index";
     }
 
@@ -79,23 +75,23 @@ public class CardResource {
 
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") String id, Model model) {
-        CardEntity cardEntity = null;
+        Card card = null;
         try {
-            cardEntity = cardService.getEntityById(id);
+            card = cardService.getEntityById(id);
         }
         catch (Exception e){
             throw new IllegalArgumentException("Invalid card Id:" + id);
         }
 
-        model.addAttribute("cardEntity", cardEntity);
+        model.addAttribute("cardEntity", card);
         return "update-card";
     }
 
     @PostMapping("/update/{id}")
-    public String updateCard(@RequestParam ("file") MultipartFile file, @PathVariable("id") String id, @Valid CardEntity cardEntity,
+    public String updateCard(@RequestParam ("file") MultipartFile file, @PathVariable("id") String id, @Valid Card card,
                              BindingResult result, Model model) {
         if (result.hasErrors()) {
-            cardEntity.setId(UUID.fromString(id));
+            card.setId(UUID.fromString(id));
             return "update-card";
         }
         String oldPath = cardService.getEntityById(id).getFilepath();
@@ -104,26 +100,26 @@ public class CardResource {
             try {
                 Path path = Paths.get(UPLOAD_DIR + fileName);
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                cardEntity.setFilepath(fileName);
+                card.setFilepath(fileName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        cardService.addCard(cardEntity);
-        return "redirect:/admin/card/index";
+        cardService.addCard(card);
+        return "redirect:/admin/card/manage";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteCard(@PathVariable("id") String id, Model model) {
-        CardEntity cardEntity = null;
+        Card card = null;
         try {
-            cardEntity = cardService.getEntityById(id);
+            card = cardService.getEntityById(id);
         }
         catch (Exception e){
             throw new IllegalArgumentException("Invalid card Id:" + id);
         }
 
-        cardService.deleteCard(cardEntity);
+        cardService.deleteCard(card);
         return "redirect:/admin/card/index";
     }
 

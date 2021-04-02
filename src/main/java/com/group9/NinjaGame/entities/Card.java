@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "cards")
-public class CardEntity {
+public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +27,7 @@ public class CardEntity {
 
     @Column(name = "difficulty_type", nullable = false, unique = false)
     @NotBlank(message = "This field is mandatory")
-    private int difficulty_type;
+    private int difficultyType;
 
     @Column(name = "difficulty", nullable = false, unique = false)
     @NotBlank(message = "This field is mandatory")
@@ -37,9 +37,11 @@ public class CardEntity {
     private String filepath;
 
     @ManyToMany(mappedBy = "cards")
-    Set<CardSetEntity> cardSets;
+    Set<CardSet> cardSets;
 
-    public CardEntity() {
+    private static final String absoluteServerPath = "http://localhost:8080/img/card_pictures/";
+
+    public Card() {
     }
 
     public UUID getId() {
@@ -74,12 +76,12 @@ public class CardEntity {
         this.points = points;
     }
 
-    public int getDifficulty_type() {
-        return difficulty_type;
+    public int getDifficultyType() {
+        return difficultyType;
     }
 
-    public void setDifficulty_type(int difficulty_type) {
-        this.difficulty_type = difficulty_type;
+    public void setDifficultyType(int difficultyType) {
+        this.difficultyType = difficultyType;
     }
 
     public int getDifficulty() {
@@ -96,5 +98,9 @@ public class CardEntity {
 
     public void setFilepath(String filepath) {
         this.filepath = filepath;
+    }
+
+    public String getAbsoluteServerPath() {
+        return absoluteServerPath + filepath;
     }
 }

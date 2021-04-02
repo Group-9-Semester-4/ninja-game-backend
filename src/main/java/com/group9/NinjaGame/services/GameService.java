@@ -1,10 +1,9 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.entities.CardSetEntity;
-import com.group9.NinjaGame.entities.GameEntity;
-import com.group9.NinjaGame.models.Card;
-import com.group9.NinjaGame.models.Game;
+import com.group9.NinjaGame.container.GameContainer;
+import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.entities.CardSet;
+import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
@@ -17,136 +16,112 @@ import java.util.*;
 public class GameService implements IGameService {
 
     private ICardService cardService;
-    private CardRepository repository;
+    private CardRepository cardRepository;
     private CardSetRepository cardSetRepository;
     private GameRepository gameRepository;
 
     @Autowired
-    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository repository, GameRepository gameRepository) {
+    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository cardRepository, GameRepository gameRepository) {
         this.cardService = cardService;
         this.cardSetRepository = cardSetRepository;
-        this.repository = repository;
+        this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
     }
 
     @Override
     public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
         Game game = new Game(timeLimit, singlePlayer, playingAlone);
-        GameEntity gameEntity = GameEntity.fromGameEntity(game);
 
-        gameRepository.save(gameEntity);
+        gameRepository.save(game);
 
-        game.setId(gameEntity.getId());
+        return game;
+    }
+
+    @Override
+    public Game startGame(UUID gameId, UUID cardSetId) {
+        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
+
+        Game game = null;
+
+        if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
+            game = gameEntityOptional.get();
+            CardSet cardSet = cardSetEntityOptional.get();
+
+            game.setSelectedCardSet(cardSet);
+
+            List<UUID> cardIds = new ArrayList<>();
+
+            for (Card card : cardSet.getCards()) {
+                cardIds.add(card.getId());
+            }
+
+            GameContainer.getInstance().setGameCards(gameId, cardIds);
+
+            game = gameRepository.save(game);
+        }
+
+        return game;
+    }
+
+    @Override
+    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
+        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+        Game game = null;
+
+        if (gameEntityOptional.isPresent()) {
+            game = gameEntityOptional.get();
+
+            List<UUID> cards = (List<UUID>) cardRepository.getCardIds(unwantedCards);
+
+            GameContainer.getInstance().setGameCards(gameId, cards);
+
+            game = gameRepository.save(game);
+        }
+
         return game;
     }
 
     @Override
     public Card draw(UUID gameId) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        GameEntity gameEntity = null;
-        if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
+
+        List<UUID> cardIds = GameContainer.getInstance().getGameCards(gameId);
+
+        if (cardIds != null) {
+            UUID drawnCardId = cardIds.get(new Random().nextInt(cardIds.size()));
+
+            Optional<Card> cardOptional = cardRepository.findById(drawnCardId);
+
+            return cardOptional.orElse(null);
         }
 
-        if (gameEntity.getSelectedCardSet().getCards().size() == 0) {
-            return null;
-        } else {
-            Set<CardEntity> cardEntities = gameEntity.getSelectedCardSet().getCards();
-            List<CardEntity> arr = new ArrayList<>(cardEntities);
-            CardEntity cardEntity = arr.get(new Random().nextInt(arr.size()));
-            return Card.fromCardEntity(cardEntity);
-        }
+        return null;
     }
 
-    @Override
-    public Game startGame(UUID gameId, UUID cardSetId) {
+    public boolean removeDoneCard(UUID gameId, UUID cardId) {
+        List<UUID> cardIds = GameContainer.getInstance().getGameCards(gameId);
 
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardSetEntity> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
-        GameEntity gameEntity = null;
-        Game g = null;
-        if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
-        }
-        if (cardSetEntityOptional.isPresent()) {
-            CardSetEntity cardSetEntity = cardSetEntityOptional.get();
-            gameEntity.setSelectedCardSet(cardSetEntity);
-            gameRepository.save(gameEntity);
-            g.setSelectedCardSet(cardSetEntity);
-
-        }
-        return g;
-    }
-
-    //not tested
-    @Override
-    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        GameEntity gameEntity = null;
-        Game g = null;
-        if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
-        }
-        if (unwantedCards.size() == 0) return g;
-        for (UUID cardId : unwantedCards) {
-            g.removeCard(cardId);
-        }
-        gameEntity.setSelectedCardSet(g.getSelectedCardSet());
-        gameRepository.save(gameEntity);
-        return g;
-    }
-
-
-    //TODO: most likely not working
-    public List<CardEntity> removeDoneCard(UUID gameId, UUID cardId) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardEntity> cardEntity = repository.findById(cardId);
-        CardEntity entity = null;
-        GameEntity gameEntity = null;
-        Game g = null;
-        if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
-        }
-
-        if (cardEntity.isPresent()) {
-            entity = cardEntity.get();
-        }
-        Card card = Card.fromCardEntity(entity);
-
-        g.removeCard(card.getId());
-        g.setPoints(g.getPoints() + card.getPoints());
-        g.setCardsDone(g.getCardsDone() + 1);
-        return g.getAllCards();
+        return cardIds.remove(cardId);
     }
 
     public Game finishGame(UUID gameId) {
-        Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        GameEntity gameEntity = null;
-        Game g = null;
+        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+        Game game;
+
+        GameContainer.getInstance().removeGame(gameId);
+
         if (gameEntityOptional.isPresent()) {
-            gameEntity = gameEntityOptional.get();
-            g = Game.fromGameEntity(gameEntity);
-            gameRepository.delete(gameEntity);
+            game = gameEntityOptional.get();
+
+            gameRepository.delete(game);
+
+            return game;
         }
-        return g;
+
+        return null;
     }
 
-    public List<Card> fromIterator(Iterable<CardEntity> cardEntities) {
-        List<Card> cards = new ArrayList<Card>();
-        Iterator<CardEntity> itr = cardEntities.iterator();
-        while (itr.hasNext()) {
-            cards.add(Card.fromCardEntity(itr.next()));
-        }
-        return cards;
-    }
-
-    // Unused but kept as an example for Custom Queries.
-    public List<Card> getAllCustom() {
-        Iterable<CardEntity> cardEntities = repository.getCustomCard();
-
-        return fromIterator(cardEntities);
+    public Iterable<Game> findAll() {
+        return gameRepository.findAll();
     }
 }

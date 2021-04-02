@@ -1,8 +1,7 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.entities.CardEntity;
-import com.group9.NinjaGame.models.Card;
-import com.group9.NinjaGame.models.Game;
+import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.entities.Game;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,8 @@ public interface IGameService {
     Game startGame(UUID uuid, List<UUID> unwantedCards);
     Game startGame(UUID gameId, UUID cardSetId);
 
-    List<CardEntity> removeDoneCard(UUID gameId, UUID cardId);
+    boolean removeDoneCard(UUID gameId, UUID cardId);
 
     Game finishGame(UUID uuid);
+    Iterable<Game> findAll();
 }

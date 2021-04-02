@@ -1,8 +1,14 @@
 package com.group9.NinjaGame.resources.api;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.group9.NinjaGame.models.Game;
+import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.entities.CardSet;
+import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.models.CardDoneParam;
+import com.group9.NinjaGame.models.FinishGameParam;
+import com.group9.NinjaGame.models.InitGameParam;
+import com.group9.NinjaGame.models.StartGameParam;
 import com.group9.NinjaGame.services.ICardService;
+import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,9 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/game")
@@ -29,54 +33,76 @@ public class GameResource {
 
     ICardService cardService;
     IGameService gameService;
+    ICardSetService cardSetService;
 
     @Autowired
-    public GameResource(ICardService cardService, IGameService gameService) {
+    public GameResource(ICardService cardService, IGameService gameService, ICardSetService cardSetService) {
         this.cardService = cardService;
         this.gameService = gameService;
+        this.cardSetService = cardSetService;
+
     }
 
 
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> initGame(@RequestBody ObjectNode json) {
-        Game g = gameService.initGame(json.get("timeLimit").asInt(), json.get("singlePlayer").asBoolean(), json.get("playingAlone").asBoolean());
-        return new ResponseEntity<>(g, HttpStatus.OK);
+    public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
+        Game game = gameService.initGame(param.timeLimit, param.singlePlayer, param.playingAlone);
+        return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
+    @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
 
+        Game game;
 
-    @GetMapping(path = "/{uuid}/draw")
-    public ResponseEntity<?> drawCard(@PathVariable UUID uuid) {
-        if (gameService.draw(uuid) == null) {
-            return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.NO_CONTENT); // todo - make sure frontend knows about this behavior
+        if (param.cardSetId != null) {
+            game = gameService.startGame(param.gameId, param.cardSetId);
         } else {
-            return new ResponseEntity<>(gameService.draw(uuid), HttpStatus.OK);
+            game = gameService.startGame(param.gameId, param.unwantedCards);
         }
+
+        return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{uuid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@PathVariable UUID uuid, @RequestBody List<String> unwantedCards) {
-        List<UUID> unwantedCardsUUIDs = unwantedCards.stream().map(s -> UUID.fromString(s)).collect(Collectors.toList());
-        Game g = gameService.startGame(uuid, unwantedCardsUUIDs);
-        return new ResponseEntity<>(g, HttpStatus.OK);
+    @GetMapping(path = "/draw")
+    public ResponseEntity<?> drawCard(@RequestParam UUID gameId) {
+        Card card = gameService.draw(gameId);
+
+        if (card == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
 
-    @PostMapping(path = "/{uuid}/done", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> cardDone(@PathVariable UUID uuid, @RequestBody ObjectNode cardCompletedUUID) {
-        return new ResponseEntity<>(gameService.removeDoneCard(uuid, UUID.fromString(cardCompletedUUID.get("id").asText())), HttpStatus.OK);
+    @PostMapping(path = "/card-done", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cardDone(@RequestBody CardDoneParam param) {
+        return new ResponseEntity<>(gameService.removeDoneCard(param.gameId, param.cardId), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{uuid}/finish")
-    public ResponseEntity<?> finishGame(@PathVariable UUID uuid) {
-        return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.OK);
+    @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+        return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 
-    //TODO:change pathvariable to requestbody
-    @PostMapping(path = "/{gameid}/{cardsetid}/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@PathVariable String gameid, @PathVariable UUID cardsetid) {
-        Game g = gameService.startGame(UUID.fromString(gameid), cardsetid);
-        return new ResponseEntity<>(g, HttpStatus.OK);
+
+    @GetMapping(path = "/cards")
+    public ResponseEntity<?> getAllCards() {
+        Iterable<Card> allCards = cardService.findAll();
+        return new ResponseEntity<>(allCards, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/cardsets")
+    public ResponseEntity<?> getAllCardsets() {
+        Iterable<CardSet> allCardsets = cardSetService.findAll();
+        return new ResponseEntity<>(allCardsets, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/games")
+    public ResponseEntity<?> getAllGames() {
+        Iterable<Game> allGames = gameService.findAll();
+        return new ResponseEntity<>(allGames, HttpStatus.OK);
     }
 
 

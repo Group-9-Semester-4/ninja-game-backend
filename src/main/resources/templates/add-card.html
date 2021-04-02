@@ -7,7 +7,7 @@
     <link th:href="@{/css/main.css}" rel="stylesheet">
 </head>
 <body>
-<form action="#" th:action="@{/admin/card/add}" enctype="multipart/form-data" th:object="${cardEntity}" method="post">
+<form action="#" th:action="@{/admin/card/add}" enctype="multipart/form-data" th:object="${card}" method="post">
     <label for="name">Name</label>
     <input type="text" th:field="*{name}" id="name" placeholder="Name">
     <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
