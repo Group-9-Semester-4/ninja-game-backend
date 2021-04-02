@@ -4,11 +4,9 @@ import com.group9.NinjaGame.container.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.GameEntity;
-import com.group9.NinjaGame.models.Game;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -89,12 +87,15 @@ public class GameService implements IGameService {
 
         List<UUID> cardIds = GameContainer.getInstance().getGameCards(gameId);
 
-        UUID drawnCardId = cardIds.get(new Random().nextInt(cardIds.size()));
+        if (cardIds != null) {
+            UUID drawnCardId = cardIds.get(new Random().nextInt(cardIds.size()));
 
-        Optional<Card> cardOptional = cardRepository.findById(drawnCardId);
+            Optional<Card> cardOptional = cardRepository.findById(drawnCardId);
 
-        return cardOptional.orElse(null);
+            return cardOptional.orElse(null);
+        }
 
+        return null;
     }
 
     public boolean removeDoneCard(UUID gameId, UUID cardId) {
@@ -103,22 +104,21 @@ public class GameService implements IGameService {
         return cardIds.remove(cardId);
     }
 
-    // TODO: Change to using only GameEntity, clear the HashMap
-    public Game finishGame(UUID gameId) {
+    public GameEntity finishGame(UUID gameId) {
         Optional<GameEntity> gameEntityOptional = gameRepository.findById(gameId);
-        GameEntity gameEntity = null;
-        Game g = new Game();
+        GameEntity gameEntity;
+
+        GameContainer.getInstance().removeGame(gameId);
+
         if (gameEntityOptional.isPresent()) {
             gameEntity = gameEntityOptional.get();
-            BeanUtils.copyProperties(gameEntity, g);
-
-            if (gameEntity.getSelectedCardSet().isTemporary()){
-                cardSetRepository.delete(gameEntity.getSelectedCardSet());
-            }
 
             gameRepository.delete(gameEntity);
+
+            return gameEntity;
         }
-        return g;
+
+        return null;
     }
 
     public Iterable<GameEntity> findAll() {

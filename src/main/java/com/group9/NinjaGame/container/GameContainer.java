@@ -25,4 +25,8 @@ public class GameContainer {
     public void setGameCards(UUID gameId, List<UUID> cards) {
         gameCards.put(gameId, cards);
     }
+
+    public void removeGame(UUID gameId) {
+        gameCards.remove(gameId);
+    }
 }

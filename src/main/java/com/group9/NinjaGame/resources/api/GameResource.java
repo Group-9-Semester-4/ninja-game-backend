@@ -3,9 +3,10 @@ package com.group9.NinjaGame.resources.api;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.GameEntity;
-import com.group9.NinjaGame.models.params.CardDoneParam;
-import com.group9.NinjaGame.models.params.InitGameParam;
-import com.group9.NinjaGame.models.params.StartGameParam;
+import com.group9.NinjaGame.models.CardDoneParam;
+import com.group9.NinjaGame.models.FinishGameParam;
+import com.group9.NinjaGame.models.InitGameParam;
+import com.group9.NinjaGame.models.StartGameParam;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
@@ -80,9 +81,9 @@ public class GameResource {
         return new ResponseEntity<>(gameService.removeDoneCard(param.gameId, param.cardId), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/finish")
-    public ResponseEntity<?> finishGame(@PathVariable UUID uuid) {
-        return new ResponseEntity<>(gameService.finishGame(uuid), HttpStatus.OK);
+    @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+        return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 
 
