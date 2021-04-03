@@ -39,8 +39,8 @@ public class CardSet {
             inverseJoinColumns = @JoinColumn(name = "card_id"))
     Set<Card> cards;
 
-    @OneToOne(mappedBy = "selectedCardSet")
-    private Game game;
+    @OneToMany(mappedBy = "selectedCardSet")
+    private List<Game> games;
 
     @Column(name = "temporary", nullable = false)
     private boolean temporary;

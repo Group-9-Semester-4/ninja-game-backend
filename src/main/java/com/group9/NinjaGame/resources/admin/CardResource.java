@@ -83,7 +83,7 @@ public class CardResource {
             throw new IllegalArgumentException("Invalid card Id:" + id);
         }
 
-        model.addAttribute("cardEntity", card);
+        model.addAttribute("card", card);
         return "update-card";
     }
 
