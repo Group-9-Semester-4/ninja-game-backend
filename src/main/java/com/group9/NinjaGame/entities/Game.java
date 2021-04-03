@@ -12,27 +12,27 @@ public class Game {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "points", length = 50, nullable = false, unique = false)
+    @Column(name = "points", length = 50, nullable = false)
     @NotBlank(message = "Points are mandatory")
     private int points;
 
-    @Column(name = "time_limit", length = 50, nullable = false, unique = false)
+    @Column(name = "time_limit", length = 50, nullable = false)
     @NotBlank(message = "Time limit is mandatory")
     private int timeLimit;
 
-    @Column(name = "cards_done", length = 50, nullable = false, unique = false)
+    @Column(name = "cards_done", length = 50, nullable = false)
     @NotBlank(message = "This field is mandatory")
     private int cardsDone;
 
-    @Column(name = "minigame_attempts", length = 50, nullable = false, unique = false)
+    @Column(name = "minigame_attempts", length = 50, nullable = false)
     @NotBlank(message = "This is mandatory")
     private int miniGameAttempts;
 
-    @Column(name = "singleplayer", nullable = false, unique = false)
+    @Column(name = "multiplayer", nullable = false)
     @NotBlank(message = "This is mandatory")
-    private boolean singlePlayer;
+    private boolean multiPlayer;
 
-    @Column(name = "playing_alone", nullable = false, unique = false)
+    @Column(name = "playing_alone", nullable = false)
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
@@ -43,10 +43,10 @@ public class Game {
     public Game() {
     }
 
-    public Game(int timeLimit, boolean singlePlayer, boolean playingAlone) {
+    public Game(int timeLimit, boolean multiPlayer, boolean playingAlone) {
         this.id = null;
         this.timeLimit = timeLimit;
-        this.singlePlayer = singlePlayer;
+        this.multiPlayer = multiPlayer;
         this.playingAlone = playingAlone;
         this.selectedCardSet = null;
     }
@@ -91,12 +91,12 @@ public class Game {
         this.miniGameAttempts = miniGameAttempts;
     }
 
-    public boolean isSinglePlayer() {
-        return singlePlayer;
+    public boolean isMultiPlayer() {
+        return multiPlayer;
     }
 
-    public void setSinglePlayer(boolean singlePlayer) {
-        this.singlePlayer = singlePlayer;
+    public void setMultiPlayer(boolean singlePlayer) {
+        this.multiPlayer = singlePlayer;
     }
 
     public boolean isPlayingAlone() {

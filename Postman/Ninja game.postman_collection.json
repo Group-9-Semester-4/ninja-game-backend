@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"timeLimit\" : 60,\r\n    \"singlePlayer\" : \"true\",\r\n    \"playingAlone\" : \"true\"\r\n}",
+					"raw": "{\r\n    \"timeLimit\" : 60,\r\n    \"multiPlayer\" : \"true\",\r\n    \"playingAlone\" : \"true\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -7,7 +7,7 @@ public class InitGameParam {
     @NotBlank(message = "timeLimit is mandatory")
     public int timeLimit;
 
-    public boolean singlePlayer;
+    public boolean multiPlayer;
 
     public boolean playingAlone;
 

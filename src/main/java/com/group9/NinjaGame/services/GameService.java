@@ -29,8 +29,8 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        Game game = new Game(timeLimit, singlePlayer, playingAlone);
+    public Game initGame(int timeLimit, boolean multiPlayer, boolean playingAlone) {
+        Game game = new Game(timeLimit, multiPlayer, playingAlone);
 
         gameRepository.save(game);
 

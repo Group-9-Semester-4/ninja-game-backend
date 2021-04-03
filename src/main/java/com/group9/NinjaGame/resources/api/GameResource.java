@@ -46,7 +46,7 @@ public class GameResource {
 
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
-        Game game = gameService.initGame(param.timeLimit, param.singlePlayer, param.playingAlone);
+        Game game = gameService.initGame(param.timeLimit, param.multiPlayer, param.playingAlone);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
