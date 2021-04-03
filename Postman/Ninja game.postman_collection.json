@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"timeLimit\" : 60,\r\n    \"multiPlayer\" : \"true\",\r\n    \"playingAlone\" : \"true\"\r\n}",
+					"raw": "{\r\n    \"timeLimit\" : 60,\r\n    \"multiPlayer\" : \"true\",\r\n    \"playingAlone\" : \"true\",\r\n    \"lobbyCode\": \"123456\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,15 +20,42 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/init",
+					"raw": "{{host}}/api/game/init",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
 						"init"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Join Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"lobbyCode\": \"123456\",\r\n    \"userName\": \"Player1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/game/join",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"game",
+						"join"
 					]
 				}
 			},
@@ -49,11 +76,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/start",
+					"raw": "{{host}}/api/game/start",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
@@ -78,11 +104,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/start",
+					"raw": "{{host}}/api/game/start",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
@@ -105,11 +130,10 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/draw?gameId={{gameId}}",
+					"raw": "{{host}}/api/game/draw?gameId={{gameId}}",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
@@ -145,11 +169,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/card-done",
+					"raw": "{{host}}/api/game/card-done",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
@@ -174,11 +197,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/game/finish",
+					"raw": "{{host}}/api/game/finish",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
@@ -194,11 +216,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/game/games",
+					"raw": "{{host}}/api/game/games",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
@@ -214,11 +235,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/game/cards",
+					"raw": "{{host}}/api/game/cards",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",
@@ -234,11 +254,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/game/cardsets",
+					"raw": "{{host}}/api/game/cardsets",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
-					"port": "8080",
 					"path": [
 						"api",
 						"game",

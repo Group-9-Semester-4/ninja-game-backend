@@ -1,5 +1,9 @@
 package com.group9.NinjaGame.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.group9.NinjaGame.container.GameContainer;
+import com.group9.NinjaGame.models.GameInfo;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
@@ -7,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "games")
 public class Game {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -36,6 +41,7 @@ public class Game {
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "card_set_id")
     private CardSet selectedCardSet;
@@ -120,5 +126,9 @@ public class Game {
             return 0;
         }
         return points / cardsDone;
+    }
+
+    public GameInfo getGameInfo() {
+        return GameContainer.getInstance().getGameInfo(this.getId());
     }
 }

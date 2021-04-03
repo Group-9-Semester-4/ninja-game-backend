@@ -3,10 +3,7 @@ package com.group9.NinjaGame.resources.api;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
-import com.group9.NinjaGame.models.params.CardDoneParam;
-import com.group9.NinjaGame.models.params.FinishGameParam;
-import com.group9.NinjaGame.models.params.InitGameParam;
-import com.group9.NinjaGame.models.params.StartGameParam;
+import com.group9.NinjaGame.models.params.*;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
@@ -46,9 +43,16 @@ public class GameResource {
 
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
-        Game game = gameService.initGame(param.timeLimit, param.multiPlayer, param.playingAlone);
+        Game game = gameService.initGame(param);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
+
+    @PostMapping(path = "/join", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> joinGame(@RequestBody JoinGameParam param) {
+        Game game = gameService.joinGame(param);
+        return new ResponseEntity<>(game, HttpStatus.OK);
+    }
+
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {

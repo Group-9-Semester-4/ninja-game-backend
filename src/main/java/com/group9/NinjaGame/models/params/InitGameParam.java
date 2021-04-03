@@ -11,4 +11,6 @@ public class InitGameParam {
 
     public boolean playingAlone;
 
+    public String lobbyCode;
+
 }
