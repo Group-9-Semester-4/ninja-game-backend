@@ -9,7 +9,7 @@ public class Player {
 
     public String name;
 
-    //@JsonIgnore
+    @JsonIgnore
     public UUID sessionId;
 
     public Player(String name, UUID sessionId) {
