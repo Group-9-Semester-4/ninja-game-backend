@@ -43,10 +43,17 @@ public class GameService implements IGameService {
         Game game = new Game(param.timeLimit, param.multiPlayer, param.playingAlone);
 
         game = gameRepository.save(game);
-        
-        if (game.isMultiPlayer()) {
-            multiplayerGameService.initGame(game.getId(), param.lobbyCode);
+
+        UUID gameId = game.getId();
+        GameInfo gameInfo;
+
+        if (param.multiPlayer) {
+            gameInfo = new GameInfo(gameId, param.lobbyCode);
+        } else {
+            gameInfo = new GameInfo(gameId);
         }
+
+        gameContainer.initGame(gameId, gameInfo);
 
         return game;
     }
@@ -70,7 +77,14 @@ public class GameService implements IGameService {
             game.setSelectedCardSet(cardSet);
             game = gameRepository.save(game);
 
-            multiplayerGameService.startGame(param.gameId, cards);
+            GameInfo gameInfo = gameContainer.getGameInfo(game.getId());
+
+            gameInfo.started = true;
+            gameInfo.remainingCards = cards;
+
+            if (game.isMultiPlayer()) {
+                multiplayerGameService.startGame(param.gameId, gameInfo);
+            }
 
             return game;
         }

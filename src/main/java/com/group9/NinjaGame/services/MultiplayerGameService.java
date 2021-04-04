@@ -45,20 +45,9 @@ public class MultiplayerGameService implements IMultiplayerGameService {
         this.namespace.addEventListener("leave", LeaveGameParam.class, onLeave());
     }
 
-    public void initGame(UUID gameId, String lobbyCode) {
-
-        GameInfo gameInfo = new GameInfo(gameId, lobbyCode);
-
-        gameContainer.initGame(gameId, gameInfo);
-    }
 
     @Override
-    public void startGame(UUID gameId, List<Card> cards) {
-        GameInfo gameInfo = gameContainer.getGameInfo(gameId);
-
-        gameInfo.started = true;
-        gameInfo.remainingCards = cards;
-
+    public void startGame(UUID gameId, GameInfo gameInfo) {
         namespace.getRoomOperations(gameId.toString()).sendEvent("start", gameInfo);
     }
 
@@ -82,7 +71,7 @@ public class MultiplayerGameService implements IMultiplayerGameService {
         return ((client, param, ackRequest) -> {
             GameInfo gameInfo = gameContainer.getGameInfo(param.lobbyCode);
 
-            if (gameInfo != null && !gameInfo.started) {
+            if (gameInfo != null && !gameInfo.started && gameInfo.multiPlayer) {
                 UUID gameId = gameInfo.gameId;
 
                 Player player = new Player(param.userName, client.getSessionId());

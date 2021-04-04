@@ -18,6 +18,8 @@ public class GameInfo {
 
     public boolean started;
 
+    public boolean multiPlayer;
+
     public GameInfo(UUID gameId, String lobbyCode) {
 
         this.gameId = gameId;
@@ -26,6 +28,18 @@ public class GameInfo {
         remainingCards = new LinkedList<>();
         players = new LinkedList<>();
         started = false;
+        multiPlayer = true;
+    }
+
+    public GameInfo(UUID gameId) {
+
+        this.gameId = gameId;
+        this.lobbyCode = null;
+
+        remainingCards = new LinkedList<>();
+        players = new LinkedList<>();
+        started = false;
+        multiPlayer = false;
     }
 
     public boolean removeCardById(UUID cardId) {
