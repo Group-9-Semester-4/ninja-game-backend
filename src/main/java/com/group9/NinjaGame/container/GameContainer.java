@@ -1,32 +1,51 @@
 package com.group9.NinjaGame.container;
 
+import com.group9.NinjaGame.models.GameInfo;
+import com.group9.NinjaGame.models.Player;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class GameContainer {
 
     private static final GameContainer instance = new GameContainer();
 
-    private final HashMap<UUID, List<UUID>> gameCards;
+    private final HashMap<UUID, GameInfo> games;
 
     private GameContainer() {
-        gameCards = new HashMap<>();
+        games = new HashMap<>();
     }
 
     public static GameContainer getInstance() {
         return instance;
     }
 
-    public List<UUID> getGameCards(UUID gameId) {
-        return gameCards.get(gameId);
+    public void initGame(UUID gameId, GameInfo gameInfo) {
+        games.put(gameId, gameInfo);
     }
 
-    public void setGameCards(UUID gameId, List<UUID> cards) {
-        gameCards.put(gameId, cards);
+    public boolean joinGame(UUID gameId, Player player) {
+        GameInfo gameInfo = games.get(gameId);
+
+        return gameInfo.players.add(player);
+    }
+
+    public GameInfo getGameInfo(UUID gameId) {
+        return games.get(gameId);
+    }
+
+
+    public GameInfo getGameInfo(String lobbyCode) {
+        for (GameInfo info : games.values()) {
+            if (info.lobbyCode.equals(lobbyCode)) {
+                return info;
+            }
+        }
+
+        return null;
     }
 
     public void removeGame(UUID gameId) {
-        gameCards.remove(gameId);
+        games.remove(gameId);
     }
 }

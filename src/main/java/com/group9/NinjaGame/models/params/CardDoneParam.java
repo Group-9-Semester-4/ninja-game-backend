@@ -1,4 +1,4 @@
-package com.group9.NinjaGame.models;
+package com.group9.NinjaGame.models.params;
 
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
