@@ -11,8 +11,6 @@ import java.util.UUID;
 public interface IGameService {
     Game initGame(InitGameParam param);
 
-    Game joinGame(JoinGameParam param);
-
     Card draw(UUID uuid);
 
     Game startGame(UUID uuid, List<UUID> unwantedCards);

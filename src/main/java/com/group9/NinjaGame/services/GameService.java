@@ -49,27 +49,6 @@ public class GameService implements IGameService {
         return game;
     }
 
-    public Game joinGame(JoinGameParam param) {
-
-        GameInfo gameInfo = gameContainer.getGameInfo(param.lobbyCode);
-
-        if (gameInfo != null) {
-            Optional<Game> gameEntityOptional = gameRepository.findById(gameInfo.gameId);
-
-            if (gameEntityOptional.isPresent()) {
-                Player player = new Player(param.userName);
-
-                multiplayerGameService.joinGame(gameInfo.gameId, player);
-
-                return gameEntityOptional.get();
-            }
-
-        }
-
-        return null;
-    }
-
-
     @Override
     public Game startGame(UUID gameId, UUID cardSetId) {
         Optional<Game> gameEntityOptional = gameRepository.findById(gameId);

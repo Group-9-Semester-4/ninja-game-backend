@@ -34,34 +34,6 @@
 			"response": []
 		},
 		{
-			"name": "Join Game",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"lobbyCode\": \"123456\",\r\n    \"userName\": \"Player1\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{host}}/api/game/join",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"game",
-						"join"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "1st Start game with cardset",
 			"request": {
 				"method": "POST",

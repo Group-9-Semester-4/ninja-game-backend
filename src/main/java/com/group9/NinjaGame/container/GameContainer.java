@@ -27,7 +27,16 @@ public class GameContainer {
     public boolean joinGame(UUID gameId, Player player) {
         GameInfo gameInfo = games.get(gameId);
 
-        return gameInfo.players.add(player);
+        if (!gameInfo.started) {
+
+            if (gameInfo.players.contains(player)) {
+                return false;
+            }
+
+            return gameInfo.players.add(player);
+        }
+
+        return false;
     }
 
     public GameInfo getGameInfo(UUID gameId) {

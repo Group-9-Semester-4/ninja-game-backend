@@ -10,7 +10,5 @@ public interface IMultiplayerGameService {
 
     void initGame(UUID gameId, String lobbyCode);
 
-    boolean joinGame(UUID gameId, Player player);
-
     void startGame(UUID gameId, List<Card> cards);
 }

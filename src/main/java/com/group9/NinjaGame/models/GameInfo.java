@@ -30,8 +30,18 @@ public class GameInfo {
 
     public boolean removeCardById(UUID cardId) {
         for (Card card : remainingCards) {
-            if (card.getId() == cardId) {
+            if (card.getId().equals(cardId)) {
                 return remainingCards.remove(card);
+            }
+        }
+
+        return false;
+    }
+
+    public boolean removePlayer(UUID sessionId) {
+        for (Player player : players) {
+            if (player.sessionId.equals(sessionId)) {
+                return players.remove(player);
             }
         }
 

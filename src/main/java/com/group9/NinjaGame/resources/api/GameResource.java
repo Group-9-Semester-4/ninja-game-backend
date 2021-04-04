@@ -47,12 +47,6 @@ public class GameResource {
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/join", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> joinGame(@RequestBody JoinGameParam param) {
-        Game game = gameService.joinGame(param);
-        return new ResponseEntity<>(game, HttpStatus.OK);
-    }
-
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
