@@ -1,5 +1,6 @@
 package com.group9.NinjaGame.services;
 
+import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import com.group9.NinjaGame.container.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
@@ -8,6 +9,7 @@ import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.JoinGameParam;
+import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
@@ -49,45 +51,31 @@ public class GameService implements IGameService {
         return game;
     }
 
-    @Override
-    public Game startGame(UUID gameId, UUID cardSetId) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
-
-        Game game = null;
+    public Game startGame(StartGameParam param) {
+        Optional<Game> gameEntityOptional = gameRepository.findById(param.gameId);
+        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
 
         if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
+            Game game = gameEntityOptional.get();
             CardSet cardSet = cardSetEntityOptional.get();
 
+            List<Card> cards = new ArrayList<>();
+
+            for (Card card : cardSet.getCards()) {
+                if (!param.unwantedCards.contains(card.getId())) {
+                    cards.add(card);
+                }
+            }
+
             game.setSelectedCardSet(cardSet);
-
-            List<Card> cards = new ArrayList<>(cardSet.getCards());
-
             game = gameRepository.save(game);
 
-            multiplayerGameService.startGame(gameId, cards);
+            multiplayerGameService.startGame(param.gameId, cards);
+
+            return game;
         }
 
-        return game;
-    }
-
-    @Override
-    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Game game = null;
-
-        if (gameEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
-
-            game = gameRepository.save(game);
-
-            List<Card> cards = (List<Card>) cardRepository.getCards(unwantedCards);
-
-            multiplayerGameService.startGame(gameId, cards);
-        }
-
-        return game;
+        return null;
     }
 
     @Override

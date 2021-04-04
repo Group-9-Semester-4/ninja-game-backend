@@ -34,41 +34,13 @@
 			"response": []
 		},
 		{
-			"name": "1st Start game with cardset",
+			"name": "Start game",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"gameId\": \"{{gameId}}\",\r\n    \"cardSetId\": \"{{cardsetId}}\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{host}}/api/game/start",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"game",
-						"start"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "2nd Start game + unwanted cards",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"gameId\": \"{{gameId}}\",\r\n    \"unwantedCards\": [\r\n        \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\",\r\n        \"bdaf6069-9238-11eb-85d0-00163e4e5003\"\r\n    ]\r\n}",
+					"raw": "{\r\n    \"gameId\": \"{{gameId}}\",\r\n    \"cardSetId\": \"{{cardsetId}}\",\r\n    \"unwantedCards\": [\r\n        \"3b7f7b62-831b-11eb-b3ef-00163e4e5003\",\r\n        \"88a2caf3-953f-11eb-85d0-00163e4e5003\"\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -40,24 +40,16 @@ public class GameResource {
 
     }
 
-
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
         Game game = gameService.initGame(param);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
-
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
 
-        Game game;
-
-        if (param.cardSetId != null) {
-            game = gameService.startGame(param.gameId, param.cardSetId);
-        } else {
-            game = gameService.startGame(param.gameId, param.unwantedCards);
-        }
+        Game game = gameService.startGame(param);
 
         return new ResponseEntity<>(game, HttpStatus.OK);
     }

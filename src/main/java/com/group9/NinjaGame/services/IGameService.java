@@ -4,6 +4,7 @@ import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.JoinGameParam;
+import com.group9.NinjaGame.models.params.StartGameParam;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,8 +14,7 @@ public interface IGameService {
 
     Card draw(UUID uuid);
 
-    Game startGame(UUID uuid, List<UUID> unwantedCards);
-    Game startGame(UUID gameId, UUID cardSetId);
+    Game startGame(StartGameParam param);
 
     boolean removeDoneCard(UUID gameId, UUID cardId);
 
