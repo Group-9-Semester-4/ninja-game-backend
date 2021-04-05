@@ -7,6 +7,15 @@
     <link th:href="@{/css/main.css}" rel="stylesheet">
 </head>
 <body>
+<h2 class="display-2">Update a card set</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+        </div>
+
+    </div>
+</div>
+
 <!-- gl -->
 <form action="#"
       th:action="@{/admin/card-set/update/{id}(id=${cardSet.id})}"
@@ -40,6 +49,16 @@
 
     <input type="submit" value="Update Card Set">
 </form>
+<button class="btn btn-danger" style="margin-top: 2em;" onclick="confirmAction()">Go back (loses changes)</button>
+<script>
+    // todo refactor to one js file
+    function confirmAction() {
+        var ask = window.confirm("Are you sure you want to leave? Your changes will not be saved.");
+        if (ask) {
+            window.location.href = "/";
+        }
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 </body>
 </html>
