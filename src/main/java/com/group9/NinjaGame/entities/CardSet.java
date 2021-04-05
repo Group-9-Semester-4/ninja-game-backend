@@ -32,7 +32,8 @@ public class CardSet {
     @NotBlank(message = "This is mandatory")
     private boolean multiplayerSuitable;
 
-    @ManyToMany
+    // TODO: Fix this usage of eager load, it's not the best, should be FetchType.Lazy
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "card_set_cards",
             joinColumns = @JoinColumn(name = "card_set_id"),

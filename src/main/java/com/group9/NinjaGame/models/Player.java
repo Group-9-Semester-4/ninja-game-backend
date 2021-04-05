@@ -1,7 +1,5 @@
 package com.group9.NinjaGame.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.Objects;
 import java.util.UUID;
 
@@ -9,7 +7,6 @@ public class Player {
 
     public String name;
 
-    @JsonIgnore
     public UUID sessionId;
 
     public Player(String name, UUID sessionId) {

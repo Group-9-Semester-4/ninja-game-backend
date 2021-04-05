@@ -12,8 +12,11 @@ public class GameContainer {
 
     private final HashMap<UUID, GameInfo> games;
 
+    private final HashMap<UUID, GameInfo> playerLobby;
+
     private GameContainer() {
         games = new HashMap<>();
+        playerLobby = new HashMap<>();
     }
 
     public static GameContainer getInstance() {
@@ -29,8 +32,14 @@ public class GameContainer {
 
         if (!gameInfo.started) {
 
+            playerLobby.put(player.sessionId, gameInfo);
+
             if (gameInfo.players.contains(player)) {
                 return false;
+            }
+
+            if (gameInfo.players.isEmpty()) {
+                gameInfo.lobbyOwnerId = player.sessionId;
             }
 
             return gameInfo.players.add(player);
@@ -46,7 +55,7 @@ public class GameContainer {
 
     public GameInfo getGameInfo(String lobbyCode) {
         for (GameInfo info : games.values()) {
-            if (info.lobbyCode.equals(lobbyCode)) {
+            if (info.multiPlayer && info.lobbyCode.equals(lobbyCode)) {
                 return info;
             }
         }
@@ -56,5 +65,20 @@ public class GameContainer {
 
     public void removeGame(UUID gameId) {
         games.remove(gameId);
+    }
+
+    public GameInfo getPlayerLobby(UUID playerId) {
+        return playerLobby.get(playerId);
+    }
+
+    public void removePlayerFromLobby(UUID playerId, GameInfo info) {
+        info.players.removeIf(player -> player.sessionId.equals(playerId));
+
+        if (info.lobbyOwnerId.equals(playerId) && !info.players.isEmpty()) {
+            Player player = info.players.get(0);
+            info.lobbyOwnerId = player.sessionId;
+        }
+
+        playerLobby.remove(playerId);
     }
 }

@@ -25,16 +25,14 @@ public class GameService implements IGameService {
     private CardRepository cardRepository;
     private CardSetRepository cardSetRepository;
     private GameRepository gameRepository;
-    private IMultiplayerGameService multiplayerGameService;
     private GameContainer gameContainer;
 
     @Autowired
-    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository cardRepository, GameRepository gameRepository, IMultiplayerGameService multiplayerGameService) {
+    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository cardRepository, GameRepository gameRepository) {
         this.cardService = cardService;
         this.cardSetRepository = cardSetRepository;
         this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
-        this.multiplayerGameService = multiplayerGameService;
         gameContainer = GameContainer.getInstance();
     }
 
@@ -81,10 +79,6 @@ public class GameService implements IGameService {
 
             gameInfo.started = true;
             gameInfo.remainingCards = cards;
-
-            if (game.isMultiPlayer()) {
-                multiplayerGameService.startGame(param.gameId, gameInfo);
-            }
 
             return game;
         }

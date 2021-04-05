@@ -1,39 +1,44 @@
 package com.group9.NinjaGame.services;
 
-import com.corundumstudio.socketio.AckRequest;
-import com.corundumstudio.socketio.HandshakeData;
-import com.corundumstudio.socketio.SocketIONamespace;
-import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.group9.NinjaGame.container.GameContainer;
 import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.entities.CardSet;
+import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
 import com.group9.NinjaGame.models.messages.MessageType;
 import com.group9.NinjaGame.models.messages.SocketIOMessage;
 import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.models.params.LeaveGameParam;
+import com.group9.NinjaGame.models.params.StartGameParam;
+import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class MultiplayerGameService implements IMultiplayerGameService {
+public class MultiplayerGameService {
 
     private final GameRepository gameRepository;
+    private final CardSetRepository cardSetRepository;
 
     private final GameContainer gameContainer;
 
     private final SocketIONamespace namespace;
 
     @Autowired
-    public MultiplayerGameService(SocketIOServer server, GameRepository gameRepository) {
+    public MultiplayerGameService(SocketIOServer server, GameRepository gameRepository, CardSetRepository cardSetRepository) {
         this.gameRepository = gameRepository;
+        this.cardSetRepository = cardSetRepository;
 
         gameContainer = GameContainer.getInstance();
 
@@ -43,12 +48,8 @@ public class MultiplayerGameService implements IMultiplayerGameService {
 
         this.namespace.addEventListener("join", JoinGameParam.class, onJoin());
         this.namespace.addEventListener("leave", LeaveGameParam.class, onLeave());
-    }
 
-
-    @Override
-    public void startGame(UUID gameId, GameInfo gameInfo) {
-        namespace.getRoomOperations(gameId.toString()).sendEvent("start", gameInfo);
+        this.namespace.addEventListener("start", StartGameParam.class, onStart());
     }
 
 
@@ -63,6 +64,9 @@ public class MultiplayerGameService implements IMultiplayerGameService {
 
     private DisconnectListener onDisconnected() {
         return client -> {
+
+            disconnectPlayerFromPreviousLobbies(client);
+
             System.out.println("Client[{}] - Disconnected from chat module." + client.getSessionId().toString());
         };
     }
@@ -76,6 +80,8 @@ public class MultiplayerGameService implements IMultiplayerGameService {
 
                 Player player = new Player(param.userName, client.getSessionId());
 
+                disconnectPlayerFromPreviousLobbies(client);
+
                 client.joinRoom(gameId.toString());
 
                 boolean connected = gameContainer.joinGame(gameId, player);
@@ -84,7 +90,7 @@ public class MultiplayerGameService implements IMultiplayerGameService {
 
                     SendMessage(ackRequest, MessageType.SUCCESS, "Successfully joined", gameInfo);
 
-                    namespace.getRoomOperations(gameId.toString()).sendEvent("join", gameInfo);
+                    namespace.getRoomOperations(gameId.toString()).sendEvent("lobby-update", gameInfo);
 
                 } else {
 
@@ -104,17 +110,55 @@ public class MultiplayerGameService implements IMultiplayerGameService {
             GameInfo gameInfo = gameContainer.getGameInfo(param.gameId);
 
             if (gameInfo != null) {
-
-                gameInfo.removePlayer(client.getSessionId());
-
-                namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("leave", gameInfo);
-
+                disconnectPlayerFromPreviousLobbies(client);
             }
 
             client.leaveRoom(param.gameId.toString());
 
             SendMessage(ackRequest, MessageType.SUCCESS, "Successfully disconnected");
 
+        });
+    }
+
+    private DataListener<StartGameParam> onStart() {
+        return ((client, param, ackRequest) -> {
+
+            UUID playerId = client.getSessionId();
+
+            GameInfo gameInfo = gameContainer.getPlayerLobby(playerId);
+
+            if (!gameInfo.lobbyOwnerId.equals(playerId)) {
+                SendMessage(ackRequest, MessageType.ERROR, "Only lobby owner can start a game");
+                return;
+            }
+
+            Optional<Game> gameEntityOptional = gameRepository.findById(gameInfo.gameId);
+            Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
+
+            if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
+                Game game = gameEntityOptional.get();
+                CardSet cardSet = cardSetEntityOptional.get();
+
+                List<Card> cards = new ArrayList<>();
+
+                for (Card card : cardSet.getCards()) {
+                    if (!param.unwantedCards.contains(card.getId())) {
+                        cards.add(card);
+                    }
+                }
+
+                game.setSelectedCardSet(cardSet);
+                game = gameRepository.save(game);
+
+                gameInfo.started = true;
+                gameInfo.remainingCards = cards;
+
+                namespace.getRoomOperations(game.getId().toString()).sendEvent("start", gameInfo);
+
+                return;
+            }
+
+            SendMessage(ackRequest, MessageType.ERROR, "Can not start a game");
         });
     }
 
@@ -126,5 +170,32 @@ public class MultiplayerGameService implements IMultiplayerGameService {
     private void SendMessage(AckRequest ackRequest, MessageType type, String message, Object data) {
         SocketIOMessage ioMessage = new SocketIOMessage(type, message, data);
         ackRequest.sendAckData(ioMessage);
+    }
+
+    private void disconnectPlayerFromPreviousLobbies(SocketIOClient client) {
+        UUID playerId = client.getSessionId();
+
+        GameInfo gameInfo = gameContainer.getPlayerLobby(playerId);
+
+        if (gameInfo != null) {
+            client.leaveRoom(gameInfo.gameId.toString());
+
+            gameContainer.removePlayerFromLobby(playerId, gameInfo);
+
+            if (gameInfo.players.isEmpty()) {
+                destroyGame(gameInfo.gameId);
+            } else {
+                namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
+            }
+        }
+    }
+
+    private void destroyGame(UUID gameId) {
+
+        gameContainer.removeGame(gameId);
+
+        gameRepository.deleteById(gameId);
+
+        namespace.getRoomOperations(gameId.toString()).disconnect();
     }
 }

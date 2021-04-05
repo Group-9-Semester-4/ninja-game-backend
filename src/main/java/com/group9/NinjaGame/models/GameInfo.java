@@ -20,6 +20,8 @@ public class GameInfo {
 
     public boolean multiPlayer;
 
+    public UUID lobbyOwnerId;
+
     public GameInfo(UUID gameId, String lobbyCode) {
 
         this.gameId = gameId;
