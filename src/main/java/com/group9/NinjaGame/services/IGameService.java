@@ -14,7 +14,7 @@ public interface IGameService {
 
     Card draw(UUID uuid);
 
-    Game startGame(StartGameParam param);
+    Game startGame(StartGameParam param) throws Exception;
 
     boolean removeDoneCard(UUID gameId, UUID cardId);
 

@@ -47,7 +47,7 @@ public class GameResource {
     }
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
+    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) throws Exception {
 
         Game game = gameService.startGame(param);
 

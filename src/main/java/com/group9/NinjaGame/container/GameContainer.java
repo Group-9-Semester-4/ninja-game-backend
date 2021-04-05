@@ -34,15 +34,15 @@ public class GameContainer {
 
             playerLobby.put(player.sessionId, gameInfo);
 
-            if (gameInfo.players.contains(player)) {
+            if (gameInfo.lobby.players.contains(player)) {
                 return false;
             }
 
-            if (gameInfo.players.isEmpty()) {
-                gameInfo.lobbyOwnerId = player.sessionId;
+            if (gameInfo.lobby.players.isEmpty()) {
+                gameInfo.lobby.lobbyOwnerId = player.sessionId;
             }
 
-            return gameInfo.players.add(player);
+            return gameInfo.lobby.players.add(player);
         }
 
         return false;
@@ -55,7 +55,7 @@ public class GameContainer {
 
     public GameInfo getGameInfo(String lobbyCode) {
         for (GameInfo info : games.values()) {
-            if (info.multiPlayer && info.lobbyCode.equals(lobbyCode)) {
+            if (info.multiPlayer && info.lobby.lobbyCode.equals(lobbyCode)) {
                 return info;
             }
         }
@@ -72,11 +72,11 @@ public class GameContainer {
     }
 
     public void removePlayerFromLobby(UUID playerId, GameInfo info) {
-        info.players.removeIf(player -> player.sessionId.equals(playerId));
+        info.lobby.players.removeIf(player -> player.sessionId.equals(playerId));
 
-        if (info.lobbyOwnerId.equals(playerId) && !info.players.isEmpty()) {
-            Player player = info.players.get(0);
-            info.lobbyOwnerId = player.sessionId;
+        if (info.lobby.lobbyOwnerId.equals(playerId) && !info.lobby.players.isEmpty()) {
+            Player player = info.lobby.players.get(0);
+            info.lobby.lobbyOwnerId = player.sessionId;
         }
 
         playerLobby.remove(playerId);

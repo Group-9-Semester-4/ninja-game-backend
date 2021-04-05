@@ -1,34 +1,27 @@
 package com.group9.NinjaGame.models;
 
-import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.models.modes.GameMode;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 public class GameInfo {
 
     public UUID gameId;
 
-    public List<Card> remainingCards;
-
-    public List<Player> players;
-
-    public String lobbyCode;
-
     public boolean started;
 
     public boolean multiPlayer;
 
-    public UUID lobbyOwnerId;
+    public Lobby lobby;
+
+    public GameMode gameModeData;
 
     public GameInfo(UUID gameId, String lobbyCode) {
 
         this.gameId = gameId;
-        this.lobbyCode = lobbyCode;
 
-        remainingCards = new LinkedList<>();
-        players = new LinkedList<>();
+        this.lobby = new Lobby(lobbyCode);
+
         started = false;
         multiPlayer = true;
     }
@@ -36,32 +29,10 @@ public class GameInfo {
     public GameInfo(UUID gameId) {
 
         this.gameId = gameId;
-        this.lobbyCode = null;
+        this.lobby = null;
 
-        remainingCards = new LinkedList<>();
-        players = new LinkedList<>();
         started = false;
         multiPlayer = false;
-    }
-
-    public boolean removeCardById(UUID cardId) {
-        for (Card card : remainingCards) {
-            if (card.getId().equals(cardId)) {
-                return remainingCards.remove(card);
-            }
-        }
-
-        return false;
-    }
-
-    public boolean removePlayer(UUID sessionId) {
-        for (Player player : players) {
-            if (player.sessionId.equals(sessionId)) {
-                return players.remove(player);
-            }
-        }
-
-        return false;
     }
 
 }

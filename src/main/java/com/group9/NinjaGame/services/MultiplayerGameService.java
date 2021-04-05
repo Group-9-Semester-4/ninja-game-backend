@@ -8,10 +8,12 @@ import com.group9.NinjaGame.container.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.helper.GameModeResolver;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
 import com.group9.NinjaGame.models.messages.MessageType;
 import com.group9.NinjaGame.models.messages.SocketIOMessage;
+import com.group9.NinjaGame.models.modes.GameMode;
 import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.models.params.LeaveGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
@@ -127,7 +129,7 @@ public class MultiplayerGameService {
 
             GameInfo gameInfo = gameContainer.getPlayerLobby(playerId);
 
-            if (!gameInfo.lobbyOwnerId.equals(playerId)) {
+            if (!gameInfo.lobby.lobbyOwnerId.equals(playerId)) {
                 SendMessage(ackRequest, MessageType.ERROR, "Only lobby owner can start a game");
                 return;
             }
@@ -136,6 +138,16 @@ public class MultiplayerGameService {
             Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
 
             if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
+
+                String gameModeName = gameInfo.lobby.gameMode;
+
+                GameMode gameMode = GameModeResolver.getFromString(gameModeName);
+
+                if (gameMode == null) {
+                    SendMessage(ackRequest, MessageType.ERROR, "Game mode does not exist");
+                    return;
+                }
+
                 Game game = gameEntityOptional.get();
                 CardSet cardSet = cardSetEntityOptional.get();
 
@@ -151,7 +163,11 @@ public class MultiplayerGameService {
                 game = gameRepository.save(game);
 
                 gameInfo.started = true;
-                gameInfo.remainingCards = cards;
+
+                gameMode.setCards(cards);
+                gameMode.init(gameInfo);
+
+                gameInfo.gameModeData = gameMode;
 
                 namespace.getRoomOperations(game.getId().toString()).sendEvent("start", gameInfo);
 
@@ -182,7 +198,7 @@ public class MultiplayerGameService {
 
             gameContainer.removePlayerFromLobby(playerId, gameInfo);
 
-            if (gameInfo.players.isEmpty()) {
+            if (gameInfo.lobby.players.isEmpty()) {
                 destroyGame(gameInfo.gameId);
             } else {
                 namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);

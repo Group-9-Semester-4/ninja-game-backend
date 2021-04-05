@@ -7,6 +7,8 @@ import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
+import com.group9.NinjaGame.models.modes.GameMode;
+import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
@@ -56,7 +58,7 @@ public class GameService implements IGameService {
         return game;
     }
 
-    public Game startGame(StartGameParam param) {
+    public Game startGame(StartGameParam param) throws Exception {
         Optional<Game> gameEntityOptional = gameRepository.findById(param.gameId);
         Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
 
@@ -78,31 +80,48 @@ public class GameService implements IGameService {
             GameInfo gameInfo = gameContainer.getGameInfo(game.getId());
 
             gameInfo.started = true;
-            gameInfo.remainingCards = cards;
+
+            gameInfo.gameModeData = new SinglePlayerGameMode();
+            gameInfo.gameModeData.setCards(cards);
 
             return game;
         }
 
-        return null;
+        throw new Exception("Game of Card set not found");
     }
 
     @Override
     public Card draw(UUID gameId) {
 
-        List<Card> cards = gameContainer.getGameInfo(gameId).remainingCards;
+        GameMode mode = gameContainer.getGameInfo(gameId).gameModeData;
 
-        if (cards != null) {
+        if (mode instanceof SinglePlayerGameMode) {
 
-            return cards.get(new Random().nextInt(cards.size()));
+            SinglePlayerGameMode gameMode = (SinglePlayerGameMode) mode;
+
+            List<Card> cards = gameMode.remainingCards;
+
+            if (cards != null) {
+
+                return cards.get(new Random().nextInt(cards.size()));
+            }
         }
+
 
         return null;
     }
 
     public boolean removeDoneCard(UUID gameId, UUID cardId) {
-        GameInfo gameInfo = gameContainer.getGameInfo(gameId);
 
-        return gameInfo.removeCardById(cardId);
+        GameMode mode = gameContainer.getGameInfo(gameId).gameModeData;
+
+        if (mode instanceof SinglePlayerGameMode) {
+            SinglePlayerGameMode gameMode = (SinglePlayerGameMode) mode;
+
+            return gameMode.removeCardById(cardId);
+        }
+
+        return false;
     }
 
     public Game finishGame(UUID gameId) {
