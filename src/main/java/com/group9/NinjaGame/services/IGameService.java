@@ -11,15 +11,15 @@ import java.util.UUID;
 public interface IGameService {
     Game initGame(InitGameParam param);
 
-    Game joinGame(JoinGameParam param);
+    Game joinGame(JoinGameParam param) throws Exception;
 
     Card draw(UUID uuid);
 
     Game startGame(UUID uuid, List<UUID> unwantedCards);
-    Game startGame(UUID gameId, UUID cardSetId);
+    Game startGame(UUID gameId, UUID cardSetId) throws Exception;
 
     boolean removeDoneCard(UUID gameId, UUID cardId);
 
-    Game finishGame(UUID uuid);
+    Game finishGame(UUID uuid) throws Exception;
     Iterable<Game> findAll();
 }

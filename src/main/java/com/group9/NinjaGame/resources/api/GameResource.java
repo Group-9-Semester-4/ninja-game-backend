@@ -48,14 +48,14 @@ public class GameResource {
     }
 
     @PostMapping(path = "/join", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> joinGame(@RequestBody JoinGameParam param) {
+    public ResponseEntity<?> joinGame(@RequestBody JoinGameParam param) throws Exception {
         Game game = gameService.joinGame(param);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
+    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) throws Exception {
 
         Game game;
 
@@ -86,7 +86,7 @@ public class GameResource {
     }
 
     @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) throws Exception {
         return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 
