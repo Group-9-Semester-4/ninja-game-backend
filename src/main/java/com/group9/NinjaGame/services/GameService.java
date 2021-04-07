@@ -11,6 +11,7 @@ import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
@@ -70,7 +71,7 @@ public class GameService implements IGameService {
                 return gameEntityOptional.get();
             }
             else {
-                throw new Exception("no game entity");
+                throw new NotFoundException("Can't find Game with this ID");
             }
         }
         catch (Exception e){
@@ -101,7 +102,7 @@ public class GameService implements IGameService {
                 return game;
             }
             else {
-                throw new Exception("no game entity");
+                throw new NotFoundException("Can't find Game with this ID");
             }
         }
         catch(Exception e){
@@ -110,19 +111,25 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
+    public Game startGame(UUID gameId, List<UUID> unwantedCards) throws Exception {
         try{
             Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+            if(gameEntityOptional.isPresent()){
+                Game game = gameEntityOptional.get();
 
-            Game game = gameEntityOptional.get();
+                game = gameRepository.save(game);
 
-            game = gameRepository.save(game);
 
-            List<Card> cards = (List<Card>) cardRepository.getCards(unwantedCards);
+                List<Card> cards = (List<Card>) cardRepository.getCards(unwantedCards);
 
-            multiplayerGameService.startGame(gameId, cards);
+                multiplayerGameService.startGame(gameId, cards);
 
-            return game;
+                return game;
+            }
+            else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
+
         }
         catch(Exception e){
             throw e;
@@ -163,10 +170,11 @@ public class GameService implements IGameService {
                 return game;
             }
             else {
-                throw new Exception("no game entity");
+                throw new NotFoundException("Can't find Game with this ID");
             }
         }
         catch(Exception e){
+            //can't delete game
             throw e;
         }
     }

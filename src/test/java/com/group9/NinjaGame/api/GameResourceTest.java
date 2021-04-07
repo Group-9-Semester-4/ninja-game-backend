@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -87,7 +89,7 @@ public class GameResourceTest {
     @Test
     void getGamesTest() throws Exception {
         mockMvc.perform(get("/api/game/games"))
-                .andExpect(status().isOk());
+                .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk());
     }
 
     //TODO: almost working
@@ -96,6 +98,7 @@ public class GameResourceTest {
         MvcResult mvcResult = mockMvc.perform(get("/api/game/games")).andReturn();
 
         String json = mvcResult.getResponse().getContentAsString();
+        System.out.print(json);
         //Object actualObject = objectMapper.readValue(json, Game.class);
         Game game = new Game();
 

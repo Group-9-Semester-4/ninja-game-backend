@@ -19,20 +19,32 @@ public class MultiplayerGameService implements IMultiplayerGameService {
     }
 
     public void initGame(UUID gameId, String lobbyCode) {
-
         GameInfo gameInfo = new GameInfo(gameId, lobbyCode);
 
-        gameContainer.initGame(gameId, gameInfo);
+        try {
+            gameContainer.initGame(gameId, gameInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public boolean joinGame(UUID gameId, Player player) {
-        return gameContainer.joinGame(gameId, player);
+        try {
+            return gameContainer.joinGame(gameId, player);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
     public void startGame(UUID gameId, List<Card> cards) {
-        GameInfo gameInfo = gameContainer.getGameInfo(gameId);
+        GameInfo gameInfo = null;
+        try {
+            gameInfo = gameContainer.getGameInfo(gameId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         gameInfo.started = true;
         gameInfo.remainingCards = cards;
