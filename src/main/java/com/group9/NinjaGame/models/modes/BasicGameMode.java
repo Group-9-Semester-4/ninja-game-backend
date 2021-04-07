@@ -10,6 +10,8 @@ import java.util.UUID;
 
 public class BasicGameMode implements GameMode {
 
+    public static final String GAME_MODE_ID = "basic";
+
     public UUID playerOnTurn;
 
     public Card drawnCard;
@@ -29,7 +31,13 @@ public class BasicGameMode implements GameMode {
     @Override
     public void init(GameInfo gameInfo) {
         playerOnTurn = gameInfo.lobby.players.get(0).sessionId;
+        players = gameInfo.lobby.players;
         drawnCard = null;
         completeStates = new HashMap<>();
+    }
+
+    @Override
+    public String getGameModeId() {
+        return GAME_MODE_ID;
     }
 }

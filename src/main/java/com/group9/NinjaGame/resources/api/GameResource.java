@@ -3,6 +3,7 @@ package com.group9.NinjaGame.resources.api;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.helper.GameModeResolver;
 import com.group9.NinjaGame.models.params.*;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
@@ -93,6 +94,11 @@ public class GameResource {
     public ResponseEntity<?> getAllGames() {
         Iterable<Game> allGames = gameService.findAll();
         return new ResponseEntity<>(allGames, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/game-modes")
+    public ResponseEntity<?> getGameModes() {
+        return new ResponseEntity<>(GameModeResolver.GAME_MODES, HttpStatus.OK);
     }
 
 

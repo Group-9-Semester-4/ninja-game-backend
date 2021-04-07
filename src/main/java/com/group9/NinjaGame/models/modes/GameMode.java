@@ -11,4 +11,6 @@ public interface GameMode {
 
     void init(GameInfo gameInfo);
 
+    String getGameModeId();
+
 }
