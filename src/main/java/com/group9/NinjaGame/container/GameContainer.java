@@ -23,8 +23,8 @@ public class GameContainer {
         return instance;
     }
 
-    public void initGame(UUID gameId, GameInfo gameInfo) {
-        games.put(gameId, gameInfo);
+    public void initGame(GameInfo gameInfo) {
+        games.put(gameInfo.gameId, gameInfo);
     }
 
     public boolean joinGame(UUID gameId, Player player) {

@@ -1,16 +1,13 @@
 package com.group9.NinjaGame.services;
 
-import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
 import com.group9.NinjaGame.container.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.models.GameInfo;
-import com.group9.NinjaGame.models.Player;
 import com.group9.NinjaGame.models.modes.GameMode;
 import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
 import com.group9.NinjaGame.models.params.InitGameParam;
-import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
@@ -53,7 +50,7 @@ public class GameService implements IGameService {
             gameInfo = new GameInfo(gameId);
         }
 
-        gameContainer.initGame(gameId, gameInfo);
+        gameContainer.initGame(gameInfo);
 
         return game;
     }
