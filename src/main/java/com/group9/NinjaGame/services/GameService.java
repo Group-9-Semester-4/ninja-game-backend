@@ -11,7 +11,9 @@ import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -40,20 +42,25 @@ public class GameService implements IGameService {
     public Game initGame(InitGameParam param) {
         Game game = new Game(param.timeLimit, param.multiPlayer, param.playingAlone);
 
-        game = gameRepository.save(game);
-        
-        if (game.isMultiPlayer()) {
-            multiplayerGameService.initGame(game.getId(), param.lobbyCode);
+        try {
+            game = gameRepository.save(game);
+
+            if (game.isMultiPlayer()) {
+                multiplayerGameService.initGame(game.getId(), param.lobbyCode);
+            }
+            return game;
+        }
+        catch(Exception e){
+            throw e;
         }
 
-        return game;
     }
 
-    public Game joinGame(JoinGameParam param) {
+    public Game joinGame(JoinGameParam param) throws Exception {
 
-        GameInfo gameInfo = gameContainer.getGameInfo(param.lobbyCode);
+        try {
+            GameInfo gameInfo = gameContainer.getGameInfo(param.lobbyCode);
 
-        if (gameInfo != null) {
             Optional<Game> gameEntityOptional = gameRepository.findById(gameInfo.gameId);
 
             if (gameEntityOptional.isPresent()) {
@@ -63,91 +70,122 @@ public class GameService implements IGameService {
 
                 return gameEntityOptional.get();
             }
-
+            else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
         }
-
-        return null;
+        catch (Exception e){
+            throw e;
+        }
     }
 
 
     @Override
-    public Game startGame(UUID gameId, UUID cardSetId) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
+    public Game startGame(UUID gameId, UUID cardSetId) throws Exception {
+        try {
+            Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
 
-        Game game = null;
+            if(gameEntityOptional.isPresent()){
 
-        if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
-            CardSet cardSet = cardSetEntityOptional.get();
+                Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
+                Game game = gameEntityOptional.get();
+                CardSet cardSet = cardSetEntityOptional.get();
 
-            game.setSelectedCardSet(cardSet);
+                game.setSelectedCardSet(cardSet);
 
-            List<Card> cards = new ArrayList<>(cardSet.getCards());
+                List<Card> cards = new ArrayList<>(cardSet.getCards());
 
-            game = gameRepository.save(game);
+                game = gameRepository.save(game);
 
-            multiplayerGameService.startGame(gameId, cards);
+                multiplayerGameService.startGame(gameId, cards);
+
+                return game;
+            }
+            else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
         }
-
-        return game;
+        catch(Exception e){
+            throw e;
+        }
     }
 
     @Override
-    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Game game = null;
+    public Game startGame(UUID gameId, List<UUID> unwantedCards) throws Exception {
+        try{
+            Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+            if(gameEntityOptional.isPresent()){
+                Game game = gameEntityOptional.get();
 
-        if (gameEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
+                game = gameRepository.save(game);
 
-            game = gameRepository.save(game);
 
-            List<Card> cards = (List<Card>) cardRepository.getCards(unwantedCards);
+                List<Card> cards = (List<Card>) cardRepository.getCards(unwantedCards);
 
-            multiplayerGameService.startGame(gameId, cards);
+                multiplayerGameService.startGame(gameId, cards);
+
+                return game;
+            }
+            else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
+
         }
-
-        return game;
+        catch(Exception e){
+            throw e;
+        }
     }
 
     @Override
     public Card draw(UUID gameId) {
-
-        List<Card> cards = gameContainer.getGameInfo(gameId).remainingCards;
-
-        if (cards != null) {
-
+        try {
+            List<Card> cards = gameContainer.getGameInfo(gameId).remainingCards;
             return cards.get(new Random().nextInt(cards.size()));
         }
-
-        return null;
+        catch(Exception e){
+            throw e;
+        }
     }
 
     public boolean removeDoneCard(UUID gameId, UUID cardId) {
-        GameInfo gameInfo = gameContainer.getGameInfo(gameId);
-
-        return gameInfo.removeCardById(cardId);
+        try {
+            GameInfo gameInfo = gameContainer.getGameInfo(gameId);
+            return gameInfo.removeCardById(cardId);
+        }
+        catch(Exception e){
+            throw e;
+        }
     }
 
-    public Game finishGame(UUID gameId) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Game game;
+    public Game finishGame(UUID gameId) throws Exception {
+        try {
+            Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+            gameContainer.removeGame(gameId);
 
-        gameContainer.removeGame(gameId);
+            if (gameEntityOptional.isPresent()) {
+                Game game = gameEntityOptional.get();
 
-        if (gameEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
+                gameRepository.delete(game);
 
-            gameRepository.delete(game);
-
-            return game;
+                return game;
+            }
+            else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
         }
-
-        return null;
+        catch(Exception e){
+            //can't delete game
+            throw e;
+        }
     }
 
     public Iterable<Game> findAll() {
-        return gameRepository.findAll();
+        try {
+            return gameRepository.findAll();
+        }
+        catch(Exception e){
+            throw e;
+        }
+
     }
 }
