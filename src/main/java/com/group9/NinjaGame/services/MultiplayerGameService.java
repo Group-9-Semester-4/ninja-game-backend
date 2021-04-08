@@ -139,7 +139,7 @@ public class MultiplayerGameService {
 
             if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
 
-                String gameModeName = gameInfo.lobby.gameMode;
+                String gameModeName = param.gameMode;
 
                 GameMode gameMode = GameModeResolver.getFromString(gameModeName);
 

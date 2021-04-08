@@ -12,4 +12,6 @@ public class StartGameParam {
     public UUID cardSetId;
 
     public List<UUID> unwantedCards;
+
+    public String gameMode;
 }
