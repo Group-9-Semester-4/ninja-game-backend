@@ -1,4 +1,4 @@
-package com.group9.NinjaGame.container;
+package com.group9.NinjaGame.containers;
 
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;

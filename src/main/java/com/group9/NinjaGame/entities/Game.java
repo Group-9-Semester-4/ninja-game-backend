@@ -1,7 +1,7 @@
 package com.group9.NinjaGame.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.group9.NinjaGame.container.GameContainer;
+import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.models.GameInfo;
 
 import javax.persistence.*;

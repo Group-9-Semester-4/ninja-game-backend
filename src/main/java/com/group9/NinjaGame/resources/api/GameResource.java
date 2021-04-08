@@ -3,7 +3,7 @@ package com.group9.NinjaGame.resources.api;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
-import com.group9.NinjaGame.helper.GameModeResolver;
+import com.group9.NinjaGame.helpers.GameModeResolver;
 import com.group9.NinjaGame.models.params.*;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;

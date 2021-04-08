@@ -1,4 +1,4 @@
-package com.group9.NinjaGame.helper;
+package com.group9.NinjaGame.helpers;
 
 import com.group9.NinjaGame.models.modes.BasicGameMode;
 import com.group9.NinjaGame.models.modes.GameMode;

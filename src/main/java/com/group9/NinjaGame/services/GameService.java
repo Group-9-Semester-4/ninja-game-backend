@@ -1,6 +1,6 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.container.GameContainer;
+import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
@@ -14,7 +14,6 @@ import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

@@ -1,6 +1,6 @@
 package com.group9.NinjaGame.unit;
 
-import com.group9.NinjaGame.container.GameContainer;
+import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.models.GameInfo;
 import org.junit.jupiter.api.Test;
 
