@@ -12,7 +12,9 @@ import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -121,24 +123,35 @@ public class GameService implements IGameService {
         return false;
     }
 
-    public Game finishGame(UUID gameId) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Game game;
+    public Game finishGame(UUID gameId) throws Exception {
+        try {
+            Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+            gameContainer.removeGame(gameId);
 
-        gameContainer.removeGame(gameId);
+            if (gameEntityOptional.isPresent()) {
+                Game game = gameEntityOptional.get();
 
-        if (gameEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
+                gameRepository.delete(game);
 
-            gameRepository.delete(game);
-
-            return game;
+                return game;
+            }
+            else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
         }
-
-        return null;
+        catch(Exception e){
+            //can't delete game
+            throw e;
+        }
     }
 
     public Iterable<Game> findAll() {
-        return gameRepository.findAll();
+        try {
+            return gameRepository.findAll();
+        }
+        catch(Exception e){
+            throw e;
+        }
+
     }
 }

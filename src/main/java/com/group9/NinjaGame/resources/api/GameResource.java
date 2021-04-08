@@ -73,7 +73,7 @@ public class GameResource {
     }
 
     @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) throws Exception {
         return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 

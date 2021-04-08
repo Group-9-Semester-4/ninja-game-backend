@@ -7,39 +7,61 @@
     <link th:href="@{/css/main.css}" rel="stylesheet">
 </head>
 <body>
-<p> here we go</p>
+<h1 class="display-1"> Create a card set</h1>
 
 <form action="#" th:action="@{/admin/card-set/add}" th:object="${cardSet}" method="post">
-
-    <label for="name">Name</label>
-    <input type="text" th:field="*{name}" id="name" placeholder="Name">
+<div class="form-group">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" class="form-control" th:field="*{name}" id="name" placeholder="Name">
     <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
-
-    <label for="completeTimeLimit">Time limit</label>
-    <input type="number" th:field="*{completeTimeLimit}" id="completeTimeLimit" placeholder="300">
+</div>
+<div class="form-group">
+    <label for="completeTimeLimit" class="form-label">Time limit</label>
+    <input type="number" class="form-control" th:field="*{completeTimeLimit}" id="completeTimeLimit" placeholder="300">
     <span th:if="${#fields.hasErrors('completeTimeLimit')}" th:errors="*{completeTimeLimit}"></span>
-
-    <label for="multiplayer">Multiplayer suitable?</label>
-    <input type="checkbox" th:field="*{multiplayerSuitable}" id="multiplayer">
+</div>
+<div class="form-group">
+    <label for="multiplayer" class="form-label">Multiplayer suitable?</label>
+    <input type="checkbox" class="form-check-input" th:field="*{multiplayerSuitable}" id="multiplayer">
     <span th:if="${#fields.hasErrors('multiplayerSuitable')}" th:errors="*{multiplayerSuitable}"></span>
-
-    <label for="temporary">Temporary</label>
-    <input type="checkbox" th:field="*{temporary}" id="temporary">
+</div>
+<div class="form-group">
+    <label for="temporary" class="form-label">Temporary</label>
+    <input type="checkbox" class="form-check-input" th:field="*{temporary}" id="temporary">
     <span th:if="${#fields.hasErrors('temporary')}" th:errors="*{temporary}"></span>
-
-    <label for="difficulty">difficulty</label>
-    <input type="number" th:field="*{difficulty}" id="difficulty" placeholder="30">
+</div>
+<div class="form-group">
+    <label for="difficulty" class="form-label">difficulty</label>
+    <input type="number" class="form-control" th:field="*{difficulty}" id="difficulty" placeholder="30">
     <span th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}"></span>
+</div>
+<div class="form-group">
+    <label for="cards" class="form-label"></label>
 
-    <input type="checkbox" name="cards"
+<!--    This has to be redone, should be a global for loop ideally so we can make the checkboxes into
+        a table or something like that.
+-->
+    <input type="checkbox" class="form-check-input" name="cards" id="cards"
            th:each="card : ${allCards}"
            th:text="${card.name}"
            th:value="${card.id}"
            th:field="*{cards}"
     />
-    <input type="submit" value="Add Card Set">
+
+</div>
+    <button type="submit" class="btn btn-primary">Submit</button>
 
 </form>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+<button class="btn btn-danger" style="margin-top: 2em;" onclick="confirmAction()">Go back (loses changes)</button>
+<script>
+    // todo refactor to one js file
+    function confirmAction() {
+        var ask = window.confirm("Are you sure you want to leave? Your changes will not be saved.");
+        if (ask) {
+            window.location.href = "/";
+        }
+    }
+</script>
 </body>
 </html>

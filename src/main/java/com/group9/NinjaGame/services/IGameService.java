@@ -18,6 +18,6 @@ public interface IGameService {
 
     boolean removeDoneCard(UUID gameId, UUID cardId);
 
-    Game finishGame(UUID uuid);
+    Game finishGame(UUID uuid) throws Exception;
     Iterable<Game> findAll();
 }
