@@ -7,10 +7,7 @@ import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import com.group9.NinjaGame.resources.api.GameResource;
-import com.group9.NinjaGame.services.GameService;
-import com.group9.NinjaGame.services.ICardService;
-import com.group9.NinjaGame.services.ICardSetService;
-import com.group9.NinjaGame.services.IGameService;
+import com.group9.NinjaGame.services.*;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +51,8 @@ public class GameResourceTest {
     @MockBean
     private ICardSetService cardSetService;
 
+    @MockBean
+    private MultiplayerGameService multiplayerGameService;
 
 
     // TODO: check with ERIK, not working; empty response
@@ -71,8 +70,6 @@ public class GameResourceTest {
                 .content(objectMapper.writeValueAsString(testParam)))
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.gameInfo").isNotEmpty());
-
-
     }
 
 //    @Test

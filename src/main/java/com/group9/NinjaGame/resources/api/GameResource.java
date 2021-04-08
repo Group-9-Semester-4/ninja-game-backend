@@ -80,7 +80,7 @@ public class GameResource {
 
     @GetMapping(path = "/cards")
     public ResponseEntity<?> getAllCards() {
-        Iterable<Card> allCards = cardService.findAll();
+        Iterable<Card> allCards = cardService.listAll();
         return new ResponseEntity<>(allCards, HttpStatus.OK);
     }
 
