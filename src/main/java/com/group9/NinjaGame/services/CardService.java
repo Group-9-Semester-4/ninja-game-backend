@@ -2,6 +2,7 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.repositories.CardRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,31 +20,55 @@ public class CardService implements ICardService {
 
 
     @Override
-    public Card getEntityById(String id) {
-        UUID uuid = UUID.fromString(id);
-        Optional<Card> cardEntityOptional = repository.findById(uuid);
-        Card card = null;
-        if (cardEntityOptional.isPresent()) {
-            card = cardEntityOptional.get();
+    public Card getEntityById(String id) throws NotFoundException {
+        try {
+            UUID uuid = UUID.fromString(id);
+            Optional<Card> cardEntityOptional = repository.findById(uuid);
+            Card card = null;
+            if (cardEntityOptional.isPresent()) {
+                 card = cardEntityOptional.get();
+            }
+            else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
+            return card;
+        } catch (NotFoundException e) {
+            throw e;
         }
-        return card;
     }
 
     // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/
     public void addCard(Card card) {
-        repository.save(card);
+        try {
+            repository.save(card);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteCard(Card card){
-        repository.delete(card);
+        try {
+            repository.delete(card);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Iterable<Card> findAll() {
-        return repository.findAll();
+        try {
+            return repository.findAll();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
     public List<Card> listAll() {
-        return (List<Card>) findAll();
+        try {
+            return (List<Card>) findAll();
+        }
+        catch (Exception e) {
+            throw e;
+        }
     }
 }

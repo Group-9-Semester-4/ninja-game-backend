@@ -54,6 +54,7 @@ public class CardResource {
     }
 
 
+    //TODO: Refactor
     @PostMapping("/add")
     public String addCard(@RequestParam ("file") MultipartFile file, @Valid Card card, BindingResult result) {
         if ((result.hasErrors()) || (file.isEmpty())) {
@@ -86,7 +87,7 @@ public class CardResource {
         model.addAttribute("card", card);
         return "update-card";
     }
-
+    //TODO: Refactor
     @PostMapping("/update/{id}")
     public String updateCard(@RequestParam ("file") MultipartFile file, @PathVariable("id") String id, @Valid Card card,
                              BindingResult result, Model model) {
@@ -94,19 +95,26 @@ public class CardResource {
             card.setId(UUID.fromString(id));
             return "update-card";
         }
-        String oldPath = cardService.getEntityById(id).getFilepath();
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        if(!((oldPath.equals(fileName)) || (file.isEmpty()))) {
-            try {
-                Path path = Paths.get(UPLOAD_DIR + fileName);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                card.setFilepath(fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
+        try {
+            String oldPath = cardService.getEntityById(id).getFilepath();
+
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+            if(!((oldPath.equals(fileName)) || (file.isEmpty()))) {
+                try {
+                    Path path = Paths.get(UPLOAD_DIR + fileName);
+                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                    card.setFilepath(fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            cardService.addCard(card);
+            return "redirect:/admin/card/manage";
         }
-        cardService.addCard(card);
-        return "redirect:/admin/card/manage";
+        catch (Exception e){
+            throw new IllegalArgumentException("Invalid card Id:" + id);
+        }
+
     }
 
     @GetMapping("/delete/{id}")

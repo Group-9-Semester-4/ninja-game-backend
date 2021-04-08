@@ -20,11 +20,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -37,16 +43,14 @@ public class GameResourceTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    GameService gameService;
+    private ICardService cardService;
 
     @MockBean
-    GameRepository gameRepository;
+    private IGameService gameService;
 
     @MockBean
-    CardRepository cardRepository;
+    private ICardSetService cardSetService;
 
-    @MockBean
-    CardSetRepository cardSetRepository;
 
 
     // TODO: check with ERIK, not working; empty response
@@ -104,10 +108,13 @@ public class GameResourceTest {
     @Order(2)
     void getGameObjectsTest() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/api/game/games")).andReturn();
+
         String json = mvcResult.getResponse().getContentAsString();
         System.out.print(json);
         //Object actualObject = objectMapper.readValue(json, Game.class);
-        assertThat(json).isEqualToIgnoringWhitespace("[]");
+        Game game = new Game();
+
+        assertThat(json).isEqualToIgnoringWhitespace(objectMapper.writeValueAsString(game));
     }
 
 }
