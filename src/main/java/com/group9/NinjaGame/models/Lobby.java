@@ -10,8 +10,6 @@ public class Lobby {
 
     public UUID lobbyOwnerId;
 
-    public String gameMode;
-
     public List<Player> players;
 
     public Lobby(String lobbyCode) {

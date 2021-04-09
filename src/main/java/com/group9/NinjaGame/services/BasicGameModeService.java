@@ -73,7 +73,7 @@ public class BasicGameModeService {
 
             BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
 
-            boolean alreadyCompleted = gameMode.completeStates.get(client.getSessionId());
+            boolean alreadyCompleted = gameMode.completeStates.getOrDefault(client.getSessionId(), false);
 
             if (!alreadyCompleted) {
                 gameMode.completeStates.put(client.getSessionId(), true);

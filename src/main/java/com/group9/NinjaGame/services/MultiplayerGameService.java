@@ -56,8 +56,9 @@ public class MultiplayerGameService {
 
         this.namespace.addEventListener("join", JoinGameParam.class, onJoin());
         this.namespace.addEventListener("leave", LeaveGameParam.class, onLeave());
-
         this.namespace.addEventListener("start", StartGameParam.class, onStart());
+
+        basicGameModeService.registerListeners(namespace);
     }
 
 
@@ -174,6 +175,7 @@ public class MultiplayerGameService {
                 gameMode.init(gameInfo);
 
                 gameInfo.gameModeData = gameMode;
+                gameInfo.gameModeId = gameModeName;
 
                 namespace.getRoomOperations(game.getId().toString()).sendEvent("start", gameInfo);
 

@@ -16,6 +16,8 @@ public class GameInfo {
 
     public GameMode gameModeData;
 
+    public String gameModeId;
+
     public GameInfo(UUID gameId, String lobbyCode) {
 
         this.gameId = gameId;
