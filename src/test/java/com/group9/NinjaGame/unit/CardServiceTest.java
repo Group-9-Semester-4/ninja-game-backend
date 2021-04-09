@@ -25,18 +25,4 @@ public class CardServiceTest {
     void testSetup() {
         //Mockito.when(cardService.getEntityById(Mockito.anyString())).thenReturn();
     }
-
-    @Test
-    void testGetEntityByID() {
-        UUID uuid = UUID.randomUUID();
-        Card card = new Card();
-        card.setId(uuid);
-        Mockito.when(repository.findById(uuid)).thenReturn(java.util.Optional.of(card));
-
-
-        Optional<Card> optionalCard = repository.findById(uuid);
-
-        assertEquals(optionalCard,card);
-
-    }
 }
