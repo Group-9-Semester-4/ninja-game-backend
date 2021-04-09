@@ -29,7 +29,7 @@ public class CardService implements ICardService {
                  card = cardEntityOptional.get();
             }
             else {
-                throw new NotFoundException("Can't find Game with this ID");
+                throw new NotFoundException("Can't find Card set with this ID");
             }
             return card;
         } catch (NotFoundException e) {

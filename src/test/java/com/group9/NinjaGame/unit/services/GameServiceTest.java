@@ -75,10 +75,9 @@ public class GameServiceTest {
     @Test
     public void testStartGame() {
         createGameInProgress();
-        GameContainer.getInstance().initGame(gameInfo);
         doReturn(game).when(gameRepository).save(game);
-        doReturn(optionalGame).when(gameRepository).findById(uuid);
-        doReturn(optionalCardSet).when(cardSetRepository).findById(uuid);
+        doReturn(optionalGame).when(gameRepository).findById(game.getId());
+        doReturn(optionalCardSet).when(cardSetRepository).findById(cardSet.getId());
 
         StartGameParam testParam = new StartGameParam();
         testParam.gameId = uuid;
@@ -100,7 +99,7 @@ public class GameServiceTest {
     public void testDrawCardDuringGame() {
         createGameInProgress();
 
-        Card cardDrawn = gameService.draw(uuid);
+        Card cardDrawn = gameService.draw(game.getId());
 
         assertEquals(card.getName(), cardDrawn.getName());
         assertEquals(card.getId(), cardDrawn.getId());
@@ -110,7 +109,7 @@ public class GameServiceTest {
     @Test
     public void testRemoveDoneCardDuringGame() {
         createGameInProgress();
-        boolean res = gameService.removeDoneCard(uuid, uuid);
+        boolean res = gameService.removeDoneCard(game.getId(), card.getId());
         assertTrue(res);
     }
 
@@ -118,9 +117,9 @@ public class GameServiceTest {
     public void testFinishGame() {
         try {
             createGameInProgress();
-            doReturn(optionalGame).when(gameRepository).findById(uuid);
+            doReturn(optionalGame).when(gameRepository).findById(game.getId());
             assertDoesNotThrow(() -> {
-                gameService.finishGame(uuid);
+                gameService.finishGame(game.getId());
             });
         } catch (Exception e) {
             fail();
@@ -147,6 +146,7 @@ public class GameServiceTest {
         game.setId(uuid);
         game.setMultiPlayer(true);
         cardSet = new CardSet();
+        cardSet.setId(uuid);
         List<Card> list = new ArrayList<>();
         card = new Card();
         card.setId(uuid);

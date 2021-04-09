@@ -15,92 +15,98 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+//import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CardServiceTest {
+
     private Card card;
+    private UUID uuid = UUID.randomUUID();
     private List<Card> list;
     CardService cardService;
 
 
     @Mock
-    private CardRepository repository;
+    private CardRepository cardRepository;
 
-    //maybe should be BeforeAll but can't get it to work
+
     @BeforeEach
     public void setUp() {
-        assertNotNull(repository);
+        assertNotNull(cardRepository);
 
-        cardService = new CardService(repository);
+        cardService = new CardService(cardRepository);
 
         list = new ArrayList();
 
         card = new Card();
-        card.setId(UUID.randomUUID());
-        card.setName("kokot");
+        card.setId(uuid);
+        card.setName("cardName100");
     }
 
 
     @Test
     public void testGetEntityById() throws NotFoundException {
         Optional<Card> result = Optional.of(card);
+        doReturn(result).when(cardRepository).findById(card.getId());
 
-        doReturn(result).when(repository).findById(card.getId());
         Card foundCard = cardService.getEntityById(card.getId().toString());
 
-        assertThat(foundCard != null);
         assertEquals(foundCard, card);
+        verify(cardRepository,times(1)).findById(card.getId());
     }
 
     @Test
     public void testListAll() {
         Card card2 = new Card();
         card2.setId(UUID.randomUUID());
-        card2.setName("kokot1");
+        card2.setName("cardName101");
 
         list.add(card);
         list.add(card2);
 
 
-        doReturn(list).when(repository).findAll();
-        Iterable<Card> foundCards = cardService.listAll();
+        doReturn(list).when(cardRepository).findAll();
+        List<Card> foundCards = cardService.listAll();
 
-        assertThat(foundCards != null);
-        assertThat(((List<Card>) foundCards).size() > 0);
-        assertThat(((List<Card>) foundCards).contains(card) && ((List<Card>) foundCards).contains(card2));
+        assertNotNull(foundCards);
+        assertTrue(foundCards.size() > 0);
+        assertTrue(foundCards.contains(card) && foundCards.contains(card2));
     }
 
     @Test
     public void testAddCard() {
-        doReturn(card).when(repository).save(card);
+        doReturn(card).when(cardRepository).save(card);
+
         Card savedCard = cardService.addCard(card);
 
-        assertThat(savedCard != null);
-        assertThat(savedCard.getName().equalsIgnoreCase("kokot"));
+        assertNotNull(savedCard);
+        assertTrue(savedCard.getName().equalsIgnoreCase("cardName100"));
     }
 
     @Test
     public void testDeleteCard() {
-        // arrange
-        doReturn(Optional.empty()).when(repository).findById(card.getId());
-
-        // act
         cardService.deleteCard(card);
 
-        // assert
+        verify(cardRepository, times(1)).delete(card);
+    }
+
+    @Test
+    public void testDeletedCardThrowsNotFoundException() throws NotFoundException {
+        doReturn(Optional.empty()).when(cardRepository).findById(card.getId());
+
+        cardService.deleteCard(card);
+
         try {
             cardService.getEntityById(card.getId().toString());
-            fail();
+            fail(); // just in case, this line should not be hit and instead go into the catch block.
         } catch (NotFoundException e) {
-            assertThrows(NotFoundException.class, () -> {
-                cardService.getEntityById(card.getId().toString());
-            });
-            assertThat(e.getMessage().equals("Can't find Card set with this ID"));
+            assertEquals(e.getMessage(), "Can't find Card set with this ID");
         }
-        verify(repository, times(1)).delete(card);
+        verify(cardRepository, times(1)).delete(card);
+        verify(cardRepository, times(1)).findById(card.getId());
     }
 
 }
