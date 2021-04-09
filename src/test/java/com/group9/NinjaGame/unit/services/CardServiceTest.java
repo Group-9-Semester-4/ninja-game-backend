@@ -15,10 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,7 +31,7 @@ public class CardServiceTest {
 
     //maybe should be BeforeAll but can't get it to work
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         assertNotNull(repository);
 
         cardService = new CardService(repository);
@@ -54,10 +52,11 @@ public class CardServiceTest {
         Card foundCard = cardService.getEntityById(card.getId().toString());
 
         assertThat(foundCard != null);
-        assertEquals(foundCard,card);
+        assertEquals(foundCard, card);
     }
+
     @Test
-    public void testListAll(){
+    public void testListAll() {
         Card card2 = new Card();
         card2.setId(UUID.randomUUID());
         card2.setName("kokot1");
@@ -75,12 +74,12 @@ public class CardServiceTest {
     }
 
     @Test
-    public void testAddCard(){
+    public void testAddCard() {
         doReturn(card).when(repository).save(card);
         Card savedCard = cardService.addCard(card);
 
         assertThat(savedCard != null);
-        assertThat( savedCard.getName().equalsIgnoreCase("kokot"));
+        assertThat(savedCard.getName().equalsIgnoreCase("kokot"));
     }
 
     @Test

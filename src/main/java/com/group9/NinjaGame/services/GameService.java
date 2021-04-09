@@ -9,7 +9,6 @@ import com.group9.NinjaGame.models.modes.GameMode;
 import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
-import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import javassist.NotFoundException;
@@ -129,12 +128,10 @@ public class GameService implements IGameService {
                 gameRepository.delete(game);
 
                 return game;
-            }
-            else {
+            } else {
                 throw new NotFoundException("Can't find Game with this ID");
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             //can't delete game
             throw e;
         }
@@ -143,8 +140,7 @@ public class GameService implements IGameService {
     public Iterable<Game> findAll() {
         try {
             return gameRepository.findAll();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw e;
         }
 
