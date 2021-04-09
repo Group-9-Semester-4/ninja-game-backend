@@ -21,17 +21,13 @@ import java.util.*;
 @Component
 public class GameService implements IGameService {
 
-    private ICardService cardService;
-    private CardRepository cardRepository;
     private CardSetRepository cardSetRepository;
     private GameRepository gameRepository;
     private GameContainer gameContainer;
 
     @Autowired
-    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository cardRepository, GameRepository gameRepository) {
-        this.cardService = cardService;
+    public GameService(CardSetRepository cardSetRepository, GameRepository gameRepository) {
         this.cardSetRepository = cardSetRepository;
-        this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
         gameContainer = GameContainer.getInstance();
     }
