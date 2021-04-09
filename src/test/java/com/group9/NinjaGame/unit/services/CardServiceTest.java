@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -82,13 +82,21 @@ public class CardServiceTest {
         assertThat(savedCard != null);
         assertThat( savedCard.getName().equalsIgnoreCase("kokot"));
     }
-    
-    //TODO: Make delete test
+
     @Test
     public void testDeleteCard() {
-        //Act
+        doReturn(Optional.empty()).when(repository).findById(card.getId());
         cardService.deleteCard(card);
-        //Assert
+
+        try {
+            cardService.getEntityById(card.getId().toString());
+            fail();
+        } catch (NotFoundException e) {
+            assertThrows(NotFoundException.class, () -> {
+                cardService.getEntityById(card.getId().toString());
+            });
+            assertThat(e.getMessage().equals("Can't find Card set with this ID"));
+        }
         verify(repository, times(1)).delete(card);
     }
 

@@ -16,9 +16,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.doReturn;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CardSetServiceTest {
@@ -33,12 +32,12 @@ public class CardSetServiceTest {
 
     //maybe should be BeforeAll but can't get it to work
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         assertNotNull(repository);
 
         cardSetService = new CardSetService(repository);
 
-        list = new ArrayList();
+        list = new ArrayList<>();
 
         cardSet = new CardSet();
         cardSet.setId(UUID.randomUUID());
@@ -54,10 +53,11 @@ public class CardSetServiceTest {
         CardSet foundCard = cardSetService.getById(cardSet.getId().toString());
 
         assertThat(foundCard != null);
-        assertEquals(foundCard,cardSet);
+        assertEquals(foundCard, cardSet);
     }
+
     @Test
-    public void testListAllCardSets(){
+    public void testListAllCardSets() {
         CardSet cardSet1 = new CardSet();
         cardSet1.setId(UUID.randomUUID());
         cardSet1.setName("kokot1");
@@ -74,12 +74,37 @@ public class CardSetServiceTest {
         assertThat(((List<CardSet>) foundCardSets).contains(cardSet) && ((List<CardSet>) foundCardSets).contains(cardSet1));
     }
 
-//    @Test
-//    public void testAddCardSet(){
+    @Test
+    public void testAddCardSet() {
+        doReturn(cardSet).when(repository).save(cardSet);
+        cardSetService.createCardSet(cardSet);
+
+        verify(repository, times(1)).save(cardSet);
+
+        //        doReturn(card).when(repository).save(card);
+//        Card savedCard = cardService.addCard(card);
 //
-//    }
-//    @Test
-//    public void testDeleteCardSet(){
-//
-//    }
+//        assertThat(savedCard != null);
+//        assertThat( savedCard.getName().equalsIgnoreCase("kokot"));
+    }
+
+    @Test
+    public void testDeleteCardSet() {
+        doReturn(Optional.empty()).when(repository).findById(cardSet.getId());
+        cardSetService.deleteCardSet(cardSet);
+
+        try {
+            cardSetService.getById(cardSet.getId().toString());
+            fail(); // in case no Exception is thrown
+        } catch (NotFoundException e) {
+
+            assertThrows(NotFoundException.class, () -> {
+                cardSetService.getById(cardSet.getId().toString());
+            });
+
+            assertThat(e.getMessage().equals("Can't find Card set with this ID"));
+
+        }
+        verify(repository, times(1)).delete(cardSet);
+    }
 }
