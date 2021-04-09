@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CardServiceTest {
@@ -84,8 +84,12 @@ public class CardServiceTest {
     }
     
     //TODO: Make delete test
-//    @Test
-//    public void testDeleteCard(){
-//    }
+    @Test
+    public void testDeleteCard() {
+        //Act
+        cardService.deleteCard(card);
+        //Assert
+        verify(repository, times(1)).delete(card);
+    }
 
 }
