@@ -52,7 +52,7 @@ public class GameService implements IGameService {
         return game;
     }
 
-    public Game startGame(StartGameParam param) throws Exception {
+    public Game startGame(StartGameParam param) throws NotFoundException {
         Optional<Game> gameEntityOptional = gameRepository.findById(param.gameId);
         Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
 
@@ -81,7 +81,7 @@ public class GameService implements IGameService {
             return game;
         }
 
-        throw new Exception("Game of Card set not found");
+        throw new NotFoundException("Game of Card set not found");
     }
 
     @Override

@@ -85,9 +85,13 @@ public class CardServiceTest {
 
     @Test
     public void testDeleteCard() {
+        // arrange
         doReturn(Optional.empty()).when(repository).findById(card.getId());
+
+        // act
         cardService.deleteCard(card);
 
+        // assert
         try {
             cardService.getEntityById(card.getId().toString());
             fail();

@@ -80,12 +80,6 @@ public class CardSetServiceTest {
         cardSetService.createCardSet(cardSet);
 
         verify(repository, times(1)).save(cardSet);
-
-        //        doReturn(card).when(repository).save(card);
-//        Card savedCard = cardService.addCard(card);
-//
-//        assertThat(savedCard != null);
-//        assertThat( savedCard.getName().equalsIgnoreCase("kokot"));
     }
 
     @Test
