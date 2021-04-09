@@ -99,7 +99,7 @@ public class GameService implements IGameService {
 
             List<Card> cards = gameMode.remainingCards;
 
-            if (cards != null) {
+            if (cards != null && !cards.isEmpty()) {
 
                 return cards.get(new Random().nextInt(cards.size()));
             }
