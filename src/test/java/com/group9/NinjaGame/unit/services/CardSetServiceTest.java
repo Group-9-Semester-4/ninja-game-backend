@@ -28,77 +28,82 @@ public class CardSetServiceTest {
 
 
     @Mock
-    private CardSetRepository repository;
+    private CardSetRepository cardSetRepository;
 
-    //maybe should be BeforeAll but can't get it to work
     @BeforeEach
     public void setUp() {
-        assertNotNull(repository);
+        assertNotNull(cardSetRepository);
 
-        cardSetService = new CardSetService(repository);
+        cardSetService = new CardSetService(cardSetRepository);
 
         list = new ArrayList<>();
 
         cardSet = new CardSet();
         cardSet.setId(UUID.randomUUID());
-        cardSet.setName("kokot");
+        cardSet.setName("cardSetName100");
     }
 
 
     @Test
     public void testGetEntityById() throws NotFoundException {
         Optional<CardSet> result = Optional.of(cardSet);
+        doReturn(result).when(cardSetRepository).findById(cardSet.getId());
 
-        doReturn(result).when(repository).findById(cardSet.getId());
         CardSet foundCard = cardSetService.getById(cardSet.getId().toString());
 
-        assertThat(foundCard != null);
         assertEquals(foundCard, cardSet);
+        assertNotNull(foundCard);
+        verify(cardSetRepository, times(1)).findById(cardSet.getId());
     }
 
     @Test
     public void testListAllCardSets() {
-        CardSet cardSet1 = new CardSet();
-        cardSet1.setId(UUID.randomUUID());
-        cardSet1.setName("kokot1");
+        CardSet cardSet2 = new CardSet();
+        cardSet2.setId(UUID.randomUUID());
+        cardSet2.setName("cardSetName101");
 
         list.add(cardSet);
-        list.add(cardSet1);
+        list.add(cardSet2);
 
+        doReturn(list).when(cardSetRepository).findAll();
+        List<CardSet> res = cardSetService.findAll();
 
-        doReturn(list).when(repository).findAll();
-        Iterable<CardSet> foundCardSets = cardSetService.findAll();
-
-        assertThat(foundCardSets != null);
-        assertThat(((List<CardSet>) foundCardSets).size() > 0);
-        assertThat(((List<CardSet>) foundCardSets).contains(cardSet) && ((List<CardSet>) foundCardSets).contains(cardSet1));
+        assertNotNull(res);
+        assertTrue(res.size() > 0);
+        assertTrue(res.contains(cardSet) && res.contains(cardSet2));
     }
 
     @Test
     public void testAddCardSet() {
-        doReturn(cardSet).when(repository).save(cardSet);
-        cardSetService.createCardSet(cardSet);
+        doReturn(cardSet).when(cardSetRepository).save(cardSet);
 
-        verify(repository, times(1)).save(cardSet);
+        CardSet res = cardSetService.createCardSet(cardSet);
+
+        assertNotNull(res);
+        assertTrue(res.getName().equalsIgnoreCase("cardSetName100"));
+        verify(cardSetRepository, times(1)).save(cardSet);
     }
 
     @Test
     public void testDeleteCardSet() {
-        doReturn(Optional.empty()).when(repository).findById(cardSet.getId());
+        cardSetService.deleteCardSet(cardSet);
+
+        verify(cardSetRepository, times(1)).delete(cardSet);
+    }
+
+    @Test
+    public void testDeletedCardSetThrowsNotFoundException() throws NotFoundException {
+        doReturn(Optional.empty()).when(cardSetRepository).findById(cardSet.getId());
+
         cardSetService.deleteCardSet(cardSet);
 
         try {
             cardSetService.getById(cardSet.getId().toString());
-            fail(); // in case no Exception is thrown
+            fail();
         } catch (NotFoundException e) {
-
-            assertThrows(NotFoundException.class, () -> {
-                cardSetService.getById(cardSet.getId().toString());
-            });
-
-            assertThat(e.getMessage().equals("Can't find Card set with this ID"));
-
+            assertEquals(e.getMessage(), "Can't find Card set with this ID");
         }
-        verify(repository, times(1)).delete(cardSet);
+        verify(cardSetRepository, times(1)).delete(cardSet);
+        verify(cardSetRepository, times(1)).findById(cardSet.getId());
     }
 }

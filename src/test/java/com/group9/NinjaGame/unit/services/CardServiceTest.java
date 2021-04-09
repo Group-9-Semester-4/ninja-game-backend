@@ -39,7 +39,7 @@ public class CardServiceTest {
 
         cardService = new CardService(cardRepository);
 
-        list = new ArrayList();
+        list = new ArrayList<>();
 
         card = new Card();
         card.setId(uuid);
@@ -55,11 +55,12 @@ public class CardServiceTest {
         Card foundCard = cardService.getEntityById(card.getId().toString());
 
         assertEquals(foundCard, card);
+        assertNotNull(foundCard);
         verify(cardRepository,times(1)).findById(card.getId());
     }
 
     @Test
-    public void testListAll() {
+    public void testListAllCards() {
         Card card2 = new Card();
         card2.setId(UUID.randomUUID());
         card2.setName("cardName101");
@@ -84,6 +85,7 @@ public class CardServiceTest {
 
         assertNotNull(savedCard);
         assertTrue(savedCard.getName().equalsIgnoreCase("cardName100"));
+        verify(cardRepository, times(1)).save(card);
     }
 
     @Test

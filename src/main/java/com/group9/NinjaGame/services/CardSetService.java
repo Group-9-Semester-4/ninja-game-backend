@@ -6,6 +6,7 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,7 +19,8 @@ public class CardSetService implements ICardSetService {
     public CardSetService(CardSetRepository cardSetRepository) {
         this.cardSetRepository = cardSetRepository;
     }
-    public void createCardSet(CardSet cardSet) {
+
+    public CardSet createCardSet(CardSet cardSet) {
 
         try {
             cardSetRepository.save(cardSet);
@@ -26,6 +28,7 @@ public class CardSetService implements ICardSetService {
         catch (Exception e){
             throw e;
         }
+        return cardSet;
     }
 
     public CardSet getById(String id) throws NotFoundException {
@@ -56,9 +59,9 @@ public class CardSetService implements ICardSetService {
         }
     }
 
-    public Iterable<CardSet> findAll() {
+    public List<CardSet> findAll() {
         try {
-            return cardSetRepository.findAll();
+            return (List<CardSet>) cardSetRepository.findAll();
         }
         catch (Exception e){
             throw e;
