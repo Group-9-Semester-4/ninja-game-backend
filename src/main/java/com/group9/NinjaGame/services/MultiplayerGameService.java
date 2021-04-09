@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.group9.NinjaGame.helpers.SocketIOHelper.SendMessage;
+
 @Component
 public class MultiplayerGameService {
 
@@ -35,14 +37,18 @@ public class MultiplayerGameService {
 
     private final GameContainer gameContainer;
 
+    private final BasicGameModeService basicGameModeService;
+
     private final SocketIONamespace namespace;
 
     @Autowired
-    public MultiplayerGameService(SocketIOServer server, GameRepository gameRepository, CardSetRepository cardSetRepository) {
+    public MultiplayerGameService(SocketIOServer server, GameRepository gameRepository, CardSetRepository cardSetRepository, BasicGameModeService basicGameModeService) {
         this.gameRepository = gameRepository;
         this.cardSetRepository = cardSetRepository;
 
         gameContainer = GameContainer.getInstance();
+
+        this.basicGameModeService = basicGameModeService;
 
         this.namespace = server.addNamespace("/game");
         this.namespace.addConnectListener(onConnected());
@@ -127,7 +133,7 @@ public class MultiplayerGameService {
 
             UUID playerId = client.getSessionId();
 
-            GameInfo gameInfo = gameContainer.getPlayerLobby(playerId);
+            GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
 
             if (!gameInfo.lobby.lobbyOwnerId.equals(playerId)) {
                 SendMessage(ackRequest, MessageType.ERROR, "Only lobby owner can start a game");
@@ -178,20 +184,10 @@ public class MultiplayerGameService {
         });
     }
 
-    private void SendMessage(AckRequest ackRequest, MessageType type, String message) {
-        SocketIOMessage ioMessage = new SocketIOMessage(type, message);
-        ackRequest.sendAckData(ioMessage);
-    }
-
-    private void SendMessage(AckRequest ackRequest, MessageType type, String message, Object data) {
-        SocketIOMessage ioMessage = new SocketIOMessage(type, message, data);
-        ackRequest.sendAckData(ioMessage);
-    }
-
     private void disconnectPlayerFromPreviousLobbies(SocketIOClient client) {
         UUID playerId = client.getSessionId();
 
-        GameInfo gameInfo = gameContainer.getPlayerLobby(playerId);
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
 
         if (gameInfo != null) {
             client.leaveRoom(gameInfo.gameId.toString());
