@@ -66,10 +66,6 @@ public class CardSetResource {
             throw new IllegalArgumentException("Invalid card set Id:" + id);
         }
 
-        for(Card c : cardSet.getCards()){
-            cardList.removeIf(card -> card.getId().equals(c.getId()));
-        }
-
         model.addAttribute("cardSet", cardSet);
         model.addAttribute("allCards", cardList);
         return "update-card-set";
