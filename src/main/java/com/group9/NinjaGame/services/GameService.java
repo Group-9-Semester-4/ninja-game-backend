@@ -9,7 +9,6 @@ import com.group9.NinjaGame.models.modes.GameMode;
 import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
-import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import javassist.NotFoundException;
@@ -21,17 +20,13 @@ import java.util.*;
 @Component
 public class GameService implements IGameService {
 
-    private ICardService cardService;
-    private CardRepository cardRepository;
     private CardSetRepository cardSetRepository;
     private GameRepository gameRepository;
     private GameContainer gameContainer;
 
     @Autowired
-    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository cardRepository, GameRepository gameRepository) {
-        this.cardService = cardService;
+    public GameService(CardSetRepository cardSetRepository, GameRepository gameRepository) {
         this.cardSetRepository = cardSetRepository;
-        this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
         gameContainer = GameContainer.getInstance();
     }
@@ -56,7 +51,7 @@ public class GameService implements IGameService {
         return game;
     }
 
-    public Game startGame(StartGameParam param) throws Exception {
+    public Game startGame(StartGameParam param) throws NotFoundException {
         Optional<Game> gameEntityOptional = gameRepository.findById(param.gameId);
         Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
 
@@ -85,7 +80,7 @@ public class GameService implements IGameService {
             return game;
         }
 
-        throw new Exception("Game of Card set not found");
+        throw new NotFoundException("Game of Card set not found");
     }
 
     @Override
@@ -133,12 +128,10 @@ public class GameService implements IGameService {
                 gameRepository.delete(game);
 
                 return game;
-            }
-            else {
+            } else {
                 throw new NotFoundException("Can't find Game with this ID");
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             //can't delete game
             throw e;
         }
@@ -147,8 +140,7 @@ public class GameService implements IGameService {
     public Iterable<Game> findAll() {
         try {
             return gameRepository.findAll();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw e;
         }
 

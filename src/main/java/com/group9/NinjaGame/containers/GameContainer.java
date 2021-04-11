@@ -53,7 +53,7 @@ public class GameContainer {
     }
 
 
-    public GameInfo getGameInfo(String lobbyCode) {
+    public GameInfo getGameInfoByLobbyCode(String lobbyCode) {
         for (GameInfo info : games.values()) {
             if (info.multiPlayer && info.lobby.lobbyCode.equals(lobbyCode)) {
                 return info;
@@ -80,5 +80,9 @@ public class GameContainer {
         }
 
         playerGame.remove(playerId);
+    }
+
+    public GameContainer getContainer() {
+        return getInstance();
     }
 }

@@ -33,6 +33,7 @@ import static com.group9.NinjaGame.helpers.SocketIOHelper.SendMessage;
 public class MultiplayerGameService {
 
     private final GameRepository gameRepository;
+
     private final CardSetRepository cardSetRepository;
 
     private final GameContainer gameContainer;
@@ -82,7 +83,7 @@ public class MultiplayerGameService {
 
     private DataListener<JoinGameParam> onJoin() {
         return ((client, param, ackRequest) -> {
-            GameInfo gameInfo = gameContainer.getGameInfo(param.lobbyCode);
+            GameInfo gameInfo = gameContainer.getGameInfoByLobbyCode(param.lobbyCode);
 
             if (gameInfo != null && !gameInfo.started && gameInfo.multiPlayer) {
                 UUID gameId = gameInfo.gameId;

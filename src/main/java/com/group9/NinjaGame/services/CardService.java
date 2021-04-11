@@ -29,7 +29,7 @@ public class CardService implements ICardService {
                  card = cardEntityOptional.get();
             }
             else {
-                throw new NotFoundException("Can't find Game with this ID");
+                throw new NotFoundException("Can't find Card set with this ID");
             }
             return card;
         } catch (NotFoundException e) {
@@ -38,12 +38,13 @@ public class CardService implements ICardService {
     }
 
     // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/
-    public void addCard(Card card) {
+    public Card addCard(Card card) {
         try {
             repository.save(card);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return card;
     }
 
     public void deleteCard(Card card){
@@ -54,18 +55,10 @@ public class CardService implements ICardService {
         }
     }
 
-    public Iterable<Card> findAll() {
-        try {
-            return repository.findAll();
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
     @Override
     public List<Card> listAll() {
         try {
-            return (List<Card>) findAll();
+            return (List<Card>) repository.findAll();
         }
         catch (Exception e) {
             throw e;
