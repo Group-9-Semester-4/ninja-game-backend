@@ -5,6 +5,7 @@ import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.models.GameInfo;
+import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardSetRepository;
@@ -15,42 +16,43 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class GameServiceTest {
 
-
+    // Helper classes used throughout testing
     GameService gameService;
     private Game game;
+    private Card card;
+    private CardSet cardSet;
+    private Optional<Game> optionalGame;
+    private Optional<CardSet> optionalCardSet;
     private UUID uuid = UUID.randomUUID();
+    private GameInfo gameInfo;
 
     @Mock
     private GameRepository gameRepository;
     @Mock
     private CardSetRepository cardSetRepository;
 
-
-    //maybe should be BeforeAll but can't get it to work
+    // This method checks if helper classes work properly and sets up a gameService & container objects
     @BeforeEach
     public void setUp() {
         assertNotNull(gameRepository);
         assertNotNull(cardSetRepository);
-        //assertNotNull(gameContainer);
 
         gameService = new GameService(cardSetRepository, gameRepository);
+
+        assertNotNull(GameContainer.getInstance());
     }
 
 
@@ -63,8 +65,7 @@ public class GameServiceTest {
         testParam.timeLimit = 60;
 
         game = new Game(testParam.timeLimit, testParam.multiPlayer, testParam.playingAlone);
-
-        doReturn(game).when(gameRepository).save(Mockito.any(Game.class)); // hotfix'd
+        doReturn(game).when(gameRepository).save(any(Game.class));
 
         Game createdGame = gameService.initGame(testParam);
 
@@ -73,33 +74,10 @@ public class GameServiceTest {
 
     @Test
     public void testStartGame() {
-        Game g = new Game();
-        g.setId(uuid);
-        CardSet c = new CardSet();
-        List<Card> list = new ArrayList<>();
-        Card card = new Card();
-        card.setId(uuid);
-        list.add(card);
-        c.setCards(list);
-        Optional<Game> oG = Optional.of(g);
-        Optional<CardSet> oC = Optional.of(c);
-        GameInfo gI = new GameInfo(uuid, "asdf");
-
-        MockedStatic mocked = mockStatic(GameContainer.class);
-
-        /*
-
-            TODO: GameContainer is a singleton which is untestable.
-
-
-         */
-
-
-
-        //doReturn(gI).when(mocked).getGameInfo(uuid);
-        doReturn(g).when(gameRepository).save(g);
-        doReturn(oG).when(gameRepository).findById(uuid);
-        doReturn(oC).when(cardSetRepository).findById(uuid);
+        createGameInProgress();
+        doReturn(game).when(gameRepository).save(game);
+        doReturn(optionalGame).when(gameRepository).findById(game.getId());
+        doReturn(optionalCardSet).when(cardSetRepository).findById(cardSet.getId());
 
         StartGameParam testParam = new StartGameParam();
         testParam.gameId = uuid;
@@ -107,16 +85,79 @@ public class GameServiceTest {
         testParam.cardSetId = uuid;
         testParam.unwantedCards = new ArrayList<>();
 
-        try
-        {
+        try {
             Game testG = gameService.startGame(testParam);
-            assertTrue(testG instanceof Game);
-
-        } catch (NotFoundException e)
-        {
-            System.out.println("asdf");
+            assertNotNull(testG);
+        } catch (NotFoundException e) {
+            fail();
         }
 
-        //verify(gameContainer, times(1)).getGameInfo(any(UUID.class));
+        verify(gameRepository, times(1)).save(game);
     }
+
+    @Test
+    public void testDrawCardDuringGame() {
+        createGameInProgress();
+
+        Card cardDrawn = gameService.draw(game.getId());
+
+        assertEquals(card.getName(), cardDrawn.getName());
+        assertEquals(card.getId(), cardDrawn.getId());
+        assertNotNull(cardDrawn);
+    }
+
+    @Test
+    public void testRemoveDoneCardDuringGame() {
+        createGameInProgress();
+        boolean res = gameService.removeDoneCard(game.getId(), card.getId());
+        assertTrue(res);
+    }
+
+    @Test
+    public void testFinishGame() {
+        try {
+            createGameInProgress();
+            doReturn(optionalGame).when(gameRepository).findById(game.getId());
+            assertDoesNotThrow(() -> {
+                gameService.finishGame(game.getId());
+            });
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(gameRepository, times(1)).delete(game);
+    }
+
+    @Test
+    public void testFindAllGames() {
+        List<Game> games = new ArrayList<>();
+        games.add(game);
+        doReturn(games).when(gameRepository).findAll();
+
+        assertEquals(gameService.findAll(), games);
+        verify(gameRepository, times(1)).findAll();
+    }
+
+
+    // description: helper method used for any tests testing features "during a game"
+    // explanation: creates a game and initializes it in gameContainer
+    private void createGameInProgress() {
+        game = new Game();
+        game.setId(uuid);
+        game.setMultiPlayer(true);
+        cardSet = new CardSet();
+        cardSet.setId(uuid);
+        List<Card> list = new ArrayList<>();
+        card = new Card();
+        card.setId(uuid);
+        list.add(card);
+        cardSet.setCards(list);
+        optionalGame = Optional.of(game);
+        optionalCardSet = Optional.of(cardSet);
+        gameInfo = new GameInfo(uuid, "asdf");
+        gameInfo.gameModeData = new SinglePlayerGameMode();
+        gameInfo.gameModeData.setCards(list);
+        GameContainer.getInstance().initGame(gameInfo);
+    }
+
 }
