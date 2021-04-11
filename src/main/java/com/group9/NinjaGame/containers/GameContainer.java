@@ -12,11 +12,11 @@ public class GameContainer {
 
     private final HashMap<UUID, GameInfo> games;
 
-    private final HashMap<UUID, GameInfo> playerLobby;
+    private final HashMap<UUID, GameInfo> playerGame;
 
     private GameContainer() {
         games = new HashMap<>();
-        playerLobby = new HashMap<>();
+        playerGame = new HashMap<>();
     }
 
     public static GameContainer getInstance() {
@@ -32,7 +32,7 @@ public class GameContainer {
 
         if (!gameInfo.started) {
 
-            playerLobby.put(player.sessionId, gameInfo);
+            playerGame.put(player.sessionId, gameInfo);
 
             if (gameInfo.lobby.players.contains(player)) {
                 return false;
@@ -67,8 +67,8 @@ public class GameContainer {
         games.remove(gameId);
     }
 
-    public GameInfo getPlayerLobby(UUID playerId) {
-        return playerLobby.get(playerId);
+    public GameInfo getPlayerGame(UUID playerId) {
+        return playerGame.get(playerId);
     }
 
     public void removePlayerFromLobby(UUID playerId, GameInfo info) {
@@ -79,7 +79,7 @@ public class GameContainer {
             info.lobby.lobbyOwnerId = player.sessionId;
         }
 
-        playerLobby.remove(playerId);
+        playerGame.remove(playerId);
     }
 
     public GameContainer getContainer() {
