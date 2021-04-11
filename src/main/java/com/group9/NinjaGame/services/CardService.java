@@ -2,6 +2,7 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.repositories.CardRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,31 +20,48 @@ public class CardService implements ICardService {
 
 
     @Override
-    public Card getEntityById(String id) {
-        UUID uuid = UUID.fromString(id);
-        Optional<Card> cardEntityOptional = repository.findById(uuid);
-        Card card = null;
-        if (cardEntityOptional.isPresent()) {
-            card = cardEntityOptional.get();
+    public Card getEntityById(String id) throws NotFoundException {
+        try {
+            UUID uuid = UUID.fromString(id);
+            Optional<Card> cardEntityOptional = repository.findById(uuid);
+            Card card = null;
+            if (cardEntityOptional.isPresent()) {
+                 card = cardEntityOptional.get();
+            }
+            else {
+                throw new NotFoundException("Can't find Card set with this ID");
+            }
+            return card;
+        } catch (NotFoundException e) {
+            throw e;
+        }
+    }
+
+    // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/
+    public Card addCard(Card card) {
+        try {
+            repository.save(card);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return card;
     }
 
-    // for both save and update, reason why here: https://www.netsurfingzone.com/hibernate/spring-data-crudrepository-save-method/
-    public void addCard(Card card) {
-        repository.save(card);
-    }
-
     public void deleteCard(Card card){
-        repository.delete(card);
-    }
-
-    public Iterable<Card> findAll() {
-        return repository.findAll();
+        try {
+            repository.delete(card);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public List<Card> listAll() {
-        return (List<Card>) findAll();
+        try {
+            return (List<Card>) repository.findAll();
+        }
+        catch (Exception e) {
+            throw e;
+        }
     }
 }

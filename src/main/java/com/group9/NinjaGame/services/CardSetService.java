@@ -2,9 +2,11 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.repositories.CardSetRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,25 +19,53 @@ public class CardSetService implements ICardSetService {
     public CardSetService(CardSetRepository cardSetRepository) {
         this.cardSetRepository = cardSetRepository;
     }
-    public void createCardSet(CardSet cardSet) {
-        cardSetRepository.save(cardSet);
-    }
 
-    public CardSet getById(String id){
-        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(UUID.fromString(id));
-        CardSet cardSet = null;
-        if (cardSetEntityOptional.isPresent()) {
-            cardSet = cardSetEntityOptional.get();
+    public CardSet createCardSet(CardSet cardSet) {
+
+        try {
+            cardSetRepository.save(cardSet);
+        }
+        catch (Exception e){
+            throw e;
         }
         return cardSet;
     }
 
-    public void deleteCardSet(CardSet cardSet){
-        cardSetRepository.delete(cardSet);
+    public CardSet getById(String id) throws NotFoundException {
+        try {
+            Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(UUID.fromString(id));
+            CardSet cardSet = null;
+            if (cardSetEntityOptional.isPresent()) {
+                cardSet = cardSetEntityOptional.get();
+                return cardSet;
+            }
+            else {
+                throw new NotFoundException("Can't find Card set with this ID");
+            }
+
+        }
+        catch (Exception e){
+            throw e;
+        }
+
     }
 
-    public Iterable<CardSet> findAll() {
-        return cardSetRepository.findAll();
+    public void deleteCardSet(CardSet cardSet){
+        try {
+            cardSetRepository.delete(cardSet);
+        }
+        catch (Exception e){
+            throw e;
+        }
+    }
+
+    public List<CardSet> findAll() {
+        try {
+            return (List<CardSet>) cardSetRepository.findAll();
+        }
+        catch (Exception e){
+            throw e;
+        }
     }
 
 }

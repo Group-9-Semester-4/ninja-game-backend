@@ -3,10 +3,8 @@ package com.group9.NinjaGame.resources.api;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
-import com.group9.NinjaGame.models.CardDoneParam;
-import com.group9.NinjaGame.models.FinishGameParam;
-import com.group9.NinjaGame.models.InitGameParam;
-import com.group9.NinjaGame.models.StartGameParam;
+import com.group9.NinjaGame.helpers.GameModeResolver;
+import com.group9.NinjaGame.models.params.*;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
@@ -43,23 +41,16 @@ public class GameResource {
 
     }
 
-
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
-        Game game = gameService.initGame(param.timeLimit, param.singlePlayer, param.playingAlone);
+        Game game = gameService.initGame(param);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
+    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) throws Exception {
 
-        Game game;
-
-        if (param.cardSetId != null) {
-            game = gameService.startGame(param.gameId, param.cardSetId);
-        } else {
-            game = gameService.startGame(param.gameId, param.unwantedCards);
-        }
+        Game game = gameService.startGame(param);
 
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
@@ -82,14 +73,14 @@ public class GameResource {
     }
 
     @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) throws Exception {
         return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 
 
     @GetMapping(path = "/cards")
     public ResponseEntity<?> getAllCards() {
-        Iterable<Card> allCards = cardService.findAll();
+        Iterable<Card> allCards = cardService.listAll();
         return new ResponseEntity<>(allCards, HttpStatus.OK);
     }
 
@@ -103,6 +94,11 @@ public class GameResource {
     public ResponseEntity<?> getAllGames() {
         Iterable<Game> allGames = gameService.findAll();
         return new ResponseEntity<>(allGames, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/game-modes")
+    public ResponseEntity<?> getGameModes() {
+        return new ResponseEntity<>(GameModeResolver.GAME_MODES, HttpStatus.OK);
     }
 
 

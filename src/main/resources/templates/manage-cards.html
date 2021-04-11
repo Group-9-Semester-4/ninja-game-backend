@@ -7,11 +7,12 @@
     <link th:href="@{/css/main.css}" rel="stylesheet">
 </head>
 <body>
+<a href="/" class="btn btn-secondary">Go back</a>
 <div th:switch="${cards}">
     <div class="alert alert-danger" role="alert" th:case="null">No Cards yet!</div>
     <div th:case="*">
         <h2 class="display-2">Cards</h2>
-        <h4 class="text-muted"> This list has all cards in the system.</h4>
+        <h4 class="text-muted"> This list shows all <em> cards </em> in the system.</h4>
         <p><a class="btn btn-primary btn-lg" href="/admin/card/create">Add a new card</a></p>
         <table class="table table-striped table-hover">
             <thead>
@@ -22,12 +23,20 @@
                 <th>Difficulty-type</th>
                 <th>Difficulty</th>
                 <th>Path</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
             </thead>
             <tbody>
             <!--<a th:href="@{/admin/card/update/{id}(id=${card.id})}" th:text="${card.name}"></a>  -->
             <tr th:each="card : ${cards}">
                 <td th:text="${card.name}"></td>
+                <td th:text="${card.description}"></td>
+                <td th:text="${card.points}"></td>
+                <td th:text="${card.difficultyType}"></td>
+                <td th:text="${card.difficulty}"></td>
+                <td th:text="${card.filepath}"></td>
+
                 <td><a th:href="@{/admin/card/update/{id}(id=${card.id})}">Edit</a></td>
                 <td><a th:href="@{/admin/card/delete/{id}(id=${card.id})}">Delete</a></td>
             </tr>

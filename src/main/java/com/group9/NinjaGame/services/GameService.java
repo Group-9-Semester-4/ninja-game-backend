@@ -1,12 +1,17 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.container.GameContainer;
+import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
-import com.group9.NinjaGame.repositories.CardRepository;
+import com.group9.NinjaGame.models.GameInfo;
+import com.group9.NinjaGame.models.modes.GameMode;
+import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
+import com.group9.NinjaGame.models.params.InitGameParam;
+import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,113 +20,129 @@ import java.util.*;
 @Component
 public class GameService implements IGameService {
 
-    private ICardService cardService;
-    private CardRepository cardRepository;
     private CardSetRepository cardSetRepository;
     private GameRepository gameRepository;
+    private GameContainer gameContainer;
 
     @Autowired
-    public GameService(ICardService cardService, CardSetRepository cardSetRepository, CardRepository cardRepository, GameRepository gameRepository) {
-        this.cardService = cardService;
+    public GameService(CardSetRepository cardSetRepository, GameRepository gameRepository) {
         this.cardSetRepository = cardSetRepository;
-        this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
+        gameContainer = GameContainer.getInstance();
     }
 
     @Override
-    public Game initGame(int timeLimit, boolean singlePlayer, boolean playingAlone) {
-        Game game = new Game(timeLimit, singlePlayer, playingAlone);
+    public Game initGame(InitGameParam param) {
+        Game game = new Game(param.timeLimit, param.multiPlayer, param.playingAlone);
 
-        gameRepository.save(game);
+        game = gameRepository.save(game);
+
+        UUID gameId = game.getId();
+        GameInfo gameInfo;
+
+        if (param.multiPlayer) {
+            gameInfo = new GameInfo(gameId, param.lobbyCode);
+        } else {
+            gameInfo = new GameInfo(gameId);
+        }
+
+        gameContainer.initGame(gameInfo);
 
         return game;
     }
 
-    @Override
-    public Game startGame(UUID gameId, UUID cardSetId) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(cardSetId);
-
-        Game game = null;
+    public Game startGame(StartGameParam param) throws NotFoundException {
+        Optional<Game> gameEntityOptional = gameRepository.findById(param.gameId);
+        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
 
         if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
+            Game game = gameEntityOptional.get();
             CardSet cardSet = cardSetEntityOptional.get();
 
-            game.setSelectedCardSet(cardSet);
-
-            List<UUID> cardIds = new ArrayList<>();
+            List<Card> cards = new ArrayList<>();
 
             for (Card card : cardSet.getCards()) {
-                cardIds.add(card.getId());
+                if (!param.unwantedCards.contains(card.getId())) {
+                    cards.add(card);
+                }
             }
 
-            GameContainer.getInstance().setGameCards(gameId, cardIds);
-
+            game.setSelectedCardSet(cardSet);
             game = gameRepository.save(game);
+
+            GameInfo gameInfo = gameContainer.getGameInfo(game.getId());
+
+            gameInfo.started = true;
+
+            gameInfo.gameModeData = new SinglePlayerGameMode();
+            gameInfo.gameModeData.setCards(cards);
+
+            return game;
         }
 
-        return game;
-    }
-
-    @Override
-    public Game startGame(UUID gameId, List<UUID> unwantedCards) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Game game = null;
-
-        if (gameEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
-
-            List<UUID> cards = (List<UUID>) cardRepository.getCardIds(unwantedCards);
-
-            GameContainer.getInstance().setGameCards(gameId, cards);
-
-            game = gameRepository.save(game);
-        }
-
-        return game;
+        throw new NotFoundException("Game of Card set not found");
     }
 
     @Override
     public Card draw(UUID gameId) {
 
-        List<UUID> cardIds = GameContainer.getInstance().getGameCards(gameId);
+        GameMode mode = gameContainer.getGameInfo(gameId).gameModeData;
 
-        if (cardIds != null) {
-            UUID drawnCardId = cardIds.get(new Random().nextInt(cardIds.size()));
+        if (mode instanceof SinglePlayerGameMode) {
 
-            Optional<Card> cardOptional = cardRepository.findById(drawnCardId);
+            SinglePlayerGameMode gameMode = (SinglePlayerGameMode) mode;
 
-            return cardOptional.orElse(null);
+            List<Card> cards = gameMode.remainingCards;
+
+            if (cards != null && !cards.isEmpty()) {
+
+                return cards.get(new Random().nextInt(cards.size()));
+            }
         }
+
 
         return null;
     }
 
     public boolean removeDoneCard(UUID gameId, UUID cardId) {
-        List<UUID> cardIds = GameContainer.getInstance().getGameCards(gameId);
 
-        return cardIds.remove(cardId);
-    }
+        GameMode mode = gameContainer.getGameInfo(gameId).gameModeData;
 
-    public Game finishGame(UUID gameId) {
-        Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-        Game game;
+        if (mode instanceof SinglePlayerGameMode) {
+            SinglePlayerGameMode gameMode = (SinglePlayerGameMode) mode;
 
-        GameContainer.getInstance().removeGame(gameId);
-
-        if (gameEntityOptional.isPresent()) {
-            game = gameEntityOptional.get();
-
-            gameRepository.delete(game);
-
-            return game;
+            return gameMode.removeCardById(cardId);
         }
 
-        return null;
+        return false;
+    }
+
+    public Game finishGame(UUID gameId) throws Exception {
+        try {
+            Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
+            gameContainer.removeGame(gameId);
+
+            if (gameEntityOptional.isPresent()) {
+                Game game = gameEntityOptional.get();
+
+                gameRepository.delete(game);
+
+                return game;
+            } else {
+                throw new NotFoundException("Can't find Game with this ID");
+            }
+        } catch (Exception e) {
+            //can't delete game
+            throw e;
+        }
     }
 
     public Iterable<Game> findAll() {
-        return gameRepository.findAll();
+        try {
+            return gameRepository.findAll();
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 }

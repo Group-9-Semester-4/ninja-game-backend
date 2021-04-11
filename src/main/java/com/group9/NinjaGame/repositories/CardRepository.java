@@ -18,9 +18,7 @@ public interface CardRepository extends CrudRepository<Card, UUID> {
 
         How to Update a Row in the database -> https://stackoverflow.com/questions/36693300/how-to-update-an-attribute-with-spring-crudrepository
      */
-    @Query("SELECT c FROM Card c WHERE c.points > 1")
-    Iterable<Card> getCustomCard();
 
-    @Query("SELECT c.id from Card c where c.id not in :unwantedCards")
-    Iterable<UUID> getCardIds(@Param("unwantedCards") List<UUID> unwantedCards);
+    @Query("SELECT c from Card c where c.id not in :unwantedCards")
+    Iterable<Card> getCards(@Param("unwantedCards") List<UUID> unwantedCards);
 }
