@@ -12,7 +12,6 @@ import com.group9.NinjaGame.helpers.GameModeResolver;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
 import com.group9.NinjaGame.models.messages.MessageType;
-import com.group9.NinjaGame.models.messages.SocketIOMessage;
 import com.group9.NinjaGame.models.modes.GameMode;
 import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.models.params.LeaveGameParam;
@@ -55,19 +54,11 @@ public class MultiplayerGameService {
         this.namespace.addConnectListener(onConnected());
         this.namespace.addDisconnectListener(onDisconnected());
 
-        this.namespace.addEventListener("join", JoinGameParam.class, onJoin());
-        this.namespace.addEventListener("leave", LeaveGameParam.class, onLeave());
+        this.namespace.addEventListener("join", JoinGameParam.class, this::onJoin);
+        this.namespace.addEventListener("leave", LeaveGameParam.class, this::onLeave);
         this.namespace.addEventListener("start", StartGameParam.class, onStart());
 
         basicGameModeService.registerListeners(namespace);
-    }
-
-    public MultiplayerGameService(GameRepository gameRepository, CardSetRepository cardSetRepository, SocketIOServer server, BasicGameModeService basicGameModeService, SocketIONamespace namespace) {
-        this.gameRepository = gameRepository;
-        this.cardSetRepository = cardSetRepository;
-        this.gameContainer = GameContainer.getInstance();
-        this.basicGameModeService = basicGameModeService;
-        this.namespace = namespace;
     }
 
     // Socket.io related methods
@@ -86,57 +77,6 @@ public class MultiplayerGameService {
 
             System.out.println("Client[{}] - Disconnected from chat module." + client.getSessionId().toString());
         };
-    }
-
-    private DataListener<JoinGameParam> onJoin() {
-        return ((client, param, ackRequest) -> {
-            GameInfo gameInfo = gameContainer.getGameInfoByLobbyCode(param.lobbyCode);
-
-            if (gameInfo != null && !gameInfo.started && gameInfo.multiPlayer) {
-                UUID gameId = gameInfo.gameId;
-
-                Player player = new Player(param.userName, client.getSessionId());
-
-                disconnectPlayerFromPreviousLobbies(client);
-
-                client.joinRoom(gameId.toString());
-
-                boolean connected = gameContainer.joinGame(gameId, player);
-
-                if (connected) {
-
-                    SendMessage(ackRequest, MessageType.SUCCESS, "Successfully joined", gameInfo);
-
-                    namespace.getRoomOperations(gameId.toString()).sendEvent("lobby-update", gameInfo);
-
-                } else {
-
-                    SendMessage(ackRequest, MessageType.ERROR, "User already joined", gameInfo);
-                }
-
-            } else {
-                SendMessage(ackRequest, MessageType.ERROR, "Game not found");
-            }
-
-
-        });
-    }
-
-    private DataListener<LeaveGameParam> onLeave() {
-        return ((client, param, ackRequest) -> {
-            GameInfo gameInfo = gameContainer.getGameInfo(param.gameId);
-
-            if (gameInfo != null) {
-                disconnectPlayerFromPreviousLobbies(client);
-            }
-
-            client.leaveRoom(param.gameId.toString());
-
-            SendMessage(ackRequest, MessageType.SUCCESS, "Successfully disconnected");
-
-        });
-
-
     }
 
     private DataListener<StartGameParam> onStart() {
@@ -221,5 +161,52 @@ public class MultiplayerGameService {
         gameRepository.deleteById(gameId);
 
         namespace.getRoomOperations(gameId.toString()).disconnect();
+    }
+
+
+    public void onLeave(SocketIOClient client, LeaveGameParam param, AckRequest ackRequest) {
+        GameInfo gameInfo = gameContainer.getGameInfo(param.gameId);
+
+        if (gameInfo != null) {
+            disconnectPlayerFromPreviousLobbies(client);
+        }
+
+        client.leaveRoom(param.gameId.toString());
+
+        SendMessage(ackRequest, MessageType.SUCCESS, "Successfully disconnected");
+
+    }
+
+
+    public void onJoin(SocketIOClient client, JoinGameParam param, AckRequest ackRequest) {
+        GameInfo gameInfo = gameContainer.getGameInfoByLobbyCode(param.lobbyCode);
+
+        if (gameInfo != null && !gameInfo.started && gameInfo.multiPlayer) {
+            UUID gameId = gameInfo.gameId;
+
+            Player player = new Player(param.userName, client.getSessionId());
+
+            //disconnectPlayerFromPreviousLobbies(client);
+
+            client.joinRoom(gameId.toString());
+
+            boolean connected = gameContainer.joinGame(gameId, player);
+
+            if (connected) {
+
+                SendMessage(ackRequest, MessageType.SUCCESS, "Successfully joined", gameInfo);
+
+                namespace.getRoomOperations(gameId.toString()).sendEvent("lobby-update", gameInfo);
+
+            } else {
+
+                SendMessage(ackRequest, MessageType.ERROR, "User already joined", gameInfo);
+            }
+
+        } else {
+            SendMessage(ackRequest, MessageType.ERROR, "Game not found");
+        }
+
+
     }
 }
