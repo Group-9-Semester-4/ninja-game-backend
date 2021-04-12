@@ -62,10 +62,17 @@ public class MultiplayerGameService {
         basicGameModeService.registerListeners(namespace);
     }
 
+    public MultiplayerGameService(GameRepository gameRepository, CardSetRepository cardSetRepository, SocketIOServer server, BasicGameModeService basicGameModeService, SocketIONamespace namespace) {
+        this.gameRepository = gameRepository;
+        this.cardSetRepository = cardSetRepository;
+        this.gameContainer = GameContainer.getInstance();
+        this.basicGameModeService = basicGameModeService;
+        this.namespace = namespace;
+    }
 
     // Socket.io related methods
 
-    private ConnectListener onConnected() {
+    public ConnectListener onConnected() {
         return client -> {
             HandshakeData handshakeData = client.getHandshakeData();
             System.out.println("Client[{}] - Connected to chat module through '{}'" + client.getSessionId().toString() + handshakeData.getUrl());
@@ -128,6 +135,8 @@ public class MultiplayerGameService {
             SendMessage(ackRequest, MessageType.SUCCESS, "Successfully disconnected");
 
         });
+
+
     }
 
     private DataListener<StartGameParam> onStart() {
