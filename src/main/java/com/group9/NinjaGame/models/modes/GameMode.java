@@ -13,4 +13,6 @@ public interface GameMode {
 
     String getGameModeId();
 
+    List<Card> getCards();
+
 }

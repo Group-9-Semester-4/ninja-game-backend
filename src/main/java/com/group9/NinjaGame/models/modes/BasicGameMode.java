@@ -27,7 +27,10 @@ public class BasicGameMode implements GameMode {
     public void setCards(List<Card> cards) {
         remainingCards = cards;
     }
-
+    @Override
+    public List<Card> getCards() {
+        return remainingCards;
+    }
     @Override
     public void init(GameInfo gameInfo) {
         playerOnTurn = gameInfo.lobby.players.get(0).sessionId;

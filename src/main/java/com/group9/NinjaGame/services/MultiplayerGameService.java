@@ -56,7 +56,7 @@ public class MultiplayerGameService {
 
         this.namespace.addEventListener("join", JoinGameParam.class, this::onJoin);
         this.namespace.addEventListener("leave", LeaveGameParam.class, this::onLeave);
-        this.namespace.addEventListener("start", StartGameParam.class, onStart());
+        this.namespace.addEventListener("start", StartGameParam.class, this::onStart);
 
         basicGameModeService.registerListeners(namespace);
     }
@@ -77,63 +77,6 @@ public class MultiplayerGameService {
 
             System.out.println("Client[{}] - Disconnected from chat module." + client.getSessionId().toString());
         };
-    }
-
-    private DataListener<StartGameParam> onStart() {
-        return ((client, param, ackRequest) -> {
-
-            UUID playerId = client.getSessionId();
-
-            GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
-
-            if (!gameInfo.lobby.lobbyOwnerId.equals(playerId)) {
-                SendMessage(ackRequest, MessageType.ERROR, "Only lobby owner can start a game");
-                return;
-            }
-
-            Optional<Game> gameEntityOptional = gameRepository.findById(gameInfo.gameId);
-            Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
-
-            if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
-
-                String gameModeName = param.gameMode;
-
-                GameMode gameMode = GameModeResolver.getFromString(gameModeName);
-
-                if (gameMode == null) {
-                    SendMessage(ackRequest, MessageType.ERROR, "Game mode does not exist");
-                    return;
-                }
-
-                Game game = gameEntityOptional.get();
-                CardSet cardSet = cardSetEntityOptional.get();
-
-                List<Card> cards = new ArrayList<>();
-
-                for (Card card : cardSet.getCards()) {
-                    if (!param.unwantedCards.contains(card.getId())) {
-                        cards.add(card);
-                    }
-                }
-
-                game.setSelectedCardSet(cardSet);
-                game = gameRepository.save(game);
-
-                gameInfo.started = true;
-
-                gameMode.setCards(cards);
-                gameMode.init(gameInfo);
-
-                gameInfo.gameModeData = gameMode;
-                gameInfo.gameModeId = gameModeName;
-
-                namespace.getRoomOperations(game.getId().toString()).sendEvent("start", gameInfo);
-
-                return;
-            }
-
-            SendMessage(ackRequest, MessageType.ERROR, "Can not start a game");
-        });
     }
 
     private void disconnectPlayerFromPreviousLobbies(SocketIOClient client) {
@@ -208,5 +151,60 @@ public class MultiplayerGameService {
         }
 
 
+    }
+
+    public void onStart(SocketIOClient client, StartGameParam param, AckRequest ackRequest) {
+
+        UUID playerId = client.getSessionId();
+
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
+
+        if (!gameInfo.lobby.lobbyOwnerId.equals(playerId) ) {
+            SendMessage(ackRequest, MessageType.ERROR, "Only lobby owner can start a game");
+            return;
+        }
+
+        Optional<Game> gameEntityOptional = gameRepository.findById(gameInfo.gameId);
+        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
+
+        if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
+
+            String gameModeName = param.gameMode;
+
+            GameMode gameMode = GameModeResolver.getFromString(gameModeName);
+
+            if (gameMode == null) {
+                SendMessage(ackRequest, MessageType.ERROR, "Game mode does not exist");
+                return;
+            }
+
+            Game game = gameEntityOptional.get();
+            CardSet cardSet = cardSetEntityOptional.get();
+
+            List<Card> cards = new ArrayList<>();
+
+            for (Card card : cardSet.getCards()) {
+                if (!param.unwantedCards.contains(card.getId())) {
+                    cards.add(card);
+                }
+            }
+
+            game.setSelectedCardSet(cardSet);
+            game = gameRepository.save(game);
+
+            gameInfo.started = true;
+
+            gameMode.setCards(cards);
+            gameMode.init(gameInfo);
+
+            gameInfo.gameModeData = gameMode;
+            gameInfo.gameModeId = gameModeName;
+
+            namespace.getRoomOperations(game.getId().toString()).sendEvent("start", gameInfo);
+
+            return;
+        }
+
+        SendMessage(ackRequest, MessageType.ERROR, "Can not start a game");
     }
 }
