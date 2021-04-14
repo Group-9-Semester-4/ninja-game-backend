@@ -75,7 +75,7 @@ public class BasicGameModeService {
 
             boolean alreadyCompleted = gameMode.completeStates.getOrDefault(client.getSessionId(), false);
 
-            if (!alreadyCompleted) {
+            if (!alreadyCompleted && gameMode.drawnCard != null) {
                 gameMode.completeStates.put(client.getSessionId(), true);
 
                 checkAllComplete(gameMode);
