@@ -26,9 +26,9 @@
         <span th:if="${#fields.hasErrors('points')}" th:errors="*{points}"></span>
     </div>
     <div class="form-group">
-        <label for="difficultyType" class="form-label">Difficulty type</label>
-        <input type="number" class="form-control" th:field="*{difficultyType}" id="difficultyType" placeholder="Difficulty type">
-        <span th:if="${#fields.hasErrors('difficultyType')}" th:errors="*{difficultyType}"></span>
+        <label for="hasTimer" class="form-label">Is time-based</label>
+        <input type="number" class="form-control" th:field="*{hasTimer}" id="hasTimer" placeholder="Is time-based">
+        <span th:if="${#fields.hasErrors('hasTimer')}" th:errors="*{hasTimer}"></span>
     </div>
     <div class="form-group">
         <label for="difficulty" class="form-label">Difficulty</label>

@@ -25,9 +25,9 @@ public class Card {
     @NotBlank(message = "Number of points is mandatory")
     private int points;
 
-    @Column(name = "difficulty_type", nullable = false, unique = false)
+    @Column(name = "has_timer", nullable = false, unique = false)
     @NotBlank(message = "This field is mandatory")
-    private int difficultyType;
+    private int hasTimer;
 
     @Column(name = "difficulty", nullable = false, unique = false)
     @NotBlank(message = "This field is mandatory")
@@ -76,12 +76,12 @@ public class Card {
         this.points = points;
     }
 
-    public int getDifficultyType() {
-        return difficultyType;
+    public int getHasTimer() {
+        return hasTimer;
     }
 
-    public void setDifficultyType(int difficultyType) {
-        this.difficultyType = difficultyType;
+    public void setHasTimer(int difficultyType) {
+        this.hasTimer = difficultyType;
     }
 
     public int getDifficulty() {

@@ -3,10 +3,8 @@ CREATE TABLE IF NOT EXISTS `cards` (
     `name` VARCHAR(50) NOT NULL,
     `description` VARCHAR(50) NOT NULL,
     `points` INT NOT NULL,
-    `difficulty_type` TINYINT NOT NULL,
+    `has_timer` TINYINT NOT NULL,
     `difficulty` INT NOT NULL,
-    # difficulty_type -> boolean for difficulty type, 0 means difficulty is stored in seconds
-    # 1 means difficulty stored in # of repetitions
     `singleplayer` BOOLEAN NOT NULL DEFAULT 1,
     `filepath` VARCHAR(50) NOT NULL DEFAULT 'default.png'
 
