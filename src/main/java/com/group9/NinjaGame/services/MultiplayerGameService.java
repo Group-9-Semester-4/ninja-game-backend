@@ -1,9 +1,15 @@
 package com.group9.NinjaGame.services;
 
-import com.corundumstudio.socketio.*;
-import com.corundumstudio.socketio.listener.ConnectListener;
-import com.corundumstudio.socketio.listener.DataListener;
-import com.corundumstudio.socketio.listener.DisconnectListener;
+//import com.corundumstudio.socketio.*;
+//import com.corundumstudio.socketio.listener.ConnectListener;
+//import com.corundumstudio.socketio.listener.DisconnectListener;
+//import com.corundumstudio.socketio.SocketIONamespace;
+//import com.corundumstudio.socketio.listener.DataListener;
+//import com.corundumstudio.socketio.SocketIOClient;
+//import com.corundumstudio.socketio.SocketIONamespace;
+import com.corundumstudio.socketio.AckRequest;
+import com.corundumstudio.socketio.SocketIOClient;
+import com.corundumstudio.socketio.SocketIONamespace;
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
@@ -37,49 +43,26 @@ public class MultiplayerGameService {
 
     private final GameContainer gameContainer;
 
-    private final BasicGameModeService basicGameModeService;
+    private SocketIONamespace namespace;
 
-    private final SocketIONamespace namespace;
 
     @Autowired
-    public MultiplayerGameService(SocketIOServer server, GameRepository gameRepository, CardSetRepository cardSetRepository, BasicGameModeService basicGameModeService) {
+    public MultiplayerGameService(GameRepository gameRepository, CardSetRepository cardSetRepository) {
         this.gameRepository = gameRepository;
         this.cardSetRepository = cardSetRepository;
 
         gameContainer = GameContainer.getInstance();
+    }
 
-        this.basicGameModeService = basicGameModeService;
-
-        this.namespace = server.addNamespace("/game");
-        this.namespace.addConnectListener(onConnected());
-        this.namespace.addDisconnectListener(onDisconnected());
+    public void registerListeners(SocketIONamespace namespace) {
+        this.namespace = namespace;
 
         this.namespace.addEventListener("join", JoinGameParam.class, this::onJoin);
         this.namespace.addEventListener("leave", LeaveGameParam.class, this::onLeave);
         this.namespace.addEventListener("start", StartGameParam.class, this::onStart);
-
-        basicGameModeService.registerListeners(namespace);
     }
 
-    // Socket.io related methods
-
-    public ConnectListener onConnected() {
-        return client -> {
-            HandshakeData handshakeData = client.getHandshakeData();
-            System.out.println("Client[{}] - Connected to chat module through '{}'" + client.getSessionId().toString() + handshakeData.getUrl());
-        };
-    }
-
-    private DisconnectListener onDisconnected() {
-        return client -> {
-
-            disconnectPlayerFromPreviousLobbies(client);
-
-            System.out.println("Client[{}] - Disconnected from chat module." + client.getSessionId().toString());
-        };
-    }
-
-    private void disconnectPlayerFromPreviousLobbies(SocketIOClient client) {
+    public void disconnectPlayerFromPreviousLobbies(SocketIOClient client) {
         UUID playerId = client.getSessionId();
 
         GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
@@ -92,7 +75,7 @@ public class MultiplayerGameService {
             if (gameInfo.lobby.players.isEmpty()) {
                 destroyGame(gameInfo.gameId);
             } else {
-                namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
+                this.namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
             }
         }
     }

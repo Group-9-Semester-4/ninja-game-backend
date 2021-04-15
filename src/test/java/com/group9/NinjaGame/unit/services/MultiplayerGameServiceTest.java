@@ -16,6 +16,7 @@ import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import com.group9.NinjaGame.services.BasicGameModeService;
 import com.group9.NinjaGame.services.MultiplayerGameService;
+import com.group9.NinjaGame.services.SocketIOService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -49,8 +50,11 @@ public class MultiplayerGameServiceTest {
     private SocketIONamespace namespace;
     @Mock
     private BroadcastOperations broadcastOperations;
+    @Mock
+    private SocketIOService socketIOService;
     @InjectMocks
     private BasicGameModeService basicGameModeService;
+
 
     private GameInfo gameInfo;
     private final GameContainer gameContainer =GameContainer.getInstance();
@@ -72,13 +76,15 @@ public class MultiplayerGameServiceTest {
         assertNotNull(cardSetRepository);
         assertNotNull(server);
         assertNotNull(basicGameModeService);
+        assertNotNull(socketIOService);
 
         gameInfo = new GameInfo(uuid,lobbyCode);
         gameContainer.initGame(gameInfo);
         lenient().doReturn(namespace).when(server).addNamespace("/game");
         lenient().doReturn(broadcastOperations).when(namespace).getRoomOperations(uuid.toString());
         lenient().doReturn(playerUUID).when(client).getSessionId();
-        multiplayerGameService = new MultiplayerGameService(server,gameRepository,cardSetRepository,basicGameModeService);
+        multiplayerGameService = new MultiplayerGameService(gameRepository,cardSetRepository);
+        socketIOService = new SocketIOService(server, basicGameModeService, multiplayerGameService);
 
     }
     private void populateCardsAndSuch(){
