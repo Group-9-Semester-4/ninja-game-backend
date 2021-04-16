@@ -1,15 +1,5 @@
 package com.group9.NinjaGame.services;
 
-//import com.corundumstudio.socketio.*;
-//import com.corundumstudio.socketio.listener.ConnectListener;
-//import com.corundumstudio.socketio.listener.DisconnectListener;
-//import com.corundumstudio.socketio.SocketIONamespace;
-//import com.corundumstudio.socketio.listener.DataListener;
-//import com.corundumstudio.socketio.SocketIOClient;
-//import com.corundumstudio.socketio.SocketIONamespace;
-import com.corundumstudio.socketio.AckRequest;
-import com.corundumstudio.socketio.SocketIOClient;
-import com.corundumstudio.socketio.SocketIONamespace;
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
@@ -17,7 +7,6 @@ import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.helpers.GameModeResolver;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
-import com.group9.NinjaGame.models.messages.MessageType;
 import com.group9.NinjaGame.models.modes.GameMode;
 import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.models.params.LeaveGameParam;
@@ -25,14 +14,13 @@ import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.group9.NinjaGame.helpers.SocketIOHelper.SendMessage;
 
 @Component
 public class MultiplayerGameService {
@@ -43,9 +31,6 @@ public class MultiplayerGameService {
 
     private final GameContainer gameContainer;
 
-    private SocketIONamespace namespace;
-
-
     @Autowired
     public MultiplayerGameService(GameRepository gameRepository, CardSetRepository cardSetRepository) {
         this.gameRepository = gameRepository;
@@ -54,55 +39,37 @@ public class MultiplayerGameService {
         gameContainer = GameContainer.getInstance();
     }
 
-    public void registerListeners(SocketIONamespace namespace) {
-        this.namespace = namespace;
-
-        this.namespace.addEventListener("join", JoinGameParam.class, this::onJoin);
-        this.namespace.addEventListener("leave", LeaveGameParam.class, this::onLeave);
-        this.namespace.addEventListener("start", StartGameParam.class, this::onStart);
-    }
-
-    public void disconnectPlayerFromPreviousLobbies(SocketIOClient client) {
-        UUID playerId = client.getSessionId();
-
-        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
-
-        if (gameInfo != null) {
-            client.leaveRoom(gameInfo.gameId.toString());
-
-            gameContainer.removePlayerFromLobby(playerId, gameInfo);
-
-            if (gameInfo.lobby.players.isEmpty()) {
-                destroyGame(gameInfo.gameId);
-            } else {
-                this.namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
-            }
+    public GameInfo getGameInfoByPlayerId(UUID playerId) {
+        try {
+            return gameContainer.getPlayerGame(playerId);
+        } catch (Exception e) {
+            throw e;
         }
     }
 
-    private void destroyGame(UUID gameId) {
-
-        gameContainer.removeGame(gameId);
-
-        gameRepository.deleteById(gameId);
-
-        namespace.getRoomOperations(gameId.toString()).disconnect();
+    public boolean removePlayerFromLobby(UUID playerId, GameInfo gameInfo) {
+        gameContainer.removePlayerFromLobby(playerId, gameInfo);
+        return gameInfo.lobby.players.isEmpty();
     }
 
+    public void destroyGame(UUID gameId) {
+        try {
+            gameContainer.removeGame(gameId);
 
-    public void onLeave(SocketIOClient client, LeaveGameParam param, AckRequest ackRequest) {
+            gameRepository.deleteById(gameId);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public boolean onLeave(LeaveGameParam param) {
         GameInfo gameInfo = gameContainer.getGameInfo(param.gameId);
 
         if (gameInfo != null) {
             disconnectPlayerFromPreviousLobbies(client);
         }
-
-        client.leaveRoom(param.gameId.toString());
-
-        SendMessage(ackRequest, MessageType.SUCCESS, "Successfully disconnected");
-
+        return false;
     }
-
 
     public void onJoin(SocketIOClient client, JoinGameParam param, AckRequest ackRequest) {
         GameInfo gameInfo = gameContainer.getGameInfoByLobbyCode(param.lobbyCode);
@@ -119,32 +86,19 @@ public class MultiplayerGameService {
             boolean connected = gameContainer.joinGame(gameId, player);
 
             if (connected) {
-
-                SendMessage(ackRequest, MessageType.SUCCESS, "Successfully joined", gameInfo);
-
-                namespace.getRoomOperations(gameId.toString()).sendEvent("lobby-update", gameInfo);
-
-            } else {
-
-                SendMessage(ackRequest, MessageType.ERROR, "User already joined", gameInfo);
+                return gameInfo;
             }
-
-        } else {
-            SendMessage(ackRequest, MessageType.ERROR, "Game not found");
         }
 
-
+        return null;
     }
 
-    public void onStart(SocketIOClient client, StartGameParam param, AckRequest ackRequest) {
-
-        UUID playerId = client.getSessionId();
+    public Pair<Game, GameInfo> onStart(StartGameParam param, UUID playerId) throws Exception {
 
         GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
 
-        if (!gameInfo.lobby.lobbyOwnerId.equals(playerId) ) {
-            SendMessage(ackRequest, MessageType.ERROR, "Only lobby owner can start a game");
-            return;
+        if (!gameInfo.lobby.lobbyOwnerId.equals(playerId)) {
+            throw new Exception("Only lobby owner can start a game");
         }
 
         Optional<Game> gameEntityOptional = gameRepository.findById(gameInfo.gameId);
@@ -157,8 +111,7 @@ public class MultiplayerGameService {
             GameMode gameMode = GameModeResolver.getFromString(gameModeName);
 
             if (gameMode == null) {
-                SendMessage(ackRequest, MessageType.ERROR, "Game mode does not exist");
-                return;
+                throw new Exception("Game mode does not exist");
             }
 
             Game game = gameEntityOptional.get();
@@ -180,14 +133,12 @@ public class MultiplayerGameService {
             gameMode.setCards(cards);
             gameMode.init(gameInfo);
 
+            //Todo - these next two lines should be above the init on previous line???
             gameInfo.gameModeData = gameMode;
             gameInfo.gameModeId = gameModeName;
 
-            namespace.getRoomOperations(game.getId().toString()).sendEvent("start", gameInfo);
-
-            return;
+            return Pair.of(game, gameInfo);
         }
-
-        SendMessage(ackRequest, MessageType.ERROR, "Can not start a game");
+        throw new Exception("Can not start a game");
     }
 }
