@@ -66,22 +66,18 @@ public class MultiplayerGameService {
         GameInfo gameInfo = gameContainer.getGameInfo(param.gameId);
 
         if (gameInfo != null) {
-            disconnectPlayerFromPreviousLobbies(client);
+            return true;
         }
         return false;
     }
 
-    public void onJoin(SocketIOClient client, JoinGameParam param, AckRequest ackRequest) {
+    public GameInfo onJoin(JoinGameParam param, UUID playerId) {
         GameInfo gameInfo = gameContainer.getGameInfoByLobbyCode(param.lobbyCode);
 
         if (gameInfo != null && !gameInfo.started && gameInfo.multiPlayer) {
             UUID gameId = gameInfo.gameId;
 
-            Player player = new Player(param.userName, client.getSessionId());
-
-            //disconnectPlayerFromPreviousLobbies(client);
-
-            client.joinRoom(gameId.toString());
+            Player player = new Player(param.userName, playerId);
 
             boolean connected = gameContainer.joinGame(gameId, player);
 
