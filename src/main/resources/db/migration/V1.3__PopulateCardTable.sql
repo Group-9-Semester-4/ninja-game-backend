@@ -38,14 +38,14 @@ INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Catch arrow', 'Catch a ball', 10, 
 INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Ninja stomp', 'Hard lunges alternate legs', 10, 0, 10, 1, 'hulk stomp.png');
 INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Ninja backhand throw', 'Backhand throw bag at target', 10, 0, 10, 1, 'backhand throw.png');
 #ntb 20
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'High knees', 'Get your knees to your waist', 10, 0, 20, 1, 'highknees.png');
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Booty kicks', 'Put your heels to your booty', 10, 0, 20, 1, 'bootykicks.png');
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Ninja kick bombs', 'Kick a ball', 10, 0, 20, 1, 'kickbombs.png');
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Ninja dog', 'Lift your legs to the side', 10, 0, 20, 1, 'dog.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'High knees', 'Get your knees to your waist', 20, 0, 20, 1, 'highknees.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Booty kicks', 'Put your heels to your booty', 20, 0, 20, 1, 'bootykicks.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Ninja kick bombs', 'Kick a ball', 20, 0, 20, 1, 'kickbombs.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Ninja dog', 'Lift your legs to the side', 20, 0, 20, 1, 'dog.png');
 #ntb 5
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Front rolls', 'Make front-rolls on a mat', 50, 0, 5, 1, 'frontrolls.png');
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Barrel roll', 'Roll down the mat', 50, 0, 5, 1, 'barrelroll.png');
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Take cover', 'Get flat on the floor, fast', 50, 0, 5, 1, 'take cover.png');
-INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Back rolls', 'Make back-rolls on a mat', 50, 0, 5, 1, 'backrolls.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Front rolls', 'Make front-rolls on a mat', 5, 0, 5, 1, 'frontrolls.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Barrel roll', 'Roll down the mat', 5, 0, 5, 1, 'barrelroll.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Take cover', 'Get flat on the floor, fast', 5, 0, 5, 1, 'take cover.png');
+INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Back rolls', 'Make back-rolls on a mat', 5, 0, 5, 1, 'backrolls.png');
 #multiplayer
 INSERT INTO cards VALUES(uuid_to_bin(uuid()),'Wheelbarrow', 'Team up. Wheelbarrow', 20, 0, 2, 0, 'wheelbarrow.png');
