@@ -73,6 +73,10 @@ public class SocketIOResource {
         UUID playerId = client.getSessionId();
         GameInfo gameInfo = multiplayerGameService.getGameInfoByPlayerId(client.getSessionId());
 
+        if (gameInfo == null) {
+            return;
+        }
+
         client.leaveRoom(gameInfo.gameId.toString()); // this is the reason why we come back
 
         boolean res = multiplayerGameService.removePlayerFromLobby(playerId, gameInfo);
