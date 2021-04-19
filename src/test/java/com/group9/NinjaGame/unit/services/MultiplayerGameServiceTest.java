@@ -6,32 +6,19 @@ import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.models.GameInfo;
-import com.group9.NinjaGame.models.Player;
-import com.group9.NinjaGame.models.messages.MessageType;
-import com.group9.NinjaGame.models.messages.SocketIOMessage;
-import com.group9.NinjaGame.models.params.JoinGameParam;
-import com.group9.NinjaGame.models.params.LeaveGameParam;
-import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import com.group9.NinjaGame.services.BasicGameModeService;
 import com.group9.NinjaGame.services.MultiplayerGameService;
-import com.group9.NinjaGame.resources.api.SocketIOResource;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.group9.NinjaGame.resources.socket.SocketIOResource;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

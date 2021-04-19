@@ -1,4 +1,4 @@
-package com.group9.NinjaGame.resources.api;
+package com.group9.NinjaGame.resources.socket;
 
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
@@ -25,11 +25,13 @@ public class SocketIOResource {
     private final SocketIONamespace namespace;
     private final BasicGameModeService basicGameModeService;
     private final MultiplayerGameService multiplayerGameService;
+    private final BasicGameModeResource basicGameModeResource;
 
     @Autowired
-    public SocketIOResource(SocketIOServer server, BasicGameModeService basicGameModeService, MultiplayerGameService multiplayerGameService) {
+    public SocketIOResource(SocketIOServer server, BasicGameModeService basicGameModeService, MultiplayerGameService multiplayerGameService, BasicGameModeResource basicGameModeResource) {
         this.basicGameModeService = basicGameModeService;
         this.multiplayerGameService = multiplayerGameService;
+        this.basicGameModeResource = basicGameModeResource;
 
         this.namespace = server.addNamespace("/game");
         this.namespace.addConnectListener(onConnected());
@@ -39,7 +41,7 @@ public class SocketIOResource {
         this.namespace.addEventListener("join", JoinGameParam.class, this::onJoin);
         this.namespace.addEventListener("start", StartGameParam.class, this::onStart);
 
-        basicGameModeService.registerListeners(namespace);
+        basicGameModeResource.registerListeners(namespace);
     }
 
     public ConnectListener onConnected() {
