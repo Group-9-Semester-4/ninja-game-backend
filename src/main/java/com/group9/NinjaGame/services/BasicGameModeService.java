@@ -1,12 +1,10 @@
 package com.group9.NinjaGame.services;
 
-import com.corundumstudio.socketio.SocketIONamespace;
-import com.corundumstudio.socketio.listener.DataListener;
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.models.GameInfo;
-import com.group9.NinjaGame.models.messages.MessageType;
 import com.group9.NinjaGame.models.modes.BasicGameMode;
+import com.group9.NinjaGame.models.params.BossScoreParam;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -14,75 +12,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import static com.group9.NinjaGame.helpers.SocketIOHelper.SendMessage;
-
 @Component
 public class BasicGameModeService {
 
     private final GameContainer gameContainer;
 
-    private SocketIONamespace namespace;
-
     public BasicGameModeService() {
         this.gameContainer = GameContainer.getInstance();
-    }
-
-    public void registerListeners(SocketIONamespace namespace) {
-
-        this.namespace = namespace;
-
-        this.namespace.addEventListener("basic.draw", Object.class, onDraw());
-        this.namespace.addEventListener("basic.complete", Object.class, onComplete());
-    }
-
-    public DataListener<Object> onDraw() {
-        return (client, data, ackSender) -> {
-
-            GameInfo gameInfo = gameContainer.getPlayerGame(client.getSessionId());
-
-            validateGameInfo(gameInfo);
-
-            BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
-
-            if (gameMode.playerOnTurn != client.getSessionId()) {
-                throw new Exception("Only player on turn can draw a card");
-            }
-
-            List<Card> cards = gameMode.remainingCards;
-
-            if (cards == null || cards.isEmpty()) {
-                SendMessage(ackSender, MessageType.ERROR, "No cards left");
-                return;
-            }
-
-            Card card = cards.get(new Random().nextInt(cards.size()));
-
-            gameMode.drawnCard = card;
-            gameMode.remainingCards.remove(card);
-
-            namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("game-update", gameInfo);
-        };
-    }
-
-    public DataListener<Object> onComplete() {
-        return (client, data, ackSender) -> {
-
-            GameInfo gameInfo = gameContainer.getPlayerGame(client.getSessionId());
-
-            validateGameInfo(gameInfo);
-
-            BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
-
-            boolean alreadyCompleted = gameMode.completeStates.getOrDefault(client.getSessionId(), false);
-
-            if (!alreadyCompleted && gameMode.drawnCard != null) {
-                gameMode.completeStates.put(client.getSessionId(), true);
-
-                checkAllComplete(gameMode);
-
-                namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("game-update", gameInfo);
-            }
-        };
     }
 
     public void checkAllComplete(BasicGameMode gameMode) {
@@ -123,4 +59,62 @@ public class BasicGameModeService {
         }
     }
 
+    public GameInfo onDraw(UUID playerId) throws Exception {
+
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
+
+        validateGameInfo(gameInfo);
+
+        BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
+
+        if (gameMode.playerOnTurn != playerId) {
+            throw new Exception("Only player on turn can draw a card");
+        }
+
+        List<Card> cards = gameMode.remainingCards;
+
+        if (cards == null || cards.isEmpty()) {
+            throw new Exception("No cards left");
+        }
+
+        Card card = cards.get(new Random().nextInt(cards.size()));
+
+        gameMode.drawnCard = card;
+        gameMode.remainingCards.remove(card);
+
+        return gameInfo;
+    }
+
+    public GameInfo onComplete(UUID playerId) throws Exception {
+
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
+
+        validateGameInfo(gameInfo);
+
+        BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
+
+        boolean alreadyCompleted = gameMode.completeStates.getOrDefault(playerId, false);
+
+        if (!alreadyCompleted && gameMode.drawnCard != null) {
+            gameMode.completeStates.put(playerId, true);
+
+            checkAllComplete(gameMode);
+
+            return gameInfo;
+        }
+        throw new Exception("onComplete failed flow."); //todo - I don't know what this exc. should say
+    }
+
+    public GameInfo onBossComplete(BossScoreParam bossScore, UUID playerId) throws Exception {
+
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
+
+        validateGameInfo(gameInfo);
+
+        BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
+
+        gameMode.bossFightScores.put(playerId, bossScore.score);
+
+        return gameInfo;
+    }
 }
