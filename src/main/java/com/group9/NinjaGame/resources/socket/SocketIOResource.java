@@ -23,13 +23,11 @@ import static com.group9.NinjaGame.helpers.SocketIOHelper.SendMessage;
 public class SocketIOResource {
 
     private final SocketIONamespace namespace;
-    private final BasicGameModeService basicGameModeService;
     private final MultiplayerGameService multiplayerGameService;
     private final BasicGameModeResource basicGameModeResource;
 
     @Autowired
-    public SocketIOResource(SocketIOServer server, BasicGameModeService basicGameModeService, MultiplayerGameService multiplayerGameService, BasicGameModeResource basicGameModeResource) {
-        this.basicGameModeService = basicGameModeService;
+    public SocketIOResource(SocketIOServer server, MultiplayerGameService multiplayerGameService, BasicGameModeResource basicGameModeResource) {
         this.multiplayerGameService = multiplayerGameService;
         this.basicGameModeResource = basicGameModeResource;
 

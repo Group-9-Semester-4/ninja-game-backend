@@ -17,7 +17,9 @@ public class BasicGameModeResource {
     private SocketIONamespace namespace;
     private BasicGameModeService basicGameModeService;
 
-    public BasicGameModeResource() {
+    @Autowired
+    public BasicGameModeResource(BasicGameModeService basicGameModeService) {
+        this.basicGameModeService = basicGameModeService;
     }
 
     public void registerListeners(SocketIONamespace namespace) {
@@ -26,7 +28,7 @@ public class BasicGameModeResource {
         this.namespace.addEventListener("basic.complete", Object.class, this::onComplete);
     }
 
-    public void onDraw(SocketIOClient client, Object data, AckRequest ackSender) throws Exception {
+    public void onDraw(SocketIOClient client, Object data, AckRequest ackSender) {
         try {
             GameInfo gameInfo = basicGameModeService.onDraw(data, client.getSessionId());
             namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("game-update", gameInfo);
