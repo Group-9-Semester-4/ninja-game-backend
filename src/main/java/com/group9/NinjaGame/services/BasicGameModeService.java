@@ -1,22 +1,16 @@
 package com.group9.NinjaGame.services;
 
-import com.corundumstudio.socketio.AckRequest;
-import com.corundumstudio.socketio.SocketIOClient;
-import com.corundumstudio.socketio.SocketIONamespace;
-import com.corundumstudio.socketio.listener.DataListener;
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.models.GameInfo;
-import com.group9.NinjaGame.models.messages.MessageType;
 import com.group9.NinjaGame.models.modes.BasicGameMode;
+import com.group9.NinjaGame.models.params.BossScoreParam;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-
-import static com.group9.NinjaGame.helpers.SocketIOHelper.SendMessage;
 
 @Component
 public class BasicGameModeService {
@@ -65,15 +59,15 @@ public class BasicGameModeService {
         }
     }
 
-    public GameInfo onDraw(Object data, UUID gameUUID) throws Exception {
+    public GameInfo onDraw(UUID playerId) throws Exception {
 
-        GameInfo gameInfo = gameContainer.getPlayerGame(gameUUID);
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
 
         validateGameInfo(gameInfo);
 
         BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
 
-        if (gameMode.playerOnTurn != gameUUID) {
+        if (gameMode.playerOnTurn != playerId) {
             throw new Exception("Only player on turn can draw a card");
         }
 
@@ -91,23 +85,36 @@ public class BasicGameModeService {
         return gameInfo;
     }
 
-    public GameInfo onComplete(Object data, UUID gameUUID) throws Exception {
+    public GameInfo onComplete(UUID playerId) throws Exception {
 
-        GameInfo gameInfo = gameContainer.getPlayerGame(gameUUID);
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
 
         validateGameInfo(gameInfo);
 
         BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
 
-        boolean alreadyCompleted = gameMode.completeStates.getOrDefault(gameUUID, false);
+        boolean alreadyCompleted = gameMode.completeStates.getOrDefault(playerId, false);
 
         if (!alreadyCompleted && gameMode.drawnCard != null) {
-            gameMode.completeStates.put(gameUUID, true);
+            gameMode.completeStates.put(playerId, true);
 
             checkAllComplete(gameMode);
 
             return gameInfo;
         }
         throw new Exception("onComplete failed flow."); //todo - I don't know what this exc. should say
+    }
+
+    public GameInfo onBossComplete(BossScoreParam bossScore, UUID playerId) throws Exception {
+
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
+
+        validateGameInfo(gameInfo);
+
+        BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
+
+        gameMode.bossFightScores.put(playerId, bossScore.score);
+
+        return gameInfo;
     }
 }

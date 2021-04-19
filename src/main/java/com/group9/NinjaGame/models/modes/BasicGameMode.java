@@ -22,6 +22,7 @@ public class BasicGameMode implements GameMode {
 
     public HashMap<UUID, Boolean> completeStates;
 
+    public HashMap<UUID, Integer> bossFightScores;
 
     @Override
     public void setCards(List<Card> cards) {
@@ -37,6 +38,7 @@ public class BasicGameMode implements GameMode {
         players = gameInfo.lobby.players;
         drawnCard = null;
         completeStates = new HashMap<>();
+        bossFightScores = new HashMap<>();
     }
 
     @Override
