@@ -82,6 +82,8 @@ public class BasicGameModeService {
         gameMode.drawnCard = card;
         gameMode.remainingCards.remove(card);
 
+        gameMode.score += card.getPoints();
+
         return gameInfo;
     }
 

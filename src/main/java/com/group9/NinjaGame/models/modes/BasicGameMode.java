@@ -14,6 +14,8 @@ public class BasicGameMode implements GameMode {
 
     public UUID playerOnTurn;
 
+    public int score;
+
     public Card drawnCard;
 
     public List<Card> remainingCards;
@@ -35,6 +37,7 @@ public class BasicGameMode implements GameMode {
     @Override
     public void init(GameInfo gameInfo) {
         playerOnTurn = gameInfo.lobby.players.get(0).sessionId;
+        score = 0;
         players = gameInfo.lobby.players;
         drawnCard = null;
         completeStates = new HashMap<>();
