@@ -80,8 +80,11 @@ public class BasicGameModeService {
         Card card = cards.get(new Random().nextInt(cards.size()));
 
         gameMode.drawnCard = card;
+
+        //maybe not desired? redraw deletes cards from deck
         gameMode.remainingCards.remove(card);
 
+        //shouldn't be here?
         gameMode.score += card.getPoints();
 
         return gameInfo;
