@@ -14,4 +14,6 @@ public class StartGameParam {
     public List<UUID> unwantedCards;
 
     public String gameMode;
+
+    public int timeLimit = 0;
 }

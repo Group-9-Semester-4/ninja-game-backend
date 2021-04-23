@@ -27,15 +27,15 @@ public class BasicGameMode implements GameMode {
     public HashMap<UUID, Integer> bossFightScores;
 
     @Override
-    public void setCards(List<Card> cards) {
+    public void setCards(List<Card> cards, UUID... uuid) {
         remainingCards = cards;
     }
     @Override
-    public List<Card> getCards() {
+    public List<Card> getCards(UUID... uuid) {
         return remainingCards;
     }
     @Override
-    public void init(GameInfo gameInfo) {
+    public void init(GameInfo gameInfo, int...timeLimit) {
         playerOnTurn = gameInfo.lobby.players.get(0).sessionId;
         score = 0;
         players = gameInfo.lobby.players;
