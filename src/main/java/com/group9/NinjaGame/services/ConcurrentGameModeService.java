@@ -21,20 +21,9 @@ public class ConcurrentGameModeService {
         this.gameContainer = GameContainer.getInstance();
     }
 
-    private void validateGameInfo(GameInfo gameInfo) throws Exception {
-        if (gameInfo == null) {
-            throw new Exception("Game not found");
-        }
-
-        if (!(gameInfo.gameModeData instanceof ConcurrentGameMode)) {
-            throw new Exception("Not supported for current game mode");
-        }
-    }
 
     public GameInfo onDraw(UUID playerId) throws Exception {
-        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
-
-        validateGameInfo(gameInfo);
+        GameInfo gameInfo = getValidatedGameInfo(playerId);
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
 
@@ -46,18 +35,15 @@ public class ConcurrentGameModeService {
 
         Card card = cards.get(new Random().nextInt(cards.size()));
 
-
         gameMode.playerCurrentCard.put(playerId, card);
 
         return gameInfo;
     }
-    //TODO: refactor
+    //TODO: refactored accordign to myMap.merge(key, 1, Integer::sum) answer here, test!
     //https://stackoverflow.com/questions/81346/most-efficient-way-to-increment-a-map-value-in-java
     public GameInfo onComplete(UUID playerId) throws Exception {
 
-        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
-
-        validateGameInfo(gameInfo);
+        GameInfo gameInfo = getValidatedGameInfo(playerId);
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
         Card currentCard = gameMode.playerCurrentCard.get(playerId);
@@ -66,19 +52,15 @@ public class ConcurrentGameModeService {
 
             //moved from onDraw so that redraw button doesn't delete cards from deck
             gameMode.playerRemainingCards.get(playerId).remove(currentCard);
+
             //add extra card
-            int cardsAlreadyDone = gameMode.numberOfPlayerCardsDone.get(playerId);
-            cardsAlreadyDone++;
-            gameMode.numberOfPlayerCardsDone.put(playerId, cardsAlreadyDone);
+            gameMode.numberOfPlayerCardsDone.merge(playerId, 1, Integer::sum);
 
             //add score
-            int newScore = gameMode.playerScores.get(playerId);
-            newScore += currentCard.getPoints();
-            gameMode.playerScores.put(playerId, newScore);
-
+            gameMode.playerScores.merge(playerId, 1, Integer::sum);
 
             gameMode.playerCurrentCard.remove(playerId);
-            //gameMode.playerCurrentCard.put(playerId, null);
+            //TODO: or shall we have used gameMode.playerCurrentCard.put(playerId, null); ?
 
             //check if it's a last card
             //TODO: refactor to another method
@@ -101,9 +83,7 @@ public class ConcurrentGameModeService {
 
     public GameInfo onBossComplete(BossScoreParam bossScore, UUID playerId) throws Exception {
 
-        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
-
-        validateGameInfo(gameInfo);
+        GameInfo gameInfo = getValidatedGameInfo(playerId);
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
 
@@ -114,16 +94,33 @@ public class ConcurrentGameModeService {
     //TODO: decide how many points should players get for finishing fastest
     public GameInfo onTimerEnd(UUID playerId) throws Exception {
         //for adding points
-        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
-
-        validateGameInfo(gameInfo);
+        GameInfo gameInfo = getValidatedGameInfo(playerId);
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
-        int numberOfPlayers = gameMode.players.size();
-        for(Player player : gameMode.players){
+
+        // TODO: calculation-balancing thingy, either .players or .standings (players/2)
+        int numberOfPlayers = gameMode.standings.size();
+
+        for(UUID playerUuid : gameMode.standings){
             //amount to be given up for discussion
-            gameMode.playerScores.put(player.sessionId, numberOfPlayers--);
+            gameMode.playerScores.merge(playerUuid, 5 * numberOfPlayers--, Integer::sum);
         }
+        return gameInfo;
+    }
+
+    private void validateGameInfo(GameInfo gameInfo) throws Exception {
+        if (gameInfo == null) {
+            throw new Exception("Game not found");
+        }
+
+        if (!(gameInfo.gameModeData instanceof ConcurrentGameMode)) {
+            throw new Exception("Not supported for current game mode");
+        }
+    }
+
+    private GameInfo getValidatedGameInfo(UUID playerId) throws Exception {
+        GameInfo gameInfo = gameContainer.getPlayerGame(playerId);
+        validateGameInfo(gameInfo);
         return gameInfo;
     }
 }

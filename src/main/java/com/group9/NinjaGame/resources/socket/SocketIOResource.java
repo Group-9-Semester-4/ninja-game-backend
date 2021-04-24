@@ -25,11 +25,15 @@ public class SocketIOResource {
     private final SocketIONamespace namespace;
     private final MultiplayerGameService multiplayerGameService;
     private final BasicGameModeResource basicGameModeResource;
+    private final ConcurrentGameModeResource concurrentGameModeResource;
 
     @Autowired
-    public SocketIOResource(SocketIOServer server, MultiplayerGameService multiplayerGameService, BasicGameModeResource basicGameModeResource) {
+    public SocketIOResource(SocketIOServer server, MultiplayerGameService multiplayerGameService,
+                            BasicGameModeResource basicGameModeResource,
+                            ConcurrentGameModeResource concurrentGameModeResource) {
         this.multiplayerGameService = multiplayerGameService;
         this.basicGameModeResource = basicGameModeResource;
+        this.concurrentGameModeResource = concurrentGameModeResource;
 
         this.namespace = server.addNamespace("/game");
         this.namespace.addConnectListener(onConnected());
