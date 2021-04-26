@@ -126,8 +126,7 @@ public class MultiplayerGameService {
             game = gameRepository.save(game);
 
             gameInfo.started = true;
-            gameMode.setCards(cards);
-            gameMode.init(gameInfo, param.timeLimit);
+            gameMode.init(gameInfo, cards, param.timeLimit);
 
             //Todo - these next two lines should be above the init on previous line???
             gameInfo.gameModeData = gameMode;

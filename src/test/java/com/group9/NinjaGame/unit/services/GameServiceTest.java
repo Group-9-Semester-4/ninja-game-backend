@@ -156,7 +156,7 @@ public class GameServiceTest {
         optionalCardSet = Optional.of(cardSet);
         gameInfo = new GameInfo(uuid, "asdf");
         gameInfo.gameModeData = new SinglePlayerGameMode();
-        gameInfo.gameModeData.setCards(list);
+        gameInfo.gameModeData.init(gameInfo, list, 0);
         GameContainer.getInstance().initGame(gameInfo);
     }
 

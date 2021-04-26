@@ -8,12 +8,8 @@ import java.util.UUID;
 
 public interface GameMode {
 
-    void setCards(List<Card> cards, UUID... uuid);
-
-    void init(GameInfo gameInfo, int...timeLimit);
+    void init(GameInfo gameInfo, List<Card> cards, int timeLimit);
 
     String getGameModeId();
-
-    List<Card> getCards(UUID... uuid);
 
 }

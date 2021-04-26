@@ -35,8 +35,10 @@ public class ConcurrentGameMode implements GameMode{
     // we need standings to know who finished the game 1st 2nd... to give ammo bonuses
     public List<UUID> standings;
 
+    private List<Card> cards;
+
     @Override
-    public void init(GameInfo gameInfo, int...timeLimit) {
+    public void init(GameInfo gameInfo, List<Card> cards, int timeLimit) {
         players = gameInfo.lobby.players;
         playerCurrentCard = new HashMap<>();
         playerRemainingCards = new HashMap<>();
@@ -44,30 +46,15 @@ public class ConcurrentGameMode implements GameMode{
         numberOfPlayerCardsDone = new HashMap<>();
         bossFightScores = new HashMap<>();
         standings = new ArrayList<>();
-        gameTime = timeLimit[0];
+        gameTime = timeLimit;
+
+        for (Player player : players) {
+            playerRemainingCards.put(player.sessionId, cards);
+        }
     }
     @Override
     public String getGameModeId() {
         return GAME_MODE_ID;
     }
 
-    @Override
-    public void setCards(List<Card> cards, UUID... uuid) {
-        for (UUID playerUuid : uuid) {
-            playerRemainingCards.put(playerUuid, cards);
-        }
-    }
-
-    @Override
-    public List<Card> getCards(UUID... uuid) {
-        return playerRemainingCards.get(uuid);
-    }
-
-    public int getGameTime() {
-        return gameTime;
-    }
-
-    public void setGameTime(int gameTime) {
-        this.gameTime = gameTime;
-    }
 }

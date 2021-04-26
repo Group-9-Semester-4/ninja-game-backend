@@ -13,17 +13,8 @@ public class SinglePlayerGameMode implements GameMode {
     public List<Card> remainingCards;
 
     @Override
-    public void setCards(List<Card> cards, UUID... uuid) {
+    public void init(GameInfo gameInfo, List<Card> cards, int timeLimit) {
         remainingCards = cards;
-    }
-    @Override
-    public List<Card> getCards(UUID... uuid) {
-        return remainingCards;
-    }
-
-    @Override
-    public void init(GameInfo gameInfo, int...timeLimit) {
-
     }
 
     @Override

@@ -75,7 +75,7 @@ public class GameService implements IGameService {
             gameInfo.started = true;
 
             gameInfo.gameModeData = new SinglePlayerGameMode();
-            gameInfo.gameModeData.setCards(cards);
+            gameInfo.gameModeData.init(gameInfo, cards, param.timeLimit);
 
             return game;
         }
