@@ -68,7 +68,7 @@ public class ConcurrentGameModeService {
             if(gameMode.playerRemainingCards.get(playerId).isEmpty()){
                 gameMode.standings.add(playerId);
                 //if enough players have reached the end
-                int percent = gameMode.players.size()/gameMode.standings.size()*100;
+                double percent = (double)gameMode.standings.size()/gameMode.players.size()*100;
                 //50 is made up, can be discussed
                 if(percent >= 50){
                     //force everyone into bossfight
