@@ -2,6 +2,7 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.helpers.exceptions.StartBossFightException;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
 import com.group9.NinjaGame.models.modes.BasicGameMode;
@@ -22,7 +23,7 @@ public class ConcurrentGameModeService {
     }
 
 
-    public GameInfo onDraw(UUID playerId) throws Exception {
+    public Card onDraw(UUID playerId) throws Exception {
         GameInfo gameInfo = getValidatedGameInfo(playerId);
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
@@ -37,8 +38,9 @@ public class ConcurrentGameModeService {
 
         gameMode.playerCurrentCard.put(playerId, card);
 
-        return gameInfo;
+        return card;
     }
+
     //TODO: refactored accordign to myMap.merge(key, 1, Integer::sum) answer here, test!
     //https://stackoverflow.com/questions/81346/most-efficient-way-to-increment-a-map-value-in-java
     public GameInfo onComplete(UUID playerId) throws Exception {
@@ -57,10 +59,9 @@ public class ConcurrentGameModeService {
             gameMode.numberOfPlayerCardsDone.merge(playerId, 1, Integer::sum);
 
             //add score
-            gameMode.playerScores.merge(playerId, 1, Integer::sum);
+            gameMode.playerScores.merge(playerId, currentCard.getPoints(), Integer::sum);
 
             gameMode.playerCurrentCard.remove(playerId);
-            //TODO: or shall we have used gameMode.playerCurrentCard.put(playerId, null); ?
 
             //check if it's a last card
             //TODO: refactor to another method
@@ -71,7 +72,8 @@ public class ConcurrentGameModeService {
                 //50 is made up, can be discussed
                 if(percent >= 50){
                     //force everyone into bossfight
-                    this.onTimerEnd(playerId);
+                    GameInfo bossGameInfo = this.onTimerEnd(playerId);
+                    throw new StartBossFightException(bossGameInfo);
                 }
             }
             //end TODOregion

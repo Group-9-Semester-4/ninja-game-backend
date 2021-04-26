@@ -44,6 +44,7 @@ public class SocketIOResource {
         this.namespace.addEventListener("start", StartGameParam.class, this::onStart);
 
         basicGameModeResource.registerListeners(namespace);
+        concurrentGameModeResource.registerListeners(namespace);
     }
 
     public ConnectListener onConnected() {

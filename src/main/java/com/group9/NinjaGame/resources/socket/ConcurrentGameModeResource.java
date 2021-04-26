@@ -3,6 +3,8 @@ package com.group9.NinjaGame.resources.socket;
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIONamespace;
+import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.helpers.exceptions.StartBossFightException;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.messages.MessageType;
 import com.group9.NinjaGame.models.params.BossScoreParam;
@@ -32,8 +34,8 @@ public class ConcurrentGameModeResource {
 
     public void onDraw(SocketIOClient client, Object data, AckRequest ackSender) {
         try {
-            GameInfo gameInfo = concurrentGameModeService.onDraw(client.getSessionId());
-            namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("game-update", gameInfo);
+            Card card = concurrentGameModeService.onDraw(client.getSessionId());
+            SendMessage(ackSender, MessageType.SUCCESS, "card", card);
         } catch (Exception e) {
             SendMessage(ackSender, MessageType.ERROR, e.getMessage());
         }
@@ -43,6 +45,9 @@ public class ConcurrentGameModeResource {
         try {
             GameInfo gameInfo = concurrentGameModeService.onComplete(client.getSessionId());
             namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("game-update", gameInfo);
+        } catch (StartBossFightException exception) {
+            GameInfo gameInfo = exception.getGameInfo();
+            namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("boss-start", gameInfo);
         } catch (Exception e) {
             SendMessage(ackSender, MessageType.ERROR, e.getMessage());
         }
