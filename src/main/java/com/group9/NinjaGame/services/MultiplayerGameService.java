@@ -7,6 +7,7 @@ import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.helpers.GameModeResolver;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
+import com.group9.NinjaGame.models.modes.ConcurrentGameMode;
 import com.group9.NinjaGame.models.modes.GameMode;
 import com.group9.NinjaGame.models.params.JoinGameParam;
 import com.group9.NinjaGame.models.params.LeaveGameParam;
@@ -125,9 +126,7 @@ public class MultiplayerGameService {
             game = gameRepository.save(game);
 
             gameInfo.started = true;
-
-            gameMode.setCards(cards);
-            gameMode.init(gameInfo);
+            gameMode.init(gameInfo, cards, param.timeLimit);
 
             //Todo - these next two lines should be above the init on previous line???
             gameInfo.gameModeData = gameMode;
