@@ -8,6 +8,7 @@ import com.group9.NinjaGame.models.params.*;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
+import com.group9.NinjaGame.services.IStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,13 +33,14 @@ public class GameResource {
     ICardService cardService;
     IGameService gameService;
     ICardSetService cardSetService;
+    IStatisticsService statisticsService;
 
     @Autowired
-    public GameResource(ICardService cardService, IGameService gameService, ICardSetService cardSetService) {
+    public GameResource(ICardService cardService, IGameService gameService, ICardSetService cardSetService, IStatisticsService statisticsService) {
         this.cardService = cardService;
         this.gameService = gameService;
         this.cardSetService = cardSetService;
-
+        this.statisticsService = statisticsService;
     }
 
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -77,6 +79,11 @@ public class GameResource {
         return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 
+    @PostMapping(path = "/statistics", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> cardDone(@RequestBody FinishGameParam param) {
+        return new ResponseEntity<>(statisticsService.insertGameStatistics(param), HttpStatus.OK);
+    }
+
 
     @GetMapping(path = "/cards")
     public ResponseEntity<?> getAllCards() {
@@ -100,6 +107,7 @@ public class GameResource {
     public ResponseEntity<?> getGameModes() {
         return new ResponseEntity<>(GameModeResolver.GAME_MODES, HttpStatus.OK);
     }
+
 
 
 }

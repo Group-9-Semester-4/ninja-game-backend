@@ -41,10 +41,34 @@ public class Game {
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
+    @Column(name = "percentage_of_done_cards", nullable = false)
+    private int percentageOfDoneCards;
+
+    public int getPercentageOfDoneCards() {
+        return percentageOfDoneCards;
+    }
+
+    public void setPercentageOfDoneCards(int percentageOfDoneCards) {
+        this.percentageOfDoneCards = percentageOfDoneCards;
+    }
+
+    public int getTimeInSeconds() {
+        return timeInSeconds;
+    }
+
+    public void setTimeInSeconds(int timeInSeconds) {
+        this.timeInSeconds = timeInSeconds;
+    }
+
+    @Column(name = "time", nullable = false)
+    private int timeInSeconds;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "card_set_id")
     private CardSet selectedCardSet;
+
+    //public UUID userId;
 
     public Game() {
     }
