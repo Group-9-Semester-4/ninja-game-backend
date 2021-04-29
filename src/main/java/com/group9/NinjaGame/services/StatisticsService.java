@@ -3,13 +3,20 @@ package com.group9.NinjaGame.services;
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.entities.statisics.CardDiscard;
+import com.group9.NinjaGame.entities.statisics.CardRedraw;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.params.FinishGameParam;
+import com.group9.NinjaGame.repositories.CardDiscardRepository;
+import com.group9.NinjaGame.repositories.CardRedrawRepository;
 import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,13 +26,16 @@ public class StatisticsService implements IStatisticsService {
     private final CardRepository cardRepository;
     private final GameRepository gameRepository;
     private final GameContainer gameContainer;
+    private final CardDiscardRepository cardDiscardRepository;
+    private final CardRedrawRepository cardRedrawRepository;
 
     @Autowired
-
-    public StatisticsService(CardRepository cardRepository, GameRepository gameRepository) {
+    public StatisticsService(CardRepository cardRepository, GameRepository gameRepository, CardDiscardRepository cardDiscardRepository, CardRedrawRepository cardRedrawRepository) {
         this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
         this.gameContainer = GameContainer.getInstance();
+        this.cardDiscardRepository = cardDiscardRepository;
+        this.cardRedrawRepository = cardRedrawRepository;
     }
 
     @Override
@@ -50,6 +60,26 @@ public class StatisticsService implements IStatisticsService {
             }
         }
         return game;
+    }
+
+    @Override
+    public List<CardDiscard> getAllCardDiscards() {
+        return cardDiscardRepository.findAll();
+    }
+
+    @Override
+    public List<CardDiscard> createCardDiscards(List<CardDiscard> cardDiscards) {
+        return cardDiscardRepository.saveAll(cardDiscards);
+    }
+
+    @Override
+    public List<CardRedraw> getAllCardRedraws() {
+        return cardRedrawRepository.findAll();
+    }
+
+    @Override
+    public List<CardRedraw> createCardRedraws(List<CardRedraw> cardRedraws) {
+        return cardRedrawRepository.saveAll(cardRedraws);
     }
 
 
