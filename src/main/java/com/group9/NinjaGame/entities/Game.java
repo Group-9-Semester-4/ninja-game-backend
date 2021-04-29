@@ -41,10 +41,10 @@ public class Game {
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
 
-    @Column(name = "percentage_of_done_cards", nullable = false)
+    @Column(name = "percentage_of_done_cards")
     private int percentageOfDoneCards;
 
-    @Column(name = "time", nullable = false)
+    @Column(name = "time")
     private int timeInSeconds;
 
     @JsonIgnore
