@@ -19,7 +19,7 @@ public class User {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "user")
     private List<Game> games;
 
     public User() { }
