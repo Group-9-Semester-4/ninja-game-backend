@@ -3,6 +3,7 @@ package com.group9.NinjaGame.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +18,9 @@ public class User {
     @Column(name = "email", length = 50, nullable = false, unique = true)
     @NotBlank(message = "Email is mandatory")
     private String email;
+
+    @OneToMany(mappedBy = "users")
+    private List<Game> games;
 
     public User() { }
 

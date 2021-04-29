@@ -44,22 +44,6 @@ public class Game {
     @Column(name = "percentage_of_done_cards", nullable = false)
     private int percentageOfDoneCards;
 
-    public int getPercentageOfDoneCards() {
-        return percentageOfDoneCards;
-    }
-
-    public void setPercentageOfDoneCards(int percentageOfDoneCards) {
-        this.percentageOfDoneCards = percentageOfDoneCards;
-    }
-
-    public int getTimeInSeconds() {
-        return timeInSeconds;
-    }
-
-    public void setTimeInSeconds(int timeInSeconds) {
-        this.timeInSeconds = timeInSeconds;
-    }
-
     @Column(name = "time", nullable = false)
     private int timeInSeconds;
 
@@ -68,7 +52,9 @@ public class Game {
     @JoinColumn(name = "card_set_id")
     private CardSet selectedCardSet;
 
-    //public UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    public User user;
 
     public Game() {
     }
@@ -143,6 +129,30 @@ public class Game {
 
     public void setSelectedCardSet(CardSet cardSet) {
         this.selectedCardSet = cardSet;
+    }
+
+    public int getPercentageOfDoneCards() {
+        return percentageOfDoneCards;
+    }
+
+    public void setPercentageOfDoneCards(int percentageOfDoneCards) {
+        this.percentageOfDoneCards = percentageOfDoneCards;
+    }
+
+    public int getTimeInSeconds() {
+        return timeInSeconds;
+    }
+
+    public void setTimeInSeconds(int timeInSeconds) {
+        this.timeInSeconds = timeInSeconds;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getGameAttempts() {
