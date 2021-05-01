@@ -18,9 +18,9 @@ public class CardRedraw extends Statistic {
     private UUID userId;
 
     @Column(name = "timestamp")
-    private int timestamp;
+    private long timestamp;
 
-    public CardRedraw(UUID cardId, UUID cardSetId, UUID userId, int timestamp) {
+    public CardRedraw(UUID cardId, UUID cardSetId, UUID userId, long timestamp) {
         this.cardId = cardId;
         this.cardSetId = cardSetId;
         this.userId = userId;
@@ -55,7 +55,7 @@ public class CardRedraw extends Statistic {
         this.userId = userId;
     }
 
-    public int getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 

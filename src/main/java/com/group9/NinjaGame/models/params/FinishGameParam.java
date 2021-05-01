@@ -14,4 +14,5 @@ public class FinishGameParam {
     public int timeInSeconds;
     //TODO: check if really needed - used just to check if game is in game container
     public UUID playerId;
+    public List<UUID> listOfRedrawnCards;
 }

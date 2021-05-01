@@ -1,7 +1,6 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.containers.GameContainer;
-import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.entities.statisics.CardDiscard;
 import com.group9.NinjaGame.entities.statisics.CardRedraw;
@@ -14,11 +13,7 @@ import com.group9.NinjaGame.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class StatisticsService implements IStatisticsService {
@@ -39,13 +34,13 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Override
-    public Game insertGameStatistics(FinishGameParam finishGameParam){
+    public Game insertGameStatistics(FinishGameParam finishGameParam) {
         Game game = null;
         GameInfo gameInfo = gameContainer.getPlayerGame(finishGameParam.playerId);
         //check if game exists in container
-        if(gameInfo instanceof GameInfo){
+        if (gameInfo instanceof GameInfo) {
             Optional<Game> gameOptional = gameRepository.findById(finishGameParam.gameId);
-            if(gameOptional.isPresent()){
+            if (gameOptional.isPresent()) {
                 //get game from DB
                 game = gameOptional.get();
                 //add optional fields from end of the game
@@ -53,8 +48,9 @@ public class StatisticsService implements IStatisticsService {
                 game.setTimeInSeconds(finishGameParam.timeInSeconds);
                 //override game in DB with the new found info (finished cards, time to complete, etc.)
                 try {
+                    insertRedrawnCards(finishGameParam.listOfRedrawnCards, finishGameParam.cardSetId, finishGameParam.playerId);
                     gameRepository.save(game);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -68,8 +64,29 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Override
-    public List<CardDiscard> createCardDiscards(List<CardDiscard> cardDiscards) {
-        return cardDiscardRepository.saveAll(cardDiscards);
+    public List<CardDiscard> insertCardDiscards(List<UUID> discardedCards, UUID cardSetUUID, UUID playerUUID) {
+
+        List<CardDiscard> cardDiscards = null;
+        if (discardedCards.size() > 0) {
+            for (UUID cardUUID : discardedCards) {
+                long d = new Date().getTime();
+                cardDiscards.add(new CardDiscard(cardUUID, cardSetUUID, playerUUID, d));
+            }
+            return cardDiscardRepository.saveAll(cardDiscards);
+        }
+        return Collections.emptyList();
+    }
+
+    private List<CardRedraw> insertRedrawnCards(List<UUID> redrawnCards, UUID cardSetUUID, UUID playerUUID) {
+        List<CardRedraw> cardRedraws = null;
+        if (redrawnCards.size() > 0) {
+            for (UUID cardUUID : redrawnCards) {
+                long d = new Date().getTime();
+                cardRedraws.add(new CardRedraw(cardUUID, cardSetUUID, playerUUID, d));
+            }
+            return cardRedrawRepository.saveAll(cardRedraws);
+        }
+        return Collections.emptyList();
     }
 
     @Override

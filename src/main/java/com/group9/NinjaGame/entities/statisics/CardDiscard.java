@@ -20,10 +20,9 @@ public class CardDiscard extends Statistic {
     private UUID userId;
 
     @Column(name = "timestamp")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;
+    private long timestamp;
 
-    public CardDiscard(UUID cardId, UUID cardSetId, UUID userId, Date timestamp) {
+    public CardDiscard(UUID cardId, UUID cardSetId, UUID userId, long timestamp) {
         this.cardId = cardId;
         this.cardSetId = cardSetId;
         this.userId = userId;
@@ -58,11 +57,11 @@ public class CardDiscard extends Statistic {
         this.userId = userId;
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 }

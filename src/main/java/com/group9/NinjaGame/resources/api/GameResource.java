@@ -4,7 +4,10 @@ import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.helpers.GameModeResolver;
-import com.group9.NinjaGame.models.params.*;
+import com.group9.NinjaGame.models.params.CardDoneParam;
+import com.group9.NinjaGame.models.params.FinishGameParam;
+import com.group9.NinjaGame.models.params.InitGameParam;
+import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
@@ -43,6 +46,9 @@ public class GameResource {
         this.statisticsService = statisticsService;
     }
 
+    /*
+        Beginning of the game
+     */
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
         Game game = gameService.initGame(param);
@@ -51,40 +57,43 @@ public class GameResource {
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> startGame(@RequestBody StartGameParam param) throws Exception {
-
         Game game = gameService.startGame(param);
-
+        // todo on next line, idk where to get playerUUID
+        statisticsService.insertCardDiscards(param.unwantedCards, param.cardSetId, UUID.randomUUID());
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
+    /*
+        During the game
+     */
     @GetMapping(path = "/draw")
     public ResponseEntity<?> drawCard(@RequestParam UUID gameId) {
         Card card = gameService.draw(gameId);
-
         if (card == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
-
         return new ResponseEntity<>(card, HttpStatus.OK);
     }
-
 
     @PostMapping(path = "/card-done", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cardDone(@RequestBody CardDoneParam param) {
         return new ResponseEntity<>(gameService.removeDoneCard(param.gameId, param.cardId), HttpStatus.OK);
     }
 
+    /*
+            At the end of the game
+     */
     @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) throws Exception {
+        // Save Statistics
+        statisticsService.insertGameStatistics(param);
+        // Finish the game
         return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/statistics", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> cardDone(@RequestBody FinishGameParam param) {
-        return new ResponseEntity<>(statisticsService.insertGameStatistics(param), HttpStatus.OK);
-    }
-
-
+    /*
+        Getters for data
+     */
     @GetMapping(path = "/cards")
     public ResponseEntity<?> getAllCards() {
         Iterable<Card> allCards = cardService.listAll();
@@ -107,7 +116,6 @@ public class GameResource {
     public ResponseEntity<?> getGameModes() {
         return new ResponseEntity<>(GameModeResolver.GAME_MODES, HttpStatus.OK);
     }
-
 
 
 }
