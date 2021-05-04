@@ -42,7 +42,7 @@ public class CardService implements ICardService {
         try {
             repository.save(card);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
         return card;
     }
@@ -51,7 +51,7 @@ public class CardService implements ICardService {
         try {
             repository.delete(card);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 

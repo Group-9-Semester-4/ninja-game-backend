@@ -80,7 +80,7 @@ public class GameService implements IGameService {
             return game;
         }
 
-        throw new NotFoundException("Game of Card set not found");
+        throw new NotFoundException("Game ID or Card set ID not found.");
     }
 
     @Override
@@ -100,7 +100,6 @@ public class GameService implements IGameService {
             }
         }
 
-
         return null;
     }
 
@@ -113,7 +112,7 @@ public class GameService implements IGameService {
 
             return gameMode.removeCardById(cardId);
         }
-
+        // todo - Return false when playing multiplayer? le confusion -Mikulas
         return false;
     }
 
@@ -129,7 +128,7 @@ public class GameService implements IGameService {
 
                 return game;
             } else {
-                throw new NotFoundException("Can't find Game with this ID");
+                throw new NotFoundException("Game ID not found.");
             }
         } catch (Exception e) {
             //can't delete game

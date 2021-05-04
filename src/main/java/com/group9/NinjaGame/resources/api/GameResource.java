@@ -25,12 +25,8 @@ import java.util.UUID;
 public class GameResource {
 
     /*
-        ToDo -> Handle Exceptions
-        Every method that takes a UUID or some other parameter, needs to raise an exception
-        whenever that parameter is invalid. This exception will be handled here, and passed
-        on as the API response.
-        https://www.baeldung.com/exception-handling-for-rest-with-spring (something like this?)
-        Marek research pls
+        Note about exceptions: They are all either bad_request or internal_server_error.
+
      */
 
     ICardService cardService;
@@ -51,16 +47,24 @@ public class GameResource {
      */
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
-        Game game = gameService.initGame(param);
-        return new ResponseEntity<>(game, HttpStatus.OK);
+        try {
+            Game game = gameService.initGame(param);
+            return new ResponseEntity<>(game, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) throws Exception {
-        Game game = gameService.startGame(param);
-        // todo on next line, idk where to get playerUUID
-        statisticsService.insertCardDiscards(param.unwantedCards, param.cardSetId, UUID.randomUUID());
-        return new ResponseEntity<>(game, HttpStatus.OK);
+    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) {
+        try {
+            Game game = gameService.startGame(param);
+            // todo on next line, idk where to get playerUUID
+            statisticsService.insertCardDiscards(param.unwantedCards, param.cardSetId, UUID.randomUUID());
+            return new ResponseEntity<>(game, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
@@ -68,27 +72,40 @@ public class GameResource {
      */
     @GetMapping(path = "/draw")
     public ResponseEntity<?> drawCard(@RequestParam UUID gameId) {
-        Card card = gameService.draw(gameId);
-        if (card == null) {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        try {
+            Card card = gameService.draw(gameId);
+            if (card == null) {
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(card, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
     @PostMapping(path = "/card-done", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> cardDone(@RequestBody CardDoneParam param) {
-        return new ResponseEntity<>(gameService.removeDoneCard(param.gameId, param.cardId), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(gameService.removeDoneCard(param.gameId, param.cardId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
             At the end of the game
      */
     @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) throws Exception {
-        // Save Statistics
-        statisticsService.insertGameStatistics(param);
-        // Finish the game
-        return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+        Game g = new Game();
+        try {
+            // Save Statistics
+            statisticsService.insertGameStatistics(param);
+            // Finish the game
+            return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     /*
