@@ -1,8 +1,10 @@
 package com.group9.NinjaGame.entities.statisics;
 
 
-import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.time.Instant;
 import java.util.UUID;
 
 
@@ -19,10 +21,14 @@ public class CardDiscard extends Statistic {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    /*
+    Why Instant is chosen as Date format: https://stackoverflow.com/questions/530012/how-to-convert-java-util-date-to-java-sql-date
+    */
     @Column(name = "timestamp")
-    private long timestamp;
+    private Instant timestamp;
 
-    public CardDiscard(UUID cardId, UUID cardSetId, UUID userId, long timestamp) {
+
+    public CardDiscard(UUID cardId, UUID cardSetId, UUID userId, Instant timestamp) {
         this.cardId = cardId;
         this.cardSetId = cardSetId;
         this.userId = userId;
@@ -57,11 +63,11 @@ public class CardDiscard extends Statistic {
         this.userId = userId;
     }
 
-    public long getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 }

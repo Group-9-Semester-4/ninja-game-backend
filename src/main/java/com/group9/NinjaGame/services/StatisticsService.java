@@ -13,6 +13,7 @@ import com.group9.NinjaGame.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.*;
 
 @Component
@@ -51,7 +52,7 @@ public class StatisticsService implements IStatisticsService {
                     insertRedrawnCards(finishGameParam.listOfRedrawnCards, finishGameParam.cardSetId, finishGameParam.playerId);
                     gameRepository.save(game);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw e;
                 }
             }
         }
@@ -66,11 +67,11 @@ public class StatisticsService implements IStatisticsService {
     @Override
     public List<CardDiscard> insertCardDiscards(List<UUID> discardedCards, UUID cardSetUUID, UUID playerUUID) {
 
-        List<CardDiscard> cardDiscards = null;
+        List<CardDiscard> cardDiscards = new ArrayList<>();
         if (discardedCards.size() > 0) {
             for (UUID cardUUID : discardedCards) {
-                long d = new Date().getTime();
-                cardDiscards.add(new CardDiscard(cardUUID, cardSetUUID, playerUUID, d));
+                Instant time = Instant.now();
+                cardDiscards.add(new CardDiscard(cardUUID, cardSetUUID, playerUUID, time));
             }
             return cardDiscardRepository.saveAll(cardDiscards);
         }
@@ -78,15 +79,16 @@ public class StatisticsService implements IStatisticsService {
     }
 
     private List<CardRedraw> insertRedrawnCards(List<UUID> redrawnCards, UUID cardSetUUID, UUID playerUUID) {
-        List<CardRedraw> cardRedraws = null;
+        List<CardRedraw> cardRedraws = new ArrayList<>();
         if (redrawnCards.size() > 0) {
             for (UUID cardUUID : redrawnCards) {
-                long d = new Date().getTime();
-                cardRedraws.add(new CardRedraw(cardUUID, cardSetUUID, playerUUID, d));
+                Instant time = Instant.now();
+                cardRedraws.add(new CardRedraw(cardUUID, cardSetUUID, playerUUID, time));
             }
             return cardRedrawRepository.saveAll(cardRedraws);
         }
         return Collections.emptyList();
+
     }
 
     @Override

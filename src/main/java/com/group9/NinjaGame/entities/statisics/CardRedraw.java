@@ -3,6 +3,7 @@ package com.group9.NinjaGame.entities.statisics;
 
 import javax.persistence.*;
 import java.util.UUID;
+import java.time.Instant;
 
 @Entity
 @Table(name = "statistics_card_redraw")
@@ -18,9 +19,9 @@ public class CardRedraw extends Statistic {
     private UUID userId;
 
     @Column(name = "timestamp")
-    private long timestamp;
+    private Instant timestamp;
 
-    public CardRedraw(UUID cardId, UUID cardSetId, UUID userId, long timestamp) {
+    public CardRedraw(UUID cardId, UUID cardSetId, UUID userId, Instant timestamp) {
         this.cardId = cardId;
         this.cardSetId = cardSetId;
         this.userId = userId;
@@ -55,11 +56,11 @@ public class CardRedraw extends Statistic {
         this.userId = userId;
     }
 
-    public long getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 }
