@@ -32,10 +32,10 @@ public class CardResource {
         this.cardService = cardService;
     }
 
-    @GetMapping("/index")
-    public String showManageCards() {
-        return "index";
-    }
+//    @GetMapping("/index")
+//    public String showManageCards() {
+//        return "index";
+//    }
 
 
     @GetMapping("/manage")

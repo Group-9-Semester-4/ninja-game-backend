@@ -12,9 +12,12 @@ import com.group9.NinjaGame.repositories.CardRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.ObjectUtils;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Component
 public class StatisticsService implements IStatisticsService {
@@ -60,8 +63,18 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Override
-    public List<CardDiscard> getAllCardDiscards() {
-        return cardDiscardRepository.findAll();
+    public Map<String, Long> getAllCardDiscards() {
+        // The reason for the Object[] -> Map conversion: https://stackoverflow.com/questions/51150748/nonuniqueresultexception-jparepository-spring-boot
+        // MySQL returns BigInteger by default, I convert into BigDecimal because of: https://stackoverflow.com/questions/5553863/cast-bigint-to-long
+        Map<String, Long> mappedResult = new HashMap<>();
+        List<Object[]> queryResult = cardDiscardRepository.getAllDiscardCardsWithCount();
+        for (Object[] obj : queryResult ) {
+            String ld = (String) ObjectUtils.nullSafe(obj[0], "ERROR - Missing name");
+            BigInteger big =(BigInteger) obj[1];
+            Long count = big.longValue();
+            mappedResult.put(ld, count);
+        }
+        return mappedResult;
     }
 
     @Override
