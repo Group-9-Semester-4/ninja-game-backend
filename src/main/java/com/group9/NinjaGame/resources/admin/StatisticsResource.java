@@ -22,6 +22,7 @@ public class StatisticsResource {
     @GetMapping("")
     public String showStatisticsPage(Model model) {
         model.addAttribute("discards", statisticsService.getAllCardDiscards());
+        model.addAttribute("redraws", statisticsService.getAllCardRedraws());
         return "statistics";
     }
 }

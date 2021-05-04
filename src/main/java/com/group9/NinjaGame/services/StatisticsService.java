@@ -105,8 +105,18 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Override
-    public List<CardRedraw> getAllCardRedraws() {
-        return cardRedrawRepository.findAll();
+    public Map<String,Long> getAllCardRedraws() {
+        // The reason for the Object[] -> Map conversion: https://stackoverflow.com/questions/51150748/nonuniqueresultexception-jparepository-spring-boot
+        // MySQL returns BigInteger by default, I convert into BigDecimal because of: https://stackoverflow.com/questions/5553863/cast-bigint-to-long
+        Map<String, Long> mappedResult = new HashMap<>();
+        List<Object[]> queryResult = cardRedrawRepository.getAllRedrawCardsWithCount();
+        for (Object[] obj : queryResult ) {
+            String ld = (String) ObjectUtils.nullSafe(obj[0], "ERROR - Missing name");
+            BigInteger big =(BigInteger) obj[1];
+            Long count = big.longValue();
+            mappedResult.put(ld, count);
+        }
+        return mappedResult;
     }
 
     @Override

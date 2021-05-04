@@ -16,7 +16,7 @@ public interface IStatisticsService {
 
     List<CardDiscard> insertCardDiscards(List<UUID> discardedCards, UUID cardSetUUID, UUID playerUUID);
 
-    List<CardRedraw> getAllCardRedraws();
+    Map<String, Long> getAllCardRedraws();
 
     List<CardRedraw> createCardRedraws(List<CardRedraw> cardRedraws);
 }
