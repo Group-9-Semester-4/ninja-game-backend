@@ -4,12 +4,11 @@ import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.entities.statisics.CardDiscard;
 import com.group9.NinjaGame.entities.statisics.CardRedraw;
+import com.group9.NinjaGame.entities.statisics.CardSetCompletion;
+import com.group9.NinjaGame.entities.statisics.TimePlayedPerGame;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.params.FinishGameParam;
-import com.group9.NinjaGame.repositories.CardDiscardRepository;
-import com.group9.NinjaGame.repositories.CardRedrawRepository;
-import com.group9.NinjaGame.repositories.CardRepository;
-import com.group9.NinjaGame.repositories.GameRepository;
+import com.group9.NinjaGame.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ObjectUtils;
@@ -27,14 +26,20 @@ public class StatisticsService implements IStatisticsService {
     private final GameContainer gameContainer;
     private final CardDiscardRepository cardDiscardRepository;
     private final CardRedrawRepository cardRedrawRepository;
+    private final CardSetCompletionRepository cardSetCompletionRepository;
+    private final TimePlayedPerGameRepository timePlayedPerGameRepository;
 
     @Autowired
-    public StatisticsService(CardRepository cardRepository, GameRepository gameRepository, CardDiscardRepository cardDiscardRepository, CardRedrawRepository cardRedrawRepository) {
+    public StatisticsService(CardRepository cardRepository, GameRepository gameRepository, CardDiscardRepository cardDiscardRepository, CardRedrawRepository cardRedrawRepository, CardSetCompletionRepository cardSetCompletionRepository, TimePlayedPerGameRepository timePlayedPerGameRepository) {
         this.cardRepository = cardRepository;
         this.gameRepository = gameRepository;
         this.gameContainer = GameContainer.getInstance();
         this.cardDiscardRepository = cardDiscardRepository;
         this.cardRedrawRepository = cardRedrawRepository;
+
+        // both saved in the insertGameStatistics method.
+        this.cardSetCompletionRepository = cardSetCompletionRepository;
+        this.timePlayedPerGameRepository = timePlayedPerGameRepository;
     }
 
     @Override
@@ -49,10 +54,12 @@ public class StatisticsService implements IStatisticsService {
                 game = gameOptional.get();
                 //add optional fields from end of the game
                 game.setPercentageOfDoneCards(finishGameParam.percentageOfDoneCards);
-                game.setTimeInSeconds(finishGameParam.timeInSeconds);
+                game.setTimeInSeconds(Math.min(finishGameParam.timeInSeconds, 32000)); // This is done so the SQL database
                 //override game in DB with the new found info (finished cards, time to complete, etc.)
                 try {
                     insertRedrawnCards(finishGameParam.listOfRedrawnCards, finishGameParam.cardSetId, finishGameParam.playerId);
+                    timePlayedPerGameRepository.save(new TimePlayedPerGame(game.getId(), game.getSelectedCardSet().getId(), game.getTimeInSeconds(), Instant.now()));
+                    cardSetCompletionRepository.save(new CardSetCompletion(game.getId(), game.getSelectedCardSet().getId(), game.getPercentageOfDoneCards(), Instant.now()));
                     gameRepository.save(game);
                 } catch (Exception e) {
                     throw e;
