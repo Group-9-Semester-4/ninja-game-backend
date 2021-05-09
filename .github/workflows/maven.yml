@@ -28,5 +28,5 @@ jobs:
       # StrictHostKeyChecking=no is not the best way to do it, but trying to add VPS_IP into
       # the known_hosts file just kept failing. All scripts tried to use the ssh-keyscan command
       # which is the source of failures.
-      run: rsync -avz 'ssh -i $HOME/private_key -o StrictHostKeyChecking=no -p 1337' --progress ./target/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/home/nspe/target
+      run: rsync -avz -options -e 'ssh -i $HOME/private_key -o StrictHostKeyChecking=no -p 1337' --progress ./target/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/home/nspe/target
       
