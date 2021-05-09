@@ -27,7 +27,7 @@ jobs:
     - name: Prepare SSH
       env:
         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      run: pwd ; ls -la ; echo "$SSH_KNOWN_HOSTS" > $HOME/.ssh/known_hosts ; cat $HOME/.ssh/known_hosts
+      #run: pwd ; ls -la ; echo "$SSH_KNOWN_HOSTS" > $HOME/.ssh/known_hosts ; cat $HOME/.ssh/known_hosts
     - name: Deploy with rsync
       env:
          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_NA_VPS }}
