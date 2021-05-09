@@ -16,11 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Install SSH Key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_PRIVATE_KEY_NA_VPS }} 
-        known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
     - name: Setup SSH
       # You may pin to the exact commit or the version.
       # uses: kielabokkie/ssh-key-and-known-hosts-action@e5c88dc608851beb90a7a78c7d5d2ef6f62f9860
