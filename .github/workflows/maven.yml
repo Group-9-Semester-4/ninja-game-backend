@@ -16,17 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup SSH
-      # You may pin to the exact commit or the version.
-      # uses: kielabokkie/ssh-key-and-known-hosts-action@e5c88dc608851beb90a7a78c7d5d2ef6f62f9860
-      uses: kielabokkie/ssh-key-and-known-hosts-action@v1.2.0
-      with:
-        # Private key required to access the host
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_NA_VPS }} 
-        # Hostname or IP to add to the known hosts file
-        ssh-host: ${{ secrets.VPS_IP }}
-        # Port for key-scanning the server
-        ssh-port: ${{ secrets.VPS_PORT }}
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
@@ -35,4 +24,8 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Deploy with rsync
-      run: rsync -avz 'ssh -p 1337' ./target/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/home/nspe/target
+      # StrictHostKeyChecking=no is not the best way to do it, but trying to add VPS_IP into
+      # the known_hosts file just kept failing. All scripts tried to use the ssh-keyscan command
+      # which is the source of failures.
+      run: rsync -avz 'ssh -o StrictHostKeyChecking=no -p 1337' ./target/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/home/nspe/target
+      
