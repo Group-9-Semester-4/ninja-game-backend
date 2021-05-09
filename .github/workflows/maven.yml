@@ -23,10 +23,10 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Create private key file
-      run: cd ~ ; cat "$SSH_PRIVATE_KEY_NA_VPS" >> private_key
+      run: echo "$SSH_PRIVATE_KEY_NA_VPS" >> $HOME/private_key
     - name: Deploy with rsync
       # StrictHostKeyChecking=no is not the best way to do it, but trying to add VPS_IP into
       # the known_hosts file just kept failing. All scripts tried to use the ssh-keyscan command
       # which is the source of failures.
-      run: rsync -avz 'ssh -i ~/private_key -o StrictHostKeyChecking=no -p 1337' --progress ./target/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/home/nspe/target
+      run: rsync -avz 'ssh -i $HOME/private_key -o StrictHostKeyChecking=no -p 1337' --progress ./target/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/home/nspe/target
       
