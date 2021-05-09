@@ -24,9 +24,9 @@ jobs:
       run: mvn -B package --file pom.xml
 #     - name: Create private key file
 #       run: echo "$SSH_PRIVATE_KEY_NA_VPS" >> $HOME/private_key
-    - name: Prepare SSH
-      env:
-        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+#     - name: Prepare SSH
+#       env:
+#         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
       #run: pwd ; ls -la ; echo "$SSH_KNOWN_HOSTS" > $HOME/.ssh/known_hosts ; cat $HOME/.ssh/known_hosts
     - name: Deploy with rsync
       env:
