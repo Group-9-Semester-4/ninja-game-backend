@@ -21,18 +21,14 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
-#     - name: Create private key file
-#       run: echo "$SSH_PRIVATE_KEY_NA_VPS" >> $HOME/private_key
-#     - name: Prepare SSH
-#       env:
-#         SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
-      #run: pwd ; ls -la ; echo "$SSH_KNOWN_HOSTS" > $HOME/.ssh/known_hosts ; cat $HOME/.ssh/known_hosts
-    - name: Deploy with rsync
-      env:
-         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_NA_VPS }}
-      # StrictHostKeyChecking=no is not the best way to do it, but trying to add VPS_IP into
-      # the known_hosts file just kept failing. All scripts tried to use the ssh-keyscan command
-      # which is the source of failures.
-      run: echo ${SSH_PRIVATE_KEY} > $HOME/priv ; rsync -avz -options -e 'ssh -i $HOME/priv -o StrictHostKeyChecking=no -p 1337' --progress ./target/ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/home/nspe/target
-      
+      run: mvn -B package -P prod --file pom.xml ; pwd ; ls -l
+    - name: rsync deployments
+      uses: burnett01/rsync-deployments@4.1
+      with:
+        switches: -avzr --delete
+        path: target/
+        remote_path: ~/target
+        remote_host: ${{ secrets.VPS_IP }}
+        remote_port: ${{ secrets.VPS_PORT }}
+        remote_user: ${{ secrets.VPS_USER }}
+        remote_key: ${{ secrets.VPS_PRIVATE_KEY }}
