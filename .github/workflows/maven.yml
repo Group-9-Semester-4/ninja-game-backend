@@ -25,7 +25,7 @@ jobs:
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
       with:
-        switches: -navhP --stats --progress
+        switches: -avhPz --stats --progress
         path: target/
         remote_path: /home/${{ secrets.VPS_USER }}
         remote_host: ${{ secrets.VPS_IP }}
