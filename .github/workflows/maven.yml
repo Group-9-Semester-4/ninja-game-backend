@@ -27,7 +27,7 @@ jobs:
       with:
         switches: -avzr --delete --relative
         path: target/
-        remote_path: /home/${{ secrets.VPS_USER }}/
+        remote_path: /home/${{ secrets.VPS_USER }}
         remote_host: ${{ secrets.VPS_IP }}
         remote_port: ${{ secrets.VPS_PORT }}
         remote_user: ${{ secrets.VPS_USER }}
