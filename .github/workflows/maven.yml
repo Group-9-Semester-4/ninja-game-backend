@@ -21,7 +21,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Build with Maven
-      run: mvn -B package --file pom.xml ; pwd ; ls -l
+      run: mvn -B package -P prod --file pom.xml ; pwd ; ls -l
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
       with:
