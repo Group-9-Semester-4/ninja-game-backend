@@ -25,9 +25,9 @@ jobs:
     - name: SSH Server Deploy
       uses: kostya-ten/ssh-server-deploy@v4
       with:
-        host: ${{ secrets.VPS_IP }}
-        port: ${{ secrets.VPS_PORT }}
-        username: ${{ secrets.VPS_USER }}
+        host: 167.71.40.34
+        port: 1337
+        username: nspe
         private_key: ${{ secrets.SSH_PRIVATE_KEY_NA_VPS }}
         scp_source: target/
         scp_target: ~/
