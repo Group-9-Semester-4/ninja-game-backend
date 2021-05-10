@@ -26,8 +26,8 @@ jobs:
       uses: burnett01/rsync-deployments@4.1
       with:
         switches: -avzr --delete
-        path: $HOME/work/ninja-game-backend/ninja-game-backend/target
-        remote_path: $HOME/target/
+        path: target/
+        remote_path: /home/${{ secrets.VPS_USER }}/target
         remote_host: ${{ secrets.VPS_IP }}
         remote_port: ${{ secrets.VPS_PORT }}
         remote_user: ${{ secrets.VPS_USER }}
