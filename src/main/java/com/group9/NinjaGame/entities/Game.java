@@ -37,6 +37,7 @@ public class Game {
     @NotBlank(message = "This is mandatory")
     private boolean multiPlayer;
 
+    // TODO: Remove this useless field
     @Column(name = "playing_alone", nullable = false)
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
@@ -54,16 +55,17 @@ public class Game {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    public User user;
+    private User user;
 
     public Game() {
     }
 
-    public Game(int timeLimit, boolean multiPlayer, boolean playingAlone) {
+    public Game(int timeLimit, boolean multiPlayer, boolean playingAlone, User user) {
         this.id = null;
         this.timeLimit = timeLimit;
         this.multiPlayer = multiPlayer;
         this.playingAlone = playingAlone;
+        this.user = user;
         this.selectedCardSet = null;
     }
 

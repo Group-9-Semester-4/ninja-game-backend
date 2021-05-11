@@ -9,8 +9,11 @@ public class InitGameParam {
 
     public boolean multiPlayer;
 
+    // TODO: Remove this useless field
     public boolean playingAlone;
 
     public String lobbyCode;
+
+    public String email;
 
 }

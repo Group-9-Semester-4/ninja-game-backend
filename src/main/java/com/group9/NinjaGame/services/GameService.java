@@ -1,16 +1,13 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.containers.GameContainer;
-import com.group9.NinjaGame.entities.Card;
-import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.entities.User;
 import com.group9.NinjaGame.models.GameInfo;
-import com.group9.NinjaGame.models.modes.GameMode;
-import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
+import com.group9.NinjaGame.models.params.FinishGameParam;
 import com.group9.NinjaGame.models.params.InitGameParam;
-import com.group9.NinjaGame.models.params.StartGameParam;
-import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
+import com.group9.NinjaGame.repositories.UserRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,111 +16,45 @@ import java.util.*;
 
 @Component
 public class GameService implements IGameService {
-
-    private CardSetRepository cardSetRepository;
-    private GameRepository gameRepository;
-    private GameContainer gameContainer;
+    private final GameRepository gameRepository;
+    private final GameContainer gameContainer;
+    private final UserRepository userRepository;
+    private final IStatisticsService statisticsService;
 
     @Autowired
-    public GameService(CardSetRepository cardSetRepository, GameRepository gameRepository) {
-        this.cardSetRepository = cardSetRepository;
+    public GameService(GameRepository gameRepository, UserRepository userRepository, IStatisticsService statisticsService) {
         this.gameRepository = gameRepository;
-        gameContainer = GameContainer.getInstance();
+        this.userRepository = userRepository;
+        this.statisticsService = statisticsService;
+        this.gameContainer = GameContainer.getInstance();
     }
 
     @Override
     public Game initGame(InitGameParam param) {
-        Game game = new Game(param.timeLimit, param.multiPlayer, param.playingAlone);
+        User user = createOrGetExisting(param.email);
+
+        Game game = new Game(param.timeLimit, param.multiPlayer, param.playingAlone, user);
 
         game = gameRepository.save(game);
 
-        UUID gameId = game.getId();
-        GameInfo gameInfo;
-
         if (param.multiPlayer) {
-            gameInfo = new GameInfo(gameId, param.lobbyCode);
-        } else {
-            gameInfo = new GameInfo(gameId);
+            GameInfo gameInfo = new GameInfo(game.getId(), param.lobbyCode);
+            gameContainer.initGame(gameInfo);
         }
-
-        gameContainer.initGame(gameInfo);
 
         return game;
     }
 
-    public Game startGame(StartGameParam param) throws NotFoundException {
-        Optional<Game> gameEntityOptional = gameRepository.findById(param.gameId);
-        Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(param.cardSetId);
-
-        if (gameEntityOptional.isPresent() && cardSetEntityOptional.isPresent()) {
-            Game game = gameEntityOptional.get();
-            CardSet cardSet = cardSetEntityOptional.get();
-
-            List<Card> cards = new ArrayList<>();
-
-            for (Card card : cardSet.getCards()) {
-                if (!param.unwantedCards.contains(card.getId())) {
-                    cards.add(card);
-                }
-            }
-
-            game.setSelectedCardSet(cardSet);
-            game = gameRepository.save(game);
-
-            GameInfo gameInfo = gameContainer.getGameInfo(game.getId());
-
-            gameInfo.started = true;
-
-            gameInfo.gameModeData = new SinglePlayerGameMode();
-            gameInfo.gameModeData.init(gameInfo, cards, param.timeLimit);
-
-            return game;
-        }
-
-        throw new NotFoundException("Game ID or Card set ID not found.");
-    }
-
-    @Override
-    public Card draw(UUID gameId) {
-
-        GameMode mode = gameContainer.getGameInfo(gameId).gameModeData;
-
-        if (mode instanceof SinglePlayerGameMode) {
-
-            SinglePlayerGameMode gameMode = (SinglePlayerGameMode) mode;
-
-            List<Card> cards = gameMode.remainingCards;
-
-            if (cards != null && !cards.isEmpty()) {
-
-                return cards.get(new Random().nextInt(cards.size()));
-            }
-        }
-
-        return null;
-    }
-
-    public boolean removeDoneCard(UUID gameId, UUID cardId) {
-
-        GameMode mode = gameContainer.getGameInfo(gameId).gameModeData;
-
-        if (mode instanceof SinglePlayerGameMode) {
-            SinglePlayerGameMode gameMode = (SinglePlayerGameMode) mode;
-
-            return gameMode.removeCardById(cardId);
-        }
-        // todo - Return false when playing multiplayer? le confusion -Mikulas
-        return false;
-    }
-
-    public Game finishGame(UUID gameId) throws Exception {
+    public Game finishGame(FinishGameParam param) throws Exception {
         try {
-            Optional<Game> gameEntityOptional = gameRepository.findById(gameId);
-            gameContainer.removeGame(gameId);
+            Optional<Game> gameEntityOptional = gameRepository.findById(param.gameId);
 
             if (gameEntityOptional.isPresent()) {
                 Game game = gameEntityOptional.get();
 
+                statisticsService.insertGameStatistics(param);
+
+                // TODO: Mark game as finished - add new field for example, but don't delete
                 gameRepository.delete(game);
 
                 return game;
@@ -143,5 +74,19 @@ public class GameService implements IGameService {
             throw e;
         }
 
+    }
+
+    private User createOrGetExisting(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user != null) {
+            return user;
+        }
+
+        User newUser = new User(email);
+
+        userRepository.save(newUser);
+
+        return newUser;
     }
 }

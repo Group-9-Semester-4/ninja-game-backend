@@ -1,6 +1,7 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.containers.GameContainer;
+import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.entities.statisics.CardDiscard;
 import com.group9.NinjaGame.entities.statisics.CardRedraw;
@@ -21,19 +22,17 @@ import java.util.stream.Stream;
 @Component
 public class StatisticsService implements IStatisticsService {
 
-    private final CardRepository cardRepository;
+    private final CardSetRepository cardSetRepository;
     private final GameRepository gameRepository;
-    private final GameContainer gameContainer;
     private final CardDiscardRepository cardDiscardRepository;
     private final CardRedrawRepository cardRedrawRepository;
     private final CardSetCompletionRepository cardSetCompletionRepository;
     private final TimePlayedPerGameRepository timePlayedPerGameRepository;
 
     @Autowired
-    public StatisticsService(CardRepository cardRepository, GameRepository gameRepository, CardDiscardRepository cardDiscardRepository, CardRedrawRepository cardRedrawRepository, CardSetCompletionRepository cardSetCompletionRepository, TimePlayedPerGameRepository timePlayedPerGameRepository) {
-        this.cardRepository = cardRepository;
+    public StatisticsService(CardSetRepository cardSetRepository, GameRepository gameRepository, CardDiscardRepository cardDiscardRepository, CardRedrawRepository cardRedrawRepository, CardSetCompletionRepository cardSetCompletionRepository, TimePlayedPerGameRepository timePlayedPerGameRepository) {
+        this.cardSetRepository = cardSetRepository;
         this.gameRepository = gameRepository;
-        this.gameContainer = GameContainer.getInstance();
         this.cardDiscardRepository = cardDiscardRepository;
         this.cardRedrawRepository = cardRedrawRepository;
 
@@ -44,28 +43,31 @@ public class StatisticsService implements IStatisticsService {
 
     @Override
     public Game insertGameStatistics(FinishGameParam finishGameParam) {
-        Game game = null;
-        GameInfo gameInfo = gameContainer.getPlayerGame(finishGameParam.playerId);
-        //check if game exists in container
-        if (gameInfo instanceof GameInfo) {
-            Optional<Game> gameOptional = gameRepository.findById(finishGameParam.gameId);
-            if (gameOptional.isPresent()) {
-                //get game from DB
-                game = gameOptional.get();
-                //add optional fields from end of the game
-                game.setPercentageOfDoneCards(finishGameParam.percentageOfDoneCards);
-                game.setTimeInSeconds(Math.min(finishGameParam.timeInSeconds, 32000)); // This is done so the SQL database
-                //override game in DB with the new found info (finished cards, time to complete, etc.)
-                try {
-                    insertRedrawnCards(finishGameParam.listOfRedrawnCards, finishGameParam.cardSetId, finishGameParam.playerId);
-                    timePlayedPerGameRepository.save(new TimePlayedPerGame(game.getId(), game.getSelectedCardSet().getId(), game.getTimeInSeconds(), Instant.now()));
-                    cardSetCompletionRepository.save(new CardSetCompletion(game.getId(), game.getSelectedCardSet().getId(), game.getPercentageOfDoneCards(), Instant.now()));
-                    gameRepository.save(game);
-                } catch (Exception e) {
-                    throw e;
-                }
-            }
+
+        Optional<Game> gameOptional = gameRepository.findById(finishGameParam.gameId);
+        Optional<CardSet> cardSetOptional = cardSetRepository.findById(finishGameParam.cardSetId);
+
+        if (!gameOptional.isPresent() || !cardSetOptional.isPresent()) {
+            throw new NullPointerException("Game or Card set does not exist");
         }
+
+        Game game = gameOptional.get();
+        CardSet cardSet = cardSetOptional.get();
+
+        int amountOfCards = cardSet.getCards().size();
+
+        int percentageOfDoneCards = (int) (((double) finishGameParam.cardsCompleted / (double) amountOfCards) * 100);
+
+        //add optional fields from end of the game
+        game.setPercentageOfDoneCards(percentageOfDoneCards);
+        game.setTimeInSeconds(Math.min(finishGameParam.timeInSeconds, 32000)); // This is done so the SQL database
+        //override game in DB with the new found info (finished cards, time to complete, etc.)
+        insertRedrawnCards(finishGameParam.listOfRedrawnCards, finishGameParam.cardSetId, game.getUser().getId());
+        insertCardDiscards(finishGameParam.unwantedCards, finishGameParam.cardSetId, game.getUser().getId());
+        timePlayedPerGameRepository.save(new TimePlayedPerGame(game.getId(), finishGameParam.cardSetId, game.getTimeInSeconds(), Instant.now()));
+        cardSetCompletionRepository.save(new CardSetCompletion(game.getId(), finishGameParam.cardSetId, game.getPercentageOfDoneCards(), Instant.now()));
+        gameRepository.save(game);
+
         return game;
     }
 
@@ -124,11 +126,6 @@ public class StatisticsService implements IStatisticsService {
             mappedResult.put(ld, count);
         }
         return mappedResult;
-    }
-
-    @Override
-    public List<CardRedraw> createCardRedraws(List<CardRedraw> cardRedraws) {
-        return cardRedrawRepository.saveAll(cardRedraws);
     }
 
 
