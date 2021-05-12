@@ -100,7 +100,7 @@ public class StatisticsService implements IStatisticsService {
         return Collections.emptyList();
     }
 
-    private List<CardRedraw> insertRedrawnCards(List<UUID> redrawnCards, UUID cardSetUUID, UUID playerUUID) {
+    public List<CardRedraw> insertRedrawnCards(List<UUID> redrawnCards, UUID cardSetUUID, UUID playerUUID) {
         List<CardRedraw> cardRedraws = new ArrayList<>();
         if (redrawnCards.size() > 0) {
             for (UUID cardUUID : redrawnCards) {
