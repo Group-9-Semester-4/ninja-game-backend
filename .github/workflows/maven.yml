@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Checkout backend repo
-    - uses: actions/checkout@v2
+      uses: actions/checkout@v2
       with:
         path: backend
     - name: Set up JDK 11
