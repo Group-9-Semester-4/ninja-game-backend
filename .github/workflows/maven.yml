@@ -39,7 +39,7 @@ jobs:
       env:
         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       with:
-        projectPath: $GITHUB_WORKSPACE/unity
+        projectPath: unity
         targetPlatform: WebGL
     - name: Format Unity folders
       run: |
