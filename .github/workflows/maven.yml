@@ -40,7 +40,7 @@ jobs:
         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       with:
         targetPlatform: WebGL
-        projectPath: unity
+        projectPath: ./unity
     - name: Format Unity folders
       run: |
         mv /github/workspace/unity/build/WebGL/WebGL /github/workspace/ninja
