@@ -26,14 +26,17 @@ public class SocketIOResource {
     private final MultiplayerGameService multiplayerGameService;
     private final BasicGameModeResource basicGameModeResource;
     private final ConcurrentGameModeResource concurrentGameModeResource;
+    private final DeathMatchGameModeResource deathMatchGameModeResource;
 
     @Autowired
     public SocketIOResource(SocketIOServer server, MultiplayerGameService multiplayerGameService,
                             BasicGameModeResource basicGameModeResource,
-                            ConcurrentGameModeResource concurrentGameModeResource) {
+                            ConcurrentGameModeResource concurrentGameModeResource,
+                            DeathMatchGameModeResource deathMatchGameModeResource) {
         this.multiplayerGameService = multiplayerGameService;
         this.basicGameModeResource = basicGameModeResource;
         this.concurrentGameModeResource = concurrentGameModeResource;
+        this.deathMatchGameModeResource = deathMatchGameModeResource;
 
         this.namespace = server.addNamespace("/game");
         this.namespace.addConnectListener(onConnected());
@@ -45,6 +48,7 @@ public class SocketIOResource {
 
         basicGameModeResource.registerListeners(namespace);
         concurrentGameModeResource.registerListeners(namespace);
+        deathMatchGameModeResource.registerListeners(namespace);
     }
 
     public ConnectListener onConnected() {
