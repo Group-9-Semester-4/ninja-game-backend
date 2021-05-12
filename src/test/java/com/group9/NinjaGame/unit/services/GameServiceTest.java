@@ -4,13 +4,18 @@ import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.entities.User;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
+import com.group9.NinjaGame.models.params.FinishGameParam;
 import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.models.params.StartGameParam;
 import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
+import com.group9.NinjaGame.repositories.UserRepository;
 import com.group9.NinjaGame.services.GameService;
+import com.group9.NinjaGame.services.IStatisticsService;
+import com.group9.NinjaGame.services.StatisticsService;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,20 +42,24 @@ public class GameServiceTest {
     private Optional<Game> optionalGame;
     private Optional<CardSet> optionalCardSet;
     private UUID uuid = UUID.randomUUID();
+    private String email = "tester@test.com";
     private GameInfo gameInfo;
 
     @Mock
     private GameRepository gameRepository;
     @Mock
-    private CardSetRepository cardSetRepository;
+    private UserRepository userRepository;
+    @Mock
+    private IStatisticsService statisticsService;
 
     // This method checks if helper classes work properly and sets up a gameService & container objects
     @BeforeEach
     public void setUp() {
         assertNotNull(gameRepository);
-        assertNotNull(cardSetRepository);
+        assertNotNull(userRepository);
+        assertNotNull(statisticsService);
 
-        gameService = new GameService(cardSetRepository, gameRepository);
+        gameService = new GameService(gameRepository, userRepository, statisticsService);
 
         assertNotNull(GameContainer.getInstance());
     }
@@ -63,9 +72,14 @@ public class GameServiceTest {
         testParam.multiPlayer = true;
         testParam.playingAlone = true;
         testParam.timeLimit = 60;
+        testParam.email = email;
 
-        game = new Game(testParam.timeLimit, testParam.multiPlayer, testParam.playingAlone);
+        User user = new User(email);
+        user.setId(UUID.randomUUID());
+
+        game = new Game(testParam.timeLimit, testParam.multiPlayer, testParam.playingAlone, user);
         doReturn(game).when(gameRepository).save(any(Game.class));
+        doReturn(user).when(userRepository).findByEmail(email);
 
         Game createdGame = gameService.initGame(testParam);
 
@@ -73,53 +87,16 @@ public class GameServiceTest {
     }
 
     @Test
-    public void testStartGame() {
-        createGameInProgress();
-        doReturn(game).when(gameRepository).save(game);
-        doReturn(optionalGame).when(gameRepository).findById(game.getId());
-        doReturn(optionalCardSet).when(cardSetRepository).findById(cardSet.getId());
-
-        StartGameParam testParam = new StartGameParam();
-        testParam.gameId = uuid;
-        testParam.gameMode = "basic";
-        testParam.cardSetId = uuid;
-        testParam.unwantedCards = new ArrayList<>();
-
-        try {
-            Game testG = gameService.startGame(testParam);
-            assertNotNull(testG);
-        } catch (NotFoundException e) {
-            fail();
-        }
-
-        verify(gameRepository, times(1)).save(game);
-    }
-
-    @Test
-    public void testDrawCardDuringGame() {
-        createGameInProgress();
-
-        Card cardDrawn = gameService.draw(game.getId());
-
-        assertEquals(card.getName(), cardDrawn.getName());
-        assertEquals(card.getId(), cardDrawn.getId());
-        assertNotNull(cardDrawn);
-    }
-
-    @Test
-    public void testRemoveDoneCardDuringGame() {
-        createGameInProgress();
-        boolean res = gameService.removeDoneCard(game.getId(), card.getId());
-        assertTrue(res);
-    }
-
-    @Test
     public void testFinishGame() {
         try {
             createGameInProgress();
             doReturn(optionalGame).when(gameRepository).findById(game.getId());
+
+            FinishGameParam param = new FinishGameParam();
+            param.gameId = game.getId();
+
             assertDoesNotThrow(() -> {
-                gameService.finishGame(game.getId());
+                gameService.finishGame(param);
             });
         } catch (Exception e) {
             fail();

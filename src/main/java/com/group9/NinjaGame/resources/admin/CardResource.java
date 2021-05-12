@@ -32,10 +32,10 @@ public class CardResource {
         this.cardService = cardService;
     }
 
-    @GetMapping("/index")
-    public String showManageCards() {
-        return "index";
-    }
+//    @GetMapping("/index")
+//    public String showManageCards() {
+//        return "index";
+//    }
 
 
     @GetMapping("/manage")
@@ -47,7 +47,6 @@ public class CardResource {
     }
 
 
-
     @GetMapping("/create")
     public String showCreateCardForm(Card card) {
         return "add-card";
@@ -56,7 +55,7 @@ public class CardResource {
 
     //TODO: Refactor
     @PostMapping("/add")
-    public String addCard(@RequestParam ("file") MultipartFile file, @Valid Card card, BindingResult result) {
+    public String addCard(@RequestParam("file") MultipartFile file, @Valid Card card, BindingResult result) throws Exception {
         if ((result.hasErrors()) || (file.isEmpty())) {
             return "add-card";
         }
@@ -65,7 +64,7 @@ public class CardResource {
             Path path = Paths.get(UPLOAD_DIR + fileName);
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new Exception("I/O exception when attempting to add a card.");
         }
         card.setFilepath(fileName);
         cardService.addCard(card);
@@ -73,23 +72,22 @@ public class CardResource {
     }
 
 
-
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") String id, Model model) {
-        Card card = null;
+        Card card;
         try {
             card = cardService.getEntityById(id);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalArgumentException("Invalid card Id:" + id);
         }
 
         model.addAttribute("card", card);
         return "update-card";
     }
+
     //TODO: Refactor
     @PostMapping("/update/{id}")
-    public String updateCard(@RequestParam ("file") MultipartFile file, @PathVariable("id") String id, @Valid Card card,
+    public String updateCard(@RequestParam("file") MultipartFile file, @PathVariable("id") String id, @Valid Card card,
                              BindingResult result, Model model) {
         if (result.hasErrors()) {
             card.setId(UUID.fromString(id));
@@ -99,19 +97,18 @@ public class CardResource {
             String oldPath = cardService.getEntityById(id).getFilepath();
 
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            if(!((oldPath.equals(fileName)) || (file.isEmpty()))) {
+            if (!((oldPath.equals(fileName)) || (file.isEmpty()))) {
                 try {
                     Path path = Paths.get(UPLOAD_DIR + fileName);
                     Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
                     card.setFilepath(fileName);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
             cardService.addCard(card);
             return "redirect:/admin/card/manage";
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalArgumentException("Invalid card Id:" + id);
         }
 
@@ -119,11 +116,10 @@ public class CardResource {
 
     @GetMapping("/delete/{id}")
     public String deleteCard(@PathVariable("id") String id, Model model) {
-        Card card = null;
+        Card card;
         try {
             card = cardService.getEntityById(id);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new IllegalArgumentException("Invalid card Id:" + id);
         }
 

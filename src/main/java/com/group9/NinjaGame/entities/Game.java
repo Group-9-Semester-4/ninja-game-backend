@@ -37,23 +37,35 @@ public class Game {
     @NotBlank(message = "This is mandatory")
     private boolean multiPlayer;
 
+    // TODO: Remove this useless field
     @Column(name = "playing_alone", nullable = false)
     @NotBlank(message = "This is mandatory")
     private boolean playingAlone;
+
+    @Column(name = "percentage_of_done_cards")
+    private int percentageOfDoneCards;
+
+    @Column(name = "time")
+    private int timeInSeconds;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "card_set_id")
     private CardSet selectedCardSet;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Game() {
     }
 
-    public Game(int timeLimit, boolean multiPlayer, boolean playingAlone) {
+    public Game(int timeLimit, boolean multiPlayer, boolean playingAlone, User user) {
         this.id = null;
         this.timeLimit = timeLimit;
         this.multiPlayer = multiPlayer;
         this.playingAlone = playingAlone;
+        this.user = user;
         this.selectedCardSet = null;
     }
 
@@ -119,6 +131,30 @@ public class Game {
 
     public void setSelectedCardSet(CardSet cardSet) {
         this.selectedCardSet = cardSet;
+    }
+
+    public int getPercentageOfDoneCards() {
+        return percentageOfDoneCards;
+    }
+
+    public void setPercentageOfDoneCards(int percentageOfDoneCards) {
+        this.percentageOfDoneCards = percentageOfDoneCards;
+    }
+
+    public int getTimeInSeconds() {
+        return timeInSeconds;
+    }
+
+    public void setTimeInSeconds(int timeInSeconds) {
+        this.timeInSeconds = timeInSeconds;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getGameAttempts() {
