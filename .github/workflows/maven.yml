@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ devops, develop, main ]
   pull_request:
-    branches: [ develop ]
+    branches: [ devops, develop, main ]
 
 jobs:
   build:
@@ -20,15 +20,32 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
+    - name: Checkout Unity repo
+      uses: actions/checkout@v2
+      with:
+        repository: Group-9-Semester-4/ninja-game
+    - name: CD to Unity
+      run: cd unity
+    - name: Build Unity
+      uses: game-ci/unity-builder@v2
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      with:
+        targetPlatform: WebGL
+    - name: Format Unity
+      run: |
+        mv /github/workspace/unity/build/WebGL/WebGL /github/workspace/ninja
+        rm -r /github/workspace/unity/*
+        mv /github/workspace/ninja /github/workspace/
     - name: Build with Maven
       run: mvn -B package -P prod --file pom.xml ; pwd ; ls -l
-    - name: rsync deployments
-      uses: burnett01/rsync-deployments@4.1
-      with:
-        switches: -avzr --delete
-        path: target/
-        remote_path: ~/target
-        remote_host: ${{ secrets.VPS_IP }}
-        remote_port: ${{ secrets.VPS_PORT }}
-        remote_user: ${{ secrets.VPS_USER }}
-        remote_key: ${{ secrets.VPS_PRIVATE_KEY }}
+#    - name: rsync deployments
+#      uses: burnett01/rsync-deployments@4.1
+#      with:
+#        switches: -avzr --delete
+#        path: target/
+#        remote_path: ~/target
+#        remote_host: ${{ secrets.VPS_IP }}
+#        remote_port: ${{ secrets.VPS_PORT }}
+#        remote_user: ${{ secrets.VPS_USER }}
+#        remote_key: ${{ secrets.VPS_PRIVATE_KEY }}
