@@ -31,7 +31,7 @@ jobs:
         repository: Group-9-Semester-4/ninja-game
         path: unity
         lfs: true
-        token: ${{ secrets.DEVOPS_PRIVATE }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Check unity repo
       run: cd $GITHUB_WORKSPACE/unity ; ls -l ; git status
     - name: Build Unity
