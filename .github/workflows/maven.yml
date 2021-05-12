@@ -29,7 +29,7 @@ jobs:
         repository: Group-9-Semester-4/ninja-game
         path: unity
     - name: Unshallow git repo
-      run: cd $GITHUB_WORKSPACE/unity ; git fetch --unshallow ; cd $GITHUB_WORKSPACE/unity
+      run: cd $GITHUB_WORKSPACE/unity ; ls -l ; git status ; cd $GITHUB_WORKSPACE/ ; ls -l ; git status
     - name: Build Unity
       uses: game-ci/unity-builder@v2
       env:
