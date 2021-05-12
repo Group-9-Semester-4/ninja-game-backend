@@ -29,7 +29,6 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: Group-9-Semester-4/ninja-game
-        path: unity
         lfs: true
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: Check unity repo
@@ -40,7 +39,6 @@ jobs:
         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       with:
         targetPlatform: WebGL
-        projectPath: unity
     - name: Format Unity folders
       run: |
         mv /github/workspace/unity/build/WebGL/WebGL /github/workspace/ninja
