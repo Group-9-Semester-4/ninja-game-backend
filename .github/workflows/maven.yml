@@ -24,8 +24,9 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: Group-9-Semester-4/ninja-game
+        path: unity
     - name: CD to Unity
-      run: cd unity
+      run: pwd ; ls -l ; cd $GITHUB_WORKSPACE ; ls -l
     - name: Build Unity
       uses: game-ci/unity-builder@v2
       env:
