@@ -31,6 +31,7 @@ public class CardSetService implements ICardSetService {
         return cardSet;
     }
 
+    // todo - should not be id but UUID, used all over CardSetResource
     public CardSet getById(String id) throws NotFoundException {
         try {
             Optional<CardSet> cardSetEntityOptional = cardSetRepository.findById(UUID.fromString(id));

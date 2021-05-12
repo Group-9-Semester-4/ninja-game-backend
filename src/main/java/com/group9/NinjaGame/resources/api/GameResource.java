@@ -4,10 +4,12 @@ import com.group9.NinjaGame.entities.Card;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.helpers.GameModeResolver;
-import com.group9.NinjaGame.models.params.*;
+import com.group9.NinjaGame.models.params.FinishGameParam;
+import com.group9.NinjaGame.models.params.InitGameParam;
 import com.group9.NinjaGame.services.ICardService;
 import com.group9.NinjaGame.services.ICardSetService;
 import com.group9.NinjaGame.services.IGameService;
+import com.group9.NinjaGame.services.IStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,63 +23,53 @@ import java.util.UUID;
 public class GameResource {
 
     /*
-        ToDo -> Handle Exceptions
-        Every method that takes a UUID or some other parameter, needs to raise an exception
-        whenever that parameter is invalid. This exception will be handled here, and passed
-        on as the API response.
-        https://www.baeldung.com/exception-handling-for-rest-with-spring (something like this?)
-        Marek research pls
+        Note about exceptions: They are all either bad_request or internal_server_error.
+
      */
 
     ICardService cardService;
     IGameService gameService;
     ICardSetService cardSetService;
+    IStatisticsService statisticsService;
 
     @Autowired
-    public GameResource(ICardService cardService, IGameService gameService, ICardSetService cardSetService) {
+    public GameResource(ICardService cardService, IGameService gameService, ICardSetService cardSetService, IStatisticsService statisticsService) {
         this.cardService = cardService;
         this.gameService = gameService;
         this.cardSetService = cardSetService;
-
+        this.statisticsService = statisticsService;
     }
 
+    /*
+        Beginning of the game
+     */
     @PostMapping(path = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> initGame(@RequestBody InitGameParam param) {
-        Game game = gameService.initGame(param);
-        return new ResponseEntity<>(game, HttpStatus.OK);
-    }
-
-    @PostMapping(path = "/start", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> startGame(@RequestBody StartGameParam param) throws Exception {
-
-        Game game = gameService.startGame(param);
-
-        return new ResponseEntity<>(game, HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/draw")
-    public ResponseEntity<?> drawCard(@RequestParam UUID gameId) {
-        Card card = gameService.draw(gameId);
-
-        if (card == null) {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        try {
+            Game game = gameService.initGame(param);
+            return new ResponseEntity<>(game, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(card, HttpStatus.OK);
     }
 
-
-    @PostMapping(path = "/card-done", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> cardDone(@RequestBody CardDoneParam param) {
-        return new ResponseEntity<>(gameService.removeDoneCard(param.gameId, param.cardId), HttpStatus.OK);
-    }
-
+    /*
+            At the end of the game
+     */
     @PostMapping(path = "/finish", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) throws Exception {
-        return new ResponseEntity<>(gameService.finishGame(param.gameId), HttpStatus.OK);
+    public ResponseEntity<?> finishGame(@RequestBody FinishGameParam param) {
+        try {
+            Game game = gameService.finishGame(param);
+
+            return new ResponseEntity<>(game, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
-
+    /*
+        Getters for data
+     */
     @GetMapping(path = "/cards")
     public ResponseEntity<?> getAllCards() {
         Iterable<Card> allCards = cardService.listAll();
