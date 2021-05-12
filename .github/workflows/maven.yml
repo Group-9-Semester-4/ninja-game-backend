@@ -32,7 +32,7 @@ jobs:
         lfs: true
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: Check unity repo
-      run: cd $GITHUB_WORKSPACE/unity ; ls -laf ; git status
+      run: cd $GITHUB_WORKSPACE ; ls -laf ; git status
     - name: Build Unity
       uses: game-ci/unity-builder@v2
       env:
