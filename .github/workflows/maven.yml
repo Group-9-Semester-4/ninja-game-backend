@@ -30,15 +30,16 @@ jobs:
       with:
         repository: Group-9-Semester-4/ninja-game
         lfs: true
-        token: ${{ secrets.ACCESS_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         path: unity
     - name: Check unity repo
-      run: cd $GITHUB_WORKSPACE ; ls -laf ; git status
+      run: cd $GITHUB_WORKSPACE/unity ; ls -laf ; git status
     - name: Build Unity
       uses: game-ci/unity-builder@v2
       env:
         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
       with:
+        path: unity
         projectPath: unity
         targetPlatform: WebGL
     - name: Format Unity folders
