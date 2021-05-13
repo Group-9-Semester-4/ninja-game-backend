@@ -25,7 +25,7 @@ jobs:
       with:
         github_token: ${{secrets.ACCESS_TOKEN}}
         workflow: unity_build.yml 
-        branch: develop
+        branch: devops
         name: unity_webgl_latest
         path: $GITHUB_WORKSPACE/src/main/resources/public
         repo: Group-9-Semester-4/ninja-game
