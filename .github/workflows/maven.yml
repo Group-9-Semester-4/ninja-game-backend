@@ -26,7 +26,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Checkout Unity repo
-      uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
+      uses: actions/checkout@v2.3.4
       with:
         repository: Group-9-Semester-4/ninja-game
         lfs: true
