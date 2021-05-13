@@ -28,8 +28,7 @@ jobs:
         branch: develop
         name: unity_webgl_latest
         path: $GITHUB_WORKSPACE/src/main/resources/public
-        owner: Group-9-Semester-4
-        repo: ninja-game
+        repo: Group-9-Semester-4/ninja-game
     - name: Build with Maven
       run: mvn -B package -P prod --file pom.xml ; pwd ; ls -l
       
