@@ -31,7 +31,7 @@ jobs:
         repo: Group-9-Semester-4/ninja-game
     - name: Move unity files
       run: |
-        mv -v $GITHUB_WORKSPACE/src/main/resources/public/WebGL/WebGL/* $GITHUB_WORKSPACE/src/main/resources/public/ninja/
+        mv -v $GITHUB_WORKSPACE/src/main/resources/public/WebGL/WebGL/ $GITHUB_WORKSPACE/src/main/resources/public/ninja/
         rm -r $GITHUB_WORKSPACE/src/main/resources/public/WebGL
     - name: Build with Maven
       run: mvn -B package -P prod --file pom.xml ; pwd ; ls -l      
