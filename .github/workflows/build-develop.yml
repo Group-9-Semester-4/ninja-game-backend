@@ -26,7 +26,7 @@ jobs:
         github_token: ${{secrets.ACCESS_TOKEN}}
         workflow: unity_build.yml 
         branch: devops
-        name: unity_webgl_develop
+        name: unity_webgl_latest
         path: /home/runner/work/ninja-game-backend/ninja-game-backend/src/main/resources/public
         repo: Group-9-Semester-4/ninja-game
     - name: Check files
