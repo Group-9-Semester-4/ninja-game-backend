@@ -1,11 +1,13 @@
 # This workflow will build a Java project with Maven
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Java CI with Maven
+name: Build Backend with latest Unity build from develop branch
 
 on:
   push:
     branches: [ devops, develop ]
+  pull_request:
+    branches: [ develop ]
 
 jobs:
   build:
@@ -25,8 +27,8 @@ jobs:
       with:
         github_token: ${{secrets.ACCESS_TOKEN}}
         workflow: unity_build.yml 
-        branch: devops
-        name: unity_webgl_latest
+        branch: develop
+        name: unity_webgl_develop
         path: /home/runner/work/ninja-game-backend/ninja-game-backend/src/main/resources/public
         repo: Group-9-Semester-4/ninja-game
     - name: Check files
