@@ -5,7 +5,7 @@ name: Build Backend with latest Unity build from develop branch
 
 on:
   push:
-    branches: [ devops, develop ]
+    branches: [ develop ]
   pull_request:
     branches: [ develop ]
 
