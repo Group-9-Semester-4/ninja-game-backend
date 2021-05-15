@@ -22,7 +22,7 @@ import static com.group9.NinjaGame.helpers.SocketIOHelper.SendMessage;
 @Component
 public class SocketIOResource {
 
-    private final SocketIONamespace namespace;
+    private final SocketIOServer server;
     private final MultiplayerGameService multiplayerGameService;
     private final BasicGameModeResource basicGameModeResource;
     private final ConcurrentGameModeResource concurrentGameModeResource;
@@ -37,17 +37,17 @@ public class SocketIOResource {
         this.basicGameModeResource = basicGameModeResource;
         this.concurrentGameModeResource = concurrentGameModeResource;
         this.deathMatchGameModeResource = deathMatchGameModeResource;
+        this.server = server;
 
-        this.namespace = server.addNamespace("/game");
-        this.namespace.addConnectListener(onConnected());
-        this.namespace.addDisconnectListener(onDisconnected());
-        this.namespace.addEventListener("leave", LeaveGameParam.class, this::onLeave);
+        this.server.addConnectListener(onConnected());
+        this.server.addDisconnectListener(onDisconnected());
+        this.server.addEventListener("leave", LeaveGameParam.class, this::onLeave);
 
-        this.namespace.addEventListener("join", JoinGameParam.class, this::onJoin);
-        this.namespace.addEventListener("start", StartGameParam.class, this::onStart);
+        this.server.addEventListener("join", JoinGameParam.class, this::onJoin);
+        this.server.addEventListener("start", StartGameParam.class, this::onStart);
 
-        basicGameModeResource.registerListeners(namespace);
-        concurrentGameModeResource.registerListeners(namespace);
+        basicGameModeResource.registerListeners(server);
+        concurrentGameModeResource.registerListeners(server);
         deathMatchGameModeResource.registerListeners(namespace);
     }
 
@@ -92,14 +92,14 @@ public class SocketIOResource {
 
         if (!res) {
             destroyGame(gameInfo.gameId);
-            this.namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
+            server.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
         }
 
     }
 
     public void destroyGame(UUID gameId) {
         multiplayerGameService.destroyGame(gameId);
-        namespace.getRoomOperations(gameId.toString()).disconnect();
+        server.getRoomOperations(gameId.toString()).disconnect();
     }
 
     public void onJoin(SocketIOClient client, JoinGameParam param, AckRequest ackRequest) {
@@ -112,7 +112,7 @@ public class SocketIOResource {
 
             SendMessage(ackRequest, MessageType.SUCCESS, "Successfully joined", gameInfo);
 
-            namespace.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
+            server.getRoomOperations(gameInfo.gameId.toString()).sendEvent("lobby-update", gameInfo);
         } else {
             SendMessage(ackRequest, MessageType.ERROR, "Game not found");
         }
@@ -122,7 +122,7 @@ public class SocketIOResource {
         try {
             Pair<Game, GameInfo> res = multiplayerGameService.onStart(param, client.getSessionId());
             if (res != null) {
-                namespace.getRoomOperations(res.getFirst().getId().toString()).sendEvent("start", res.getSecond());
+                server.getRoomOperations(res.getFirst().getId().toString()).sendEvent("start", res.getSecond());
             }
         } catch (Exception exception) {
             SendMessage(ackRequest, MessageType.ERROR, exception.getMessage());
