@@ -48,7 +48,7 @@ public class SocketIOResource {
 
         basicGameModeResource.registerListeners(server);
         concurrentGameModeResource.registerListeners(server);
-        deathMatchGameModeResource.registerListeners(namespace);
+        deathMatchGameModeResource.registerListeners(server);
     }
 
     public ConnectListener onConnected() {
