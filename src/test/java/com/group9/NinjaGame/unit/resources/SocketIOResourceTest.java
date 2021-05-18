@@ -49,8 +49,6 @@ public class SocketIOResourceTest {
     @Mock
     private AckRequest ackRequest;
     @Mock
-    private SocketIONamespace namespace;
-    @Mock
     private BroadcastOperations broadcastOperations;
     @Mock
     private SocketIOResource socketIOResource;
@@ -87,8 +85,7 @@ public class SocketIOResourceTest {
 
         gameInfo = new GameInfo(uuid,lobbyCode);
         gameContainer.initGame(gameInfo);
-        lenient().doReturn(namespace).when(server).addNamespace("/game");
-        lenient().doReturn(broadcastOperations).when(namespace).getRoomOperations(uuid.toString());
+        lenient().doReturn(broadcastOperations).when(server).getRoomOperations(uuid.toString());
         lenient().doReturn(playerUUID).when(client).getSessionId();
         multiplayerGameService = new MultiplayerGameService(gameRepository,cardSetRepository);
         socketIOResource = new SocketIOResource(server, multiplayerGameService, basicGameModeResource, concurrentGameModeResource, deathMatchGameModeResource);
@@ -153,7 +150,7 @@ public class SocketIOResourceTest {
 
         verify(ackRequest,times(1)).sendAckData(any(SocketIOMessage.class));
         verify(ackRequest).sendAckData(argThat((SocketIOMessage msg) -> msg.type.equals(MessageType.SUCCESS)));
-        verify(namespace, times (1)).getRoomOperations(gameInfo.gameId.toString());
+        verify(server, times (1)).getRoomOperations(gameInfo.gameId.toString());
         verify(broadcastOperations,times(1)).sendEvent("lobby-update",gameInfo);
         verify(client, times(1)).joinRoom(gameInfo.gameId.toString()); // 191
     }
@@ -213,7 +210,7 @@ public class SocketIOResourceTest {
 
         socketIOResource.onStart(client, startGameParam, ackRequest);
 
-        verify(namespace, times (1)).getRoomOperations(gameInfo.gameId.toString());
+        verify(server, times (1)).getRoomOperations(gameInfo.gameId.toString());
         assertSame(gameContainer.getGameInfo(gameInfo.gameId).gameModeData.getGameModeId(), startGameParam.gameMode);
     }
 
@@ -236,7 +233,7 @@ public class SocketIOResourceTest {
 
         socketIOResource.onStart(client, startGameParam, ackRequest);
 
-        verify(namespace, times (0)).getRoomOperations(gameInfo.gameId.toString());
+        verify(server, times (0)).getRoomOperations(gameInfo.gameId.toString());
         verify(ackRequest,times(1)).sendAckData(any(SocketIOMessage.class));
         verify(ackRequest).sendAckData(argThat((SocketIOMessage msg) -> msg.type.equals(MessageType.ERROR)));
     }
@@ -264,7 +261,7 @@ public class SocketIOResourceTest {
 
         socketIOResource.onStart(client, startGameParam, ackRequest);
 
-        verify(namespace, times (0)).getRoomOperations(gameInfo.gameId.toString());
+        verify(server, times (0)).getRoomOperations(gameInfo.gameId.toString());
         verify(ackRequest,times(1)).sendAckData(any(SocketIOMessage.class));
         verify(ackRequest).sendAckData(argThat((SocketIOMessage msg) -> msg.type.equals(MessageType.ERROR)));
     }
@@ -284,7 +281,7 @@ public class SocketIOResourceTest {
 
         socketIOResource.onStart(client, startGameParam, ackRequest);
 
-        verify(namespace, times (0)).getRoomOperations(gameInfo.gameId.toString());
+        verify(server, times (0)).getRoomOperations(gameInfo.gameId.toString());
         verify(ackRequest,times(1)).sendAckData(any(SocketIOMessage.class));
         verify(ackRequest).sendAckData(argThat((SocketIOMessage msg) -> msg.type.equals(MessageType.ERROR)));
     }
