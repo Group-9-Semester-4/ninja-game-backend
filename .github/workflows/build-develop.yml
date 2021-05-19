@@ -44,7 +44,7 @@ jobs:
       uses: burnett01/rsync-deployments@4.1
       with:
         switches: -avzrn --delete
-        rsh: sudo systemctl restart ninjagame.service
+        rsh: systemctl restart ninjagame.service
         path: target/
         remote_path: ~/target
         remote_host: ${{ secrets.VPS_IP }}
