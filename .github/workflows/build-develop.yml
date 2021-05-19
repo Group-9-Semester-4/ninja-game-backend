@@ -5,7 +5,7 @@ name: Build Backend with latest Unity build from develop branch
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, devops ]
   pull_request:
     branches: [ develop ]
   repository_dispatch:
@@ -43,7 +43,8 @@ jobs:
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
       with:
-        switches: -avzr --delete
+        switches: -avzrn --delete
+        rsh: sudo systemctl restart ninjagame.service
         path: target/
         remote_path: ~/target
         remote_host: ${{ secrets.VPS_IP }}
