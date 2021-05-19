@@ -44,10 +44,18 @@ jobs:
       uses: burnett01/rsync-deployments@4.1
       with:
         switches: -avzrn --delete
-        rsh: systemctl restart ninjagame.service
         path: target/
         remote_path: ~/target
         remote_host: ${{ secrets.VPS_IP }}
         remote_port: ${{ secrets.VPS_PORT }}
         remote_user: ${{ secrets.VPS_USER }}
         remote_key: ${{ secrets.VPS_PRIVATE_KEY }}
+    - name: restart service on server
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        command: sudo systemctl restart ninjagame.service
+        port: ${{ secrets.VPS_PORT }}
+        password: ${{ secrets.VPS_PW }}
+        host: ${{ secrets.VPS_IP }}
+        username: ${{ secrets.VPS_USER }}
+        privateKey: ${{ secrets.VPS_PRIVATE_KEY }}
