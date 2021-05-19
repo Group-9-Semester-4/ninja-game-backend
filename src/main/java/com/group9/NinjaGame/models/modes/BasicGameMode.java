@@ -1,10 +1,11 @@
 package com.group9.NinjaGame.models.modes;
 
 import com.group9.NinjaGame.entities.Card;
+import com.group9.NinjaGame.models.structural.BossFightScore;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
 
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,9 +23,9 @@ public class BasicGameMode implements GameMode {
 
     public List<Player> players;
 
-    public HashMap<UUID, Boolean> completeStates;
+    public List<UUID> completeStates;
 
-    public HashMap<UUID, Integer> bossFightScores;
+    public List<BossFightScore> bossFightScores;
 
 
     @Override
@@ -33,13 +34,19 @@ public class BasicGameMode implements GameMode {
         score = 0;
         players = gameInfo.lobby.players;
         drawnCard = null;
-        completeStates = new HashMap<>();
-        bossFightScores = new HashMap<>();
+        completeStates = new LinkedList<>();
+        bossFightScores = new LinkedList<>();
         remainingCards = cards;
     }
 
     @Override
     public String getGameModeId() {
         return GAME_MODE_ID;
+    }
+
+    public void score(UUID playerId, int score) {
+        BossFightScore bossFightScore = new BossFightScore(playerId, score);
+
+        bossFightScores.add(bossFightScore);
     }
 }

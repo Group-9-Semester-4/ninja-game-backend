@@ -24,14 +24,25 @@
     (during gameplay, players can choose to "skip" certain cards - redraw a different one).</p>
 <div class="graph-wide"><canvas id="discarded_graph"></canvas></div>
 <div class="graph-wide"><canvas id="redrawn_graph"></canvas></div>
+<hr>
+<div>
+    <h3> Average game time: <span id="avg-game-time" style="font-style: italic"> </span> seconds.</h3>
+    <p> </p>
+</div>
+<div class="graph-wide"><canvas id="game_time_graph"></canvas></div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
 <script th:inline="javascript">
     var card_discarded_map = /*[[${discards}]]*/ {};
     console.log(card_discarded_map);
     var card_redrawn_map = /*[[${redraws}]]*/ {};
     console.log(card_redrawn_map);
+    var game_times = /*[[${gametime}]]*/ {};
+    console.log(game_times);
+    var avg_game_time = /*[[${avggametime}]]*/ {};
+    console.log(avg_game_time);
 </script>
 <script>
+    document.getElementById("avg-game-time").textContent = avg_game_time.toString();
     // Say "No data" if the dataset is empty.
     const no_data_plugin = {
         id: 'no-data',
@@ -119,6 +130,45 @@
                 title: {
                     display: true,
                     text: 'Card redraws',
+                    padding: {
+                        top: 10,
+                        bottom: 10
+                    }
+                },
+                legend: {
+                    onClick: (e) => e, // Stopping unwanted default behavior (hides labels on click)
+                },
+            },
+            scale: {
+                ticks: {
+                    precision: 0
+                }
+            }
+        },
+        plugins: [no_data_plugin]
+    });
+    var ctxGameTime = document.getElementById('game_time_graph').getContext('2d');
+    var gametime_chart = new Chart(ctxGameTime, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(game_times),
+            datasets: [{
+                label: 'Time in seconds',
+                data: Object.values(game_times),
+                backgroundColor: 'rgb(243,136,79)',
+                borderColor: 'rgb(33,33,33)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:  true,
+            maintainAspectRatio: false,
+
+            indexAxis: 'x',
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Longest games',
                     padding: {
                         top: 10,
                         bottom: 10

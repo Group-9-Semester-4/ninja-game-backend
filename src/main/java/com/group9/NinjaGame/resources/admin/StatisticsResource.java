@@ -23,6 +23,8 @@ public class StatisticsResource {
     public String showStatisticsPage(Model model) {
         model.addAttribute("discards", statisticsService.getAllCardDiscards());
         model.addAttribute("redraws", statisticsService.getAllCardRedraws());
+        model.addAttribute("gametime", statisticsService.getAllTimePlayedPerGame());
+        model.addAttribute("avggametime", statisticsService.getAverageGameTime());
         return "statistics";
     }
 }

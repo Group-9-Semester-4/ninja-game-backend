@@ -28,7 +28,7 @@ public class ConcurrentGameModeService {
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
 
-        List<Card> cards = gameMode.playerRemainingCards.get(playerId);
+        List<Card> cards = gameMode.getRemainingCards(playerId);
 
         if (cards == null || cards.isEmpty()) {
             throw new Exception("No cards left");
@@ -36,7 +36,7 @@ public class ConcurrentGameModeService {
 
         Card card = cards.get(new Random().nextInt(cards.size()));
 
-        gameMode.playerCurrentCard.put(playerId, card);
+        gameMode.setPlayerCurrentCard(playerId, card);
 
         return card;
     }
@@ -48,24 +48,24 @@ public class ConcurrentGameModeService {
         GameInfo gameInfo = getValidatedGameInfo(playerId);
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
-        Card currentCard = gameMode.playerCurrentCard.get(playerId);
+        Card currentCard = gameMode.getPlayerCurrentCard(playerId);
 
         if (currentCard != null) {
 
             //moved from onDraw so that redraw button doesn't delete cards from deck
-            gameMode.playerRemainingCards.get(playerId).remove(currentCard);
+            gameMode.getRemainingCards(playerId).remove(currentCard);
 
             //add extra card
-            gameMode.numberOfPlayerCardsDone.merge(playerId, 1, Integer::sum);
+            gameMode.incrementCardsDone(playerId);
 
             //add score
-            gameMode.playerScores.merge(playerId, currentCard.getPoints(), Integer::sum);
+            gameMode.addScore(playerId, currentCard.getPoints());
 
-            gameMode.playerCurrentCard.remove(playerId);
+            gameMode.setPlayerCurrentCard(playerId, null);
 
             //check if it's a last card
             //TODO: refactor to another method
-            if(gameMode.playerRemainingCards.get(playerId).isEmpty()){
+            if(gameMode.getRemainingCards(playerId).isEmpty()){
                 gameMode.standings.add(playerId);
                 //if enough players have reached the end
                 double percent = (double)gameMode.standings.size()/gameMode.players.size()*100;
@@ -89,7 +89,7 @@ public class ConcurrentGameModeService {
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
 
-        gameMode.bossFightScores.put(playerId, bossScore.score);
+        gameMode.bossScore(playerId, bossScore.score);
 
         return gameInfo;
     }
@@ -105,7 +105,7 @@ public class ConcurrentGameModeService {
 
         for(UUID playerUuid : gameMode.standings){
             //amount to be given up for discussion
-            gameMode.playerScores.merge(playerUuid, 5 * numberOfPlayers--, Integer::sum);
+            gameMode.addScore(playerUuid, 5 * numberOfPlayers--);
         }
         return gameInfo;
     }

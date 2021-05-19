@@ -1,13 +1,11 @@
 package com.group9.NinjaGame.services;
 
-import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.entities.statisics.CardDiscard;
 import com.group9.NinjaGame.entities.statisics.CardRedraw;
 import com.group9.NinjaGame.entities.statisics.CardSetCompletion;
 import com.group9.NinjaGame.entities.statisics.TimePlayedPerGame;
-import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.params.FinishGameParam;
 import com.group9.NinjaGame.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +13,10 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ObjectUtils;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Component
 public class StatisticsService implements IStatisticsService {
@@ -70,16 +69,34 @@ public class StatisticsService implements IStatisticsService {
 
         return game;
     }
+    @Override
+    public Map<String, Short> getAllTimePlayedPerGame() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); // helper to get nicely readable date time value
+        Map<String,Short> mappedResult = new LinkedHashMap<>();
+        List<Object[]> queryResult = timePlayedPerGameRepository.getAllPlayTimes();
+        for (Object[] obj : queryResult) {
+            Timestamp sql_timestamp = (Timestamp) obj[0];
+            String formatted_date = sdf.format(sql_timestamp);
+            Short seconds_played = (Short) obj[1];
+            mappedResult.put(formatted_date,seconds_played);
+        }
+        return mappedResult;
+    }
+
+    @Override
+    public Long getAverageGameTime() {
+        return timePlayedPerGameRepository.getAvgGameTimePlayingNinjaGame();
+    }
 
     @Override
     public Map<String, Long> getAllCardDiscards() {
         // The reason for the Object[] -> Map conversion: https://stackoverflow.com/questions/51150748/nonuniqueresultexception-jparepository-spring-boot
         // MySQL returns BigInteger by default, I convert into BigDecimal because of: https://stackoverflow.com/questions/5553863/cast-bigint-to-long
-        Map<String, Long> mappedResult = new HashMap<>();
+        Map<String, Long> mappedResult = new LinkedHashMap<>();
         List<Object[]> queryResult = cardDiscardRepository.getAllDiscardCardsWithCount();
-        for (Object[] obj : queryResult ) {
+        for (Object[] obj : queryResult) {
             String ld = (String) ObjectUtils.nullSafe(obj[0], "ERROR - Missing name");
-            BigInteger big =(BigInteger) obj[1];
+            BigInteger big = (BigInteger) obj[1];
             Long count = big.longValue();
             mappedResult.put(ld, count);
         }
@@ -100,7 +117,7 @@ public class StatisticsService implements IStatisticsService {
         return Collections.emptyList();
     }
 
-    private List<CardRedraw> insertRedrawnCards(List<UUID> redrawnCards, UUID cardSetUUID, UUID playerUUID) {
+    public List<CardRedraw> insertRedrawnCards(List<UUID> redrawnCards, UUID cardSetUUID, UUID playerUUID) {
         List<CardRedraw> cardRedraws = new ArrayList<>();
         if (redrawnCards.size() > 0) {
             for (UUID cardUUID : redrawnCards) {
@@ -114,14 +131,14 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Override
-    public Map<String,Long> getAllCardRedraws() {
+    public Map<String, Long> getAllCardRedraws() {
         // The reason for the Object[] -> Map conversion: https://stackoverflow.com/questions/51150748/nonuniqueresultexception-jparepository-spring-boot
         // MySQL returns BigInteger by default, I convert into BigDecimal because of: https://stackoverflow.com/questions/5553863/cast-bigint-to-long
-        Map<String, Long> mappedResult = new HashMap<>();
+        Map<String, Long> mappedResult = new LinkedHashMap<>();
         List<Object[]> queryResult = cardRedrawRepository.getAllRedrawCardsWithCount();
-        for (Object[] obj : queryResult ) {
+        for (Object[] obj : queryResult) {
             String ld = (String) ObjectUtils.nullSafe(obj[0], "ERROR - Missing name");
-            BigInteger big =(BigInteger) obj[1];
+            BigInteger big = (BigInteger) obj[1];
             Long count = big.longValue();
             mappedResult.put(ld, count);
         }

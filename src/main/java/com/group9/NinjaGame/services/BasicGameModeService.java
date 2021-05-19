@@ -7,10 +7,7 @@ import com.group9.NinjaGame.models.modes.BasicGameMode;
 import com.group9.NinjaGame.models.params.BossScoreParam;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class BasicGameModeService {
@@ -23,7 +20,7 @@ public class BasicGameModeService {
 
     public void checkAllComplete(BasicGameMode gameMode) {
         if (gameMode.completeStates.size() == gameMode.players.size()) {
-            gameMode.completeStates = new HashMap<>();
+            gameMode.completeStates = new LinkedList<>();
 
             UUID playerOnTurn = gameMode.playerOnTurn;
 
@@ -98,10 +95,11 @@ public class BasicGameModeService {
 
         BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
 
-        boolean alreadyCompleted = gameMode.completeStates.getOrDefault(playerId, false);
+        boolean alreadyCompleted = gameMode.completeStates.contains(playerId);
 
         if (!alreadyCompleted && gameMode.drawnCard != null) {
-            gameMode.completeStates.put(playerId, true);
+
+            gameMode.completeStates.add(playerId);
 
             checkAllComplete(gameMode);
 
@@ -118,7 +116,7 @@ public class BasicGameModeService {
 
         BasicGameMode gameMode = (BasicGameMode) gameInfo.gameModeData;
 
-        gameMode.bossFightScores.put(playerId, bossScore.score);
+        gameMode.score(playerId, bossScore.score);
 
         return gameInfo;
     }
