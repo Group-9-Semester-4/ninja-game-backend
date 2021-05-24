@@ -53,7 +53,7 @@ public class DeathMatchGameModeService {
         cardLockInfo.playerId = param.playerId;
         cardLockInfo.locked = true;
 
-        return new com.sun.tools.javac.util.Pair<>(gameInfo, cardLockInfo);
+        return new Pair<>(gameInfo, cardLockInfo);
     }
 
     public GameInfo onComplete(CardCompleteParam param) throws Exception {
