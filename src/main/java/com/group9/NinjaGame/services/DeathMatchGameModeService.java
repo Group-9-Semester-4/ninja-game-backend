@@ -39,7 +39,7 @@ public class DeathMatchGameModeService {
         return players == gameMode.playersReady.size();
     }
 
-    public Pair<GameInfo, CardLockInfo> onLock(LockCardParam param) throws Exception {
+    public GameInfo onLock(LockCardParam param) throws Exception {
 
         GameInfo gameInfo = getValidatedGameInfo(param.playerId);
         DeathMatchGameMode gameMode = (DeathMatchGameMode) gameInfo.gameModeData;
@@ -53,7 +53,20 @@ public class DeathMatchGameModeService {
         cardLockInfo.playerId = param.playerId;
         cardLockInfo.locked = true;
 
-        return new Pair<>(gameInfo, cardLockInfo);
+        return gameInfo;
+    }
+
+    public GameInfo onUnlock(LockCardParam param) throws Exception {
+
+        GameInfo gameInfo = getValidatedGameInfo(param.playerId);
+        DeathMatchGameMode gameMode = (DeathMatchGameMode) gameInfo.gameModeData;
+
+        CardLockInfo cardLockInfo = gameMode.getLockInfo(param.cardId);
+
+        cardLockInfo.playerId = null;
+        cardLockInfo.locked = false;
+
+        return gameInfo;
     }
 
     public GameInfo onComplete(CardCompleteParam param) throws Exception {

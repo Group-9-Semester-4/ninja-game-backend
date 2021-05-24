@@ -31,6 +31,7 @@ public class DeathMatchGameModeResource {
         this.server.addEventListener("deathmatch.complete", CardCompleteParam.class, this::onComplete);
         this.server.addEventListener("deathmatch.ready", Object.class, this::onReady);
         this.server.addEventListener("deathmatch.lock-card", LockCardParam.class, this::onLockCard);
+        this.server.addEventListener("deathmatch.unlock-card", LockCardParam.class, this::onLockCard);
     }
 
     public void onReady(SocketIOClient client, Object data, AckRequest ackSender) {
@@ -48,10 +49,21 @@ public class DeathMatchGameModeResource {
 
     public void onLockCard(SocketIOClient client, LockCardParam param, AckRequest ackSender) {
         try {
-            Pair<GameInfo, CardLockInfo> pair = deathMatchGameModeService.onLock(param);
+            GameInfo gameInfo = deathMatchGameModeService.onLock(param);
 
             SendMessage(ackSender, MessageType.SUCCESS, "Card locked");
-            server.getRoomOperations(pair.fst.gameId.toString()).sendEvent("card-lock", pair.snd);
+            server.getRoomOperations(gameInfo.gameId.toString()).sendEvent("game-update", gameInfo);
+        } catch (Exception e) {
+            SendMessage(ackSender, MessageType.ERROR, e.getMessage());
+        }
+    }
+
+    public void onUnlockCard(SocketIOClient client, LockCardParam param, AckRequest ackSender) {
+        try {
+            GameInfo gameInfo = deathMatchGameModeService.onUnlock(param);
+
+            SendMessage(ackSender, MessageType.SUCCESS, "Card unlocked");
+            server.getRoomOperations(gameInfo.gameId.toString()).sendEvent("game-update", gameInfo);
         } catch (Exception e) {
             SendMessage(ackSender, MessageType.ERROR, e.getMessage());
         }
