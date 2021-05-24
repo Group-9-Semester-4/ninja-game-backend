@@ -2,11 +2,14 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.containers.GameContainer;
 import com.group9.NinjaGame.entities.Card;
-import com.group9.NinjaGame.helpers.exceptions.StartBossFightException;
 import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.modes.ConcurrentGameMode;
 import com.group9.NinjaGame.models.modes.DeathMatchGameMode;
 import com.group9.NinjaGame.models.params.CardCompleteParam;
+import com.group9.NinjaGame.models.params.LockCardParam;
+import com.group9.NinjaGame.models.structural.CardLockInfo;
+import com.group9.NinjaGame.models.structural.PlayerScore;
+import com.sun.tools.javac.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -24,7 +27,7 @@ public class DeathMatchGameModeService {
     public GameInfo onReady(UUID playerId) throws Exception {
         GameInfo gameInfo = getValidatedGameInfo(playerId);
         DeathMatchGameMode gameMode = (DeathMatchGameMode) gameInfo.gameModeData;
-        gameMode.playersReady.put(playerId, true);
+        gameMode.playersReady.add(playerId);
         return gameInfo;
     }
 
@@ -32,23 +35,39 @@ public class DeathMatchGameModeService {
         GameInfo gameInfo = getValidatedGameInfo(playerId);
         DeathMatchGameMode gameMode = (DeathMatchGameMode) gameInfo.gameModeData;
         int players = gameMode.players.size();
-        if(players == gameMode.playersReady.size()) {return true;}
-        return false;
+
+        return players == gameMode.playersReady.size();
+    }
+
+    public Pair<GameInfo, CardLockInfo> onLock(LockCardParam param) throws Exception {
+
+        GameInfo gameInfo = getValidatedGameInfo(param.playerId);
+        DeathMatchGameMode gameMode = (DeathMatchGameMode) gameInfo.gameModeData;
+
+        CardLockInfo cardLockInfo = gameMode.getLockInfo(param.cardId);
+
+        if (cardLockInfo.locked) {
+            throw new Exception("Card locked");
+        }
+
+        cardLockInfo.playerId = param.playerId;
+        cardLockInfo.locked = true;
+
+        return new com.sun.tools.javac.util.Pair<>(gameInfo, cardLockInfo);
     }
 
     public GameInfo onComplete(CardCompleteParam param) throws Exception {
 
         GameInfo gameInfo = getValidatedGameInfo(param.playerId);
         DeathMatchGameMode gameMode = (DeathMatchGameMode) gameInfo.gameModeData;
-        gameMode.remainingCards.remove(param.cardId);
+        gameMode.removeCard(param.cardId);
         Card card = cardService.getEntityById(param.cardId.toString());
+
         //add score
-        gameMode.playerScores.merge(param.playerId, card.getPoints(), Integer::sum);
-        //check if it's a last card
-        if(gameMode.remainingCards.isEmpty()){
-            return gameInfo;
-            }
-        throw new Exception("onComplete failed flow."); //todo - I don't know what this exc. should say
+        PlayerScore score = gameMode.getPlayerScore(param.playerId);
+        score.score += card.getPoints();
+
+        return gameInfo;
     }
 
 
