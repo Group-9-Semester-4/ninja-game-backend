@@ -88,7 +88,7 @@ public class DeathMatchGameModeService {
             throw new Exception("Game not found");
         }
 
-        if (!(gameInfo.gameModeData instanceof ConcurrentGameMode)) {
+        if (!(gameInfo.gameModeData instanceof DeathMatchGameMode)) {
             throw new Exception("Not supported for current game mode");
         }
     }
