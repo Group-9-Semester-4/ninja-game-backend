@@ -6,17 +6,13 @@ import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
 import com.group9.NinjaGame.entities.User;
 import com.group9.NinjaGame.models.GameInfo;
-import com.group9.NinjaGame.models.modes.SinglePlayerGameMode;
+import com.group9.NinjaGame.models.modes.BasicGameMode;
 import com.group9.NinjaGame.models.params.FinishGameParam;
 import com.group9.NinjaGame.models.params.InitGameParam;
-import com.group9.NinjaGame.models.params.StartGameParam;
-import com.group9.NinjaGame.repositories.CardSetRepository;
 import com.group9.NinjaGame.repositories.GameRepository;
 import com.group9.NinjaGame.repositories.UserRepository;
 import com.group9.NinjaGame.services.GameService;
 import com.group9.NinjaGame.services.IStatisticsService;
-import com.group9.NinjaGame.services.StatisticsService;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -132,7 +128,7 @@ public class GameServiceTest {
         optionalGame = Optional.of(game);
         optionalCardSet = Optional.of(cardSet);
         gameInfo = new GameInfo(uuid, "asdf");
-        gameInfo.gameModeData = new SinglePlayerGameMode();
+        gameInfo.gameModeData = new BasicGameMode();
         gameInfo.gameModeData.init(gameInfo, list, 0);
         GameContainer.getInstance().initGame(gameInfo);
     }

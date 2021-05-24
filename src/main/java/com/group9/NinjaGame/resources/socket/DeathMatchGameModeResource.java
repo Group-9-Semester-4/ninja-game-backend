@@ -10,7 +10,6 @@ import com.group9.NinjaGame.models.params.CardCompleteParam;
 import com.group9.NinjaGame.models.params.LockCardParam;
 import com.group9.NinjaGame.models.structural.CardLockInfo;
 import com.group9.NinjaGame.services.DeathMatchGameModeService;
-import com.sun.tools.javac.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

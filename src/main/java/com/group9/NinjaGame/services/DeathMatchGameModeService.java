@@ -9,7 +9,6 @@ import com.group9.NinjaGame.models.params.CardCompleteParam;
 import com.group9.NinjaGame.models.params.LockCardParam;
 import com.group9.NinjaGame.models.structural.CardLockInfo;
 import com.group9.NinjaGame.models.structural.PlayerScore;
-import com.sun.tools.javac.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
