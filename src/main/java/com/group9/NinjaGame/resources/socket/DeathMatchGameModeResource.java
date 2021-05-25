@@ -30,7 +30,7 @@ public class DeathMatchGameModeResource {
         this.server.addEventListener("deathmatch.complete", CardCompleteParam.class, this::onComplete);
         this.server.addEventListener("deathmatch.ready", Object.class, this::onReady);
         this.server.addEventListener("deathmatch.lock-card", LockCardParam.class, this::onLockCard);
-        this.server.addEventListener("deathmatch.unlock-card", LockCardParam.class, this::onLockCard);
+        this.server.addEventListener("deathmatch.unlock-card", LockCardParam.class, this::onUnlockCard);
     }
 
     public void onReady(SocketIOClient client, Object data, AckRequest ackSender) {
