@@ -12,22 +12,20 @@ public class ConcurrentGameMode implements GameMode{
     public static final String GAME_MODE_ID = "concurrent";
     public List<Player> players;
 
-    // game time should be in seconds
+    // gametime in seconds
     public int gameTime;
 
-    // hashmap players and the current card they are playing with now
+    // list of players and the current card they are playing with now
     public List<PlayerCurrentCard> playerCurrentCard;
 
-    //hashmap players and list of remaining cards for each player
+    //list of players and remaining cards for each player
     public List<PlayerRemainingCards> playerRemainingCards;
 
-    // hashmap storing uuids of all players and their respective scores (points totaling cards done)
+    // list storing uuids of all players and their respective scores (points totaling cards done)
     public List<PlayerScore> playerScores;
 
-    // hashmap storing uuids of all players and the number of cards they completed- to be shown in FE all the time
     public List<CardsDone> numberOfPlayerCardsDone;
 
-    // hashmap storing uuds of all players and their bossfight scores to make the final leaderboard
     public List<BossFightScore> bossFightScores;
 
     // we need standings to know who finished the game 1st 2nd... to give ammo bonuses
@@ -35,7 +33,6 @@ public class ConcurrentGameMode implements GameMode{
 
     private List<Card> cards;
 
-    @Override
     public void init(GameInfo gameInfo, List<Card> cards, int timeLimit) {
         players = gameInfo.lobby.players;
         playerCurrentCard = new LinkedList<>();

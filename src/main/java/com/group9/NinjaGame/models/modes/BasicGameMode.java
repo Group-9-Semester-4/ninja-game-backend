@@ -27,8 +27,6 @@ public class BasicGameMode implements GameMode {
 
     public List<BossFightScore> bossFightScores;
 
-
-    @Override
     public void init(GameInfo gameInfo, List<Card> cards, int timeLimit) {
         playerOnTurn = gameInfo.lobby.players.get(0).sessionId;
         score = 0;

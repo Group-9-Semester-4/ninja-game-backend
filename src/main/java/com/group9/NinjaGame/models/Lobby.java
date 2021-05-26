@@ -18,13 +18,4 @@ public class Lobby {
         players = new ArrayList<>();
     }
 
-    public boolean removePlayer(UUID sessionId) {
-        for (Player player : players) {
-            if (player.sessionId.equals(sessionId)) {
-                return players.remove(player);
-            }
-        }
-
-        return false;
-    }
 }

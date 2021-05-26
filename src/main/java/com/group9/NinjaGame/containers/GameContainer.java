@@ -81,8 +81,4 @@ public class GameContainer {
 
         playerGame.remove(playerId);
     }
-
-    public GameContainer getContainer() {
-        return getInstance();
-    }
 }

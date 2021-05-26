@@ -41,8 +41,6 @@ public class ConcurrentGameModeService {
         return card;
     }
 
-    //TODO: refactored accordign to myMap.merge(key, 1, Integer::sum) answer here, test!
-    //https://stackoverflow.com/questions/81346/most-efficient-way-to-increment-a-map-value-in-java
     public GameInfo onComplete(UUID playerId) throws Exception {
 
         GameInfo gameInfo = getValidatedGameInfo(playerId);
@@ -64,23 +62,21 @@ public class ConcurrentGameModeService {
             gameMode.setPlayerCurrentCard(playerId, null);
 
             //check if it's a last card
-            //TODO: refactor to another method
             if(gameMode.getRemainingCards(playerId).isEmpty()){
                 gameMode.standings.add(playerId);
                 //if enough players have reached the end
                 double percent = (double)gameMode.standings.size()/gameMode.players.size()*100;
-                //50 is made up, can be discussed
+
                 if(percent >= 50){
                     //force everyone into bossfight
                     GameInfo bossGameInfo = this.onTimerEnd(playerId);
                     throw new StartBossFightException(bossGameInfo);
                 }
             }
-            //end TODOregion
 
             return gameInfo;
         }
-        throw new Exception("onComplete failed flow."); //todo - I don't know what this exc. should say
+        throw new Exception("Game flow failed.");
     }
 
     public GameInfo onBossComplete(BossScoreParam bossScore, UUID playerId) throws Exception {
@@ -93,18 +89,15 @@ public class ConcurrentGameModeService {
 
         return gameInfo;
     }
-    //TODO: decide how many points should players get for finishing fastest
     public GameInfo onTimerEnd(UUID playerId) throws Exception {
         //for adding points
         GameInfo gameInfo = getValidatedGameInfo(playerId);
 
         ConcurrentGameMode gameMode = (ConcurrentGameMode) gameInfo.gameModeData;
 
-        // TODO: calculation-balancing thingy, either .players or .standings (players/2)
         int numberOfPlayers = gameMode.standings.size();
 
         for(UUID playerUuid : gameMode.standings){
-            //amount to be given up for discussion
             gameMode.addScore(playerUuid, 5 * numberOfPlayers--);
         }
         return gameInfo;

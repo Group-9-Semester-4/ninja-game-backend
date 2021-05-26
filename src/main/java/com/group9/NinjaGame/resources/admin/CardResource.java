@@ -32,14 +32,7 @@ public class CardResource {
         this.cardService = cardService;
     }
 
-//    @GetMapping("/index")
-//    public String showManageCards() {
-//        return "index";
-//    }
-
-
     @GetMapping("/manage")
-    //TODO: doesn't update automatically
     public String listCards(Model model) {
         List<Card> cardList = cardService.listAll();
         model.addAttribute("cards", cardList);
@@ -85,7 +78,6 @@ public class CardResource {
         return "update-card";
     }
 
-    //TODO: Refactor
     @PostMapping("/update/{id}")
     public String updateCard(@RequestParam("file") MultipartFile file, @PathVariable("id") String id, @Valid Card card,
                              BindingResult result, Model model) {

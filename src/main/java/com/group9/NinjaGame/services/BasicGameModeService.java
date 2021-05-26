@@ -23,7 +23,6 @@ public class BasicGameModeService {
             gameMode.completeStates = new LinkedList<>();
 
             UUID playerOnTurn = gameMode.playerOnTurn;
-
             int playerIndex = 0;
 
             for (int i = 0; i < gameMode.players.size(); i++) {
@@ -41,18 +40,6 @@ public class BasicGameModeService {
             }
 
             gameMode.drawnCard = null;
-        }
-    }
-
-    // Helper method
-
-    private void validateGameInfo(GameInfo gameInfo) throws Exception {
-        if (gameInfo == null) {
-            throw new Exception("Game not found");
-        }
-
-        if (!(gameInfo.gameModeData instanceof BasicGameMode)) {
-            throw new Exception("Not supported for current game mode");
         }
     }
 
@@ -78,10 +65,8 @@ public class BasicGameModeService {
 
         gameMode.drawnCard = card;
 
-        //maybe not desired? redraw deletes cards from deck
         gameMode.remainingCards.remove(card);
 
-        //shouldn't be here?
         gameMode.score += card.getPoints();
 
         return gameInfo;
@@ -105,7 +90,7 @@ public class BasicGameModeService {
 
             return gameInfo;
         }
-        throw new Exception("onComplete failed flow."); //todo - I don't know what this exc. should say
+        throw new Exception("onComplete failed flow.");
     }
 
     public GameInfo onBossComplete(BossScoreParam bossScore, UUID playerId) throws Exception {
@@ -119,5 +104,17 @@ public class BasicGameModeService {
         gameMode.score(playerId, bossScore.score);
 
         return gameInfo;
+    }
+
+    // Helper method
+
+    private void validateGameInfo(GameInfo gameInfo) throws Exception {
+        if (gameInfo == null) {
+            throw new Exception("Game not found");
+        }
+
+        if (!(gameInfo.gameModeData instanceof BasicGameMode)) {
+            throw new Exception("Not supported for current game mode");
+        }
     }
 }

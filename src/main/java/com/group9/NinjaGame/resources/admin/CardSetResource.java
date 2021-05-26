@@ -96,7 +96,6 @@ public class CardSetResource {
     }
 
     @GetMapping("/manage-cards")
-    //TODO: doesn't update automatically
     public String listCards(Model model) {
         List<Card> cardList = cardService.listAll();
         model.addAttribute("cards", cardList);

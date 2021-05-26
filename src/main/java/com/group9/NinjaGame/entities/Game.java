@@ -117,14 +117,6 @@ public class Game {
         this.multiPlayer = singlePlayer;
     }
 
-    public boolean isPlayingAlone() {
-        return playingAlone;
-    }
-
-    public void setPlayingAlone(boolean playingAlone) {
-        this.playingAlone = playingAlone;
-    }
-
     public CardSet getSelectedCardSet() {
         return selectedCardSet;
     }
@@ -155,13 +147,6 @@ public class Game {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public int getGameAttempts() {
-        if (points == 0 || cardsDone == 0) {
-            return 0;
-        }
-        return points / cardsDone;
     }
 
     public GameInfo getGameInfo() {

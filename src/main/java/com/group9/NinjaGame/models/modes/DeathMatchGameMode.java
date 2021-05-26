@@ -5,9 +5,7 @@ import com.group9.NinjaGame.models.GameInfo;
 import com.group9.NinjaGame.models.Player;
 import com.group9.NinjaGame.models.structural.CardLockInfo;
 import com.group9.NinjaGame.models.structural.PlayerScore;
-import org.springframework.security.core.parameters.P;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -23,10 +21,8 @@ public class DeathMatchGameMode implements GameMode{
     // hashmap storing uuids of all players and their respective scores (points totaling cards done)
     public List<PlayerScore> playerScores;
 
-    // is int sufficient here or do we need list<UUID> or sth?
     public List<UUID> playersReady;
 
-    @Override
     public void init(GameInfo gameInfo, List<Card> cards, int timeLimit) {
         players = gameInfo.lobby.players;
         remainingCards = new LinkedList<>();
