@@ -77,7 +77,13 @@ public class DeathMatchGameModeService {
 
         //add score
         PlayerScore score = gameMode.getPlayerScore(param.playerId);
-        score.score += card.getPoints();
+
+        if (score == null) {
+            score = new PlayerScore(param.playerId, card.getPoints());
+            gameMode.playerScores.add(score);
+        } else {
+            score.score += card.getPoints();
+        }
 
         return gameInfo;
     }
