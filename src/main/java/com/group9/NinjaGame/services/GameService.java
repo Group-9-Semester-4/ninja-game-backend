@@ -12,7 +12,8 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.Optional;
 
 @Component
 public class GameService implements IGameService {
@@ -80,11 +81,16 @@ public class GameService implements IGameService {
         User user = userRepository.findByEmail(email);
 
         if (user != null) {
+            // User found
+            user.setLast_visited(Instant.now());
+            userRepository.save(user);
             return user;
         }
-
+        // User NOT found
         User newUser = new User(email);
 
+        newUser.setRegistered(Instant.now());
+        newUser.setLast_visited(Instant.now());
         userRepository.save(newUser);
 
         return newUser;
