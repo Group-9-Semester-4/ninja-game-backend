@@ -45,6 +45,8 @@ public class StatisticsServiceTest {
     private CardSetCompletionRepository cardSetCompletionRepository;
     @Mock
     private TimePlayedPerGameRepository timePlayedPerGameRepository;
+    @Mock
+    private UserRepository userRepository;
 
 
     @BeforeEach
@@ -57,7 +59,7 @@ public class StatisticsServiceTest {
         assertNotNull(timePlayedPerGameRepository);
 
         statisticsService = new StatisticsService(cardSetRepository, gameRepository,cardDiscardRepository,
-                cardRedrawRepository, cardSetCompletionRepository, timePlayedPerGameRepository);
+                cardRedrawRepository, cardSetCompletionRepository, timePlayedPerGameRepository, userRepository);
     }
     @Test
     public void testInsertGameStatistics() {

@@ -88,7 +88,6 @@ public class GameService implements IGameService {
         }
         // User NOT found
         User newUser = new User(email);
-
         newUser.setRegistered(Instant.now());
         newUser.setLast_visited(Instant.now());
         userRepository.save(newUser);
