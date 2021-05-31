@@ -43,7 +43,7 @@ jobs:
     - name: rsync deployments
       uses: burnett01/rsync-deployments@4.1
       with:
-        switches: -avzrn --delete
+        switches: -avzr --delete
         path: target/
         remote_path: ~/target
         remote_host: ${{ secrets.VPS_IP }}
