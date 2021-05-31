@@ -13,6 +13,9 @@
             width: 80vw;
             padding: 1em;
         }
+        body {
+            padding-bottom: 5vh;
+        }
     </style>
 </head>
 <body>
@@ -22,16 +25,64 @@
 <p> As of now, we keep track of which cards are discarded (at the beginning of the game, players can choose to discard
     them). And which cards are redrawn,
     (during gameplay, players can choose to "skip" certain cards - redraw a different one).</p>
+<h2>Card discards</h2>
 <div class="graph-wide"><canvas id="discarded_graph"></canvas></div>
+<h2>Card redraws</h2>
 <div class="graph-wide"><canvas id="redrawn_graph"></canvas></div>
 <hr>
+<h2>Game length:</h2>
 <div>
     <h3> Average game time: <span id="avg-game-time" style="font-style: italic"> </span> seconds.</h3>
     <p> </p>
 </div>
 <div class="graph-wide"><canvas id="game_time_graph"></canvas></div>
+<h2>Registered users</h2>
+<small> Total users registered: <span th:text="${countUsers}"></span></small>
+<table class="table table-striped table-hover" id="users-table">
+    <p th:if="${#lists.isEmpty(users)}" class="text-danger">
+        There are no more users to display.
+    </p>
+    <thead>
+    <tr>
+        <th>Email</th>
+        <th>Registered on</th>
+        <th>Last visited on</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.registered}"></td>
+        <td th:text="${user.last_visited}"></td>
+    </tr>
+    </tbody>
+</table>
+<button id="users-prev-btn" class="btn btn-primary">Previous page</button>
+<button id="users-next-btn" class="btn btn-primary">Next page</button>
+<span> Current page number: <span id="page-no-counter"> </span></span>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
 <script th:inline="javascript">
+
+    var usersPageNumber = window.location.pathname.split("/").pop();
+    $('#page-no-counter').text(usersPageNumber);
+    var usersObj = /*[[${users}]]*/ {};
+    console.log(usersObj);
+    console.log(/*[[${countUsers}]]*/);
+
+    $('#users-prev-btn').click(function () {
+        if(Number(usersPageNumber) > 1) {
+            usersPageNumber--;
+            window.location = window.location.origin+'/admin/statistics/'+usersPageNumber
+        }
+    });
+    $('#users-next-btn').click(function () {
+        if (usersObj.length !== 0) {
+            usersPageNumber++;
+            window.location = window.location.origin+'/admin/statistics/'+usersPageNumber
+        }
+    });
+
     var card_discarded_map = /*[[${discards}]]*/ {};
     console.log(card_discarded_map);
     var card_redrawn_map = /*[[${redraws}]]*/ {};

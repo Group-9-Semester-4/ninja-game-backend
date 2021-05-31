@@ -2,6 +2,7 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
+import com.group9.NinjaGame.entities.User;
 import com.group9.NinjaGame.entities.statisics.CardDiscard;
 import com.group9.NinjaGame.entities.statisics.CardRedraw;
 import com.group9.NinjaGame.entities.statisics.CardSetCompletion;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ObjectUtils;
 
 import java.math.BigInteger;
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -27,13 +29,15 @@ public class StatisticsService implements IStatisticsService {
     private final CardRedrawRepository cardRedrawRepository;
     private final CardSetCompletionRepository cardSetCompletionRepository;
     private final TimePlayedPerGameRepository timePlayedPerGameRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public StatisticsService(CardSetRepository cardSetRepository, GameRepository gameRepository, CardDiscardRepository cardDiscardRepository, CardRedrawRepository cardRedrawRepository, CardSetCompletionRepository cardSetCompletionRepository, TimePlayedPerGameRepository timePlayedPerGameRepository) {
+    public StatisticsService(CardSetRepository cardSetRepository, GameRepository gameRepository, CardDiscardRepository cardDiscardRepository, CardRedrawRepository cardRedrawRepository, CardSetCompletionRepository cardSetCompletionRepository, TimePlayedPerGameRepository timePlayedPerGameRepository, UserRepository userRepository) {
         this.cardSetRepository = cardSetRepository;
         this.gameRepository = gameRepository;
         this.cardDiscardRepository = cardDiscardRepository;
         this.cardRedrawRepository = cardRedrawRepository;
+        this.userRepository = userRepository;
 
         // both saved in the insertGameStatistics method.
         this.cardSetCompletionRepository = cardSetCompletionRepository;
@@ -145,5 +149,13 @@ public class StatisticsService implements IStatisticsService {
         return mappedResult;
     }
 
+    @Override
+    public List<User> getAllUsers(int pageNo) {
+        return userRepository.findAllPaginated(pageNo);
+    }
 
+    @Override
+    public Long countUsers() {
+        return userRepository.count();
+    }
 }
