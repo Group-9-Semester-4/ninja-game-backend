@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface CardDiscardRepository extends JpaRepository<CardDiscard, UUID> {
-    @Query(value = "SELECT cards.name, COUNT(*) as c from statistics_card_discard LEFT JOIN cards ON statistics_card_discard.card_id = cards.id GROUP BY cards.name ORDER BY c DESC", nativeQuery = true)
+    @Query(value = "SELECT cards.name, COUNT(*) as c from statistics_card_discard LEFT JOIN cards ON statistics_card_discard.card_id = cards.id GROUP BY cards.name ORDER BY c DESC LIMIT 20", nativeQuery = true)
     List<Object[]> getAllDiscardCardsWithCount();
 
 }

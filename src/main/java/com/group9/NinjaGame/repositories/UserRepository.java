@@ -15,5 +15,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     User findByEmail(@NotBlank(message = "Email is mandatory") String email);
 
     @Query(value = "SELECT * FROM users ORDER BY last_visited DESC LIMIT 25 OFFSET ?1", nativeQuery = true)
-    List<User> findAllPaginated(int pageNo);
+    List<Object[]> findAllPaginated(int pageNo);
 }

@@ -9,7 +9,7 @@
     <style>
         .graph-wide {
             position: relative;
-            height: 30vh;
+            height: 60vh;
             width: 80vw;
             padding: 1em;
         }
@@ -51,9 +51,9 @@
     </thead>
     <tbody>
     <tr th:each="user : ${users}">
-        <td th:text="${user.email}"></td>
-        <td th:text="${user.registered}"></td>
-        <td th:text="${user.last_visited}"></td>
+        <td th:text="${user[1]}"></td>
+        <td th:text="${user[2]}"></td>
+        <td th:text="${user[3]}"></td>
     </tr>
     </tbody>
 </table>
@@ -83,17 +83,26 @@
         }
     });
 
-    var card_discarded_map = /*[[${discards}]]*/ {};
+    const card_discarded_map = /*[[${discards}]]*/ {};
     console.log(card_discarded_map);
-    var card_redrawn_map = /*[[${redraws}]]*/ {};
+    const card_redrawn_map = /*[[${redraws}]]*/ {};
     console.log(card_redrawn_map);
-    var game_times = /*[[${gametime}]]*/ {};
+    const game_times = /*[[${gametime}]]*/ {};
     console.log(game_times);
-    var avg_game_time = /*[[${avggametime}]]*/ {};
+    const avg_game_time = /*[[${avggametime}]]*/ {};
+    let avg_game_time_mins = 0;
+    let avg_game_time_secs = 0;
     console.log(avg_game_time);
 </script>
 <script>
-    document.getElementById("avg-game-time").textContent = avg_game_time.toString();
+
+    if (avg_game_time>60) {
+        avg_game_time_mins = avg_game_time/60;
+        avg_game_time_secs = avg_game_time%60;
+        document.getElementById("avg-game-time").textContent = `${avg_game_time_mins} minutes and ${avg_game_time_secs}`
+    } else {
+        document.getElementById("avg-game-time").textContent = avg_game_time.toString();
+    }
     // Say "No data" if the dataset is empty.
     const no_data_plugin = {
         id: 'no-data',
@@ -219,7 +228,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Longest games',
+                    text: 'Last 20 games played',
                     padding: {
                         top: 10,
                         bottom: 10

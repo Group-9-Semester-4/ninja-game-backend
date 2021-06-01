@@ -1,7 +1,6 @@
 package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.Game;
-import com.group9.NinjaGame.entities.User;
 import com.group9.NinjaGame.entities.statisics.CardDiscard;
 import com.group9.NinjaGame.models.params.FinishGameParam;
 
@@ -22,7 +21,7 @@ public interface IStatisticsService {
 
     Long getAverageGameTime();
 
-    List<User> getAllUsers(int pageNo);
+    List<Object[]> getAllUsers(int pageNo);
 
     Long countUsers();
 }

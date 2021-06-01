@@ -2,7 +2,6 @@ package com.group9.NinjaGame.services;
 
 import com.group9.NinjaGame.entities.CardSet;
 import com.group9.NinjaGame.entities.Game;
-import com.group9.NinjaGame.entities.User;
 import com.group9.NinjaGame.entities.statisics.CardDiscard;
 import com.group9.NinjaGame.entities.statisics.CardRedraw;
 import com.group9.NinjaGame.entities.statisics.CardSetCompletion;
@@ -14,10 +13,13 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ObjectUtils;
 
 import java.math.BigInteger;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 @Component
@@ -78,6 +80,7 @@ public class StatisticsService implements IStatisticsService {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm"); // helper to get nicely readable date time value
         Map<String,Short> mappedResult = new LinkedHashMap<>();
         List<Object[]> queryResult = timePlayedPerGameRepository.getAllPlayTimes();
+        Collections.reverse(queryResult);
         for (Object[] obj : queryResult) {
             Timestamp sql_timestamp = (Timestamp) obj[0];
             String formatted_date = sdf.format(sql_timestamp);
@@ -150,12 +153,18 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Override
-    public List<User> getAllUsers(int pageNo) {
-        return userRepository.findAllPaginated(pageNo);
+    public List<Object[]> getAllUsers(int pageNo) {
+        List<Object[]> list = userRepository.findAllPaginated(pageNo);
+        for (Object[] u : list) {
+            u[2] = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(u[2]);
+            u[3] = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(u[3]);
+        }
+        return list;
     }
 
     @Override
     public Long countUsers() {
         return userRepository.count();
     }
+
 }

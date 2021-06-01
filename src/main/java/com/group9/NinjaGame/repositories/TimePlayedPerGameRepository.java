@@ -18,7 +18,7 @@ public interface TimePlayedPerGameRepository extends JpaRepository<TimePlayedPer
     @Query(value = "SELECT AVG(time_in_seconds) FROM statistics_time_played_per_game", nativeQuery = true)
     long getAvgGameTimePlayingNinjaGame();
 
-    @Query(value = "SELECT timestamp, time_in_seconds from statistics_time_played_per_game ORDER BY time_in_seconds DESC",nativeQuery = true)
+    @Query(value = "SELECT timestamp, time_in_seconds from statistics_time_played_per_game ORDER BY timestamp DESC LIMIT 20",nativeQuery = true)
     List<Object[]> getAllPlayTimes();
 
 
