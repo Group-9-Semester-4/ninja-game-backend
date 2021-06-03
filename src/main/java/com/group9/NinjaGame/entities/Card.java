@@ -39,7 +39,7 @@ public class Card {
     @ManyToMany(mappedBy = "cards")
     Set<CardSet> cardSets;
 
-    private static final String absoluteServerPath = "http://localhost:8080/img/card_pictures/";
+    private static final String absoluteServerPath = "http://167.71.40.34:8080/img/card_pictures/";
 
     public Card() {
     }
