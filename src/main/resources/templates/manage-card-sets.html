@@ -29,7 +29,7 @@
                 <td th:text="${cardSet.name}"></td>
                 <td th:text="${cardSet.id}"></td>
                 <td><a th:href="@{/admin/card-set/update/{id}(id=${cardSet.id})}">Edit</a></td>
-                <td><a th:href="@{/admin/card-set/delete/{id}(id=${cardSet.id})}">Delete</a></td>
+                <td><a style="color: #dc3545;" th:href="@{/admin/card-set/delete/{id}(id=${cardSet.id})}">Delete</a></td>
             </tr>
             </tbody>
         </table>
